@@ -1,0 +1,26 @@
+﻿@model Category 
+@{
+    ViewData["Title"] = "Add";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<form id="addCategoryf" asp-controller="Category" asp-action="Add" method="post" enctype="multipart/form-data">
+    <div class="panel panel-info" id="AddCategory">
+        <div class="panel-heading">
+            Kategori Ekle
+            <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+        </div>
+        <div class="panel-body">
+
+            <div class="form-group">
+                <label asp-for="Name"></label>
+                <input type="text" class="form-control" asp-for="Name" placeholder="Enter Category Name">
+                <p class="help-block text-danger"><span asp-validation-for="Name" class="text-danger"></span></p>
+            </div>
+
+        </div>
+        <div class="panel-footer">
+            <button type="submit" class="btn btn-default">Submit</button>
+        </div>
+    </div>
+</form>
+

@@ -1,0 +1,80 @@
+﻿@model IEnumerable<Blog>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="header">
+    <h1 class="page-header">
+        Blog <small>Blogları Listeleyin</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#">Ana Sayfa</a></li>
+        <li><a href="#">Blog</a></li>
+        <li class="active">Index</li>
+    </ol>
+
+</div>
+<div id="page-inner">
+    <div class="col-md-12">
+        @Html.Partial("_AddBlogForm", new Blog())
+        @Html.Partial("_EditBlogForm", new Blog())
+        <!-- Advanced Tables -->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addBlogModal">
+                    Blog Ekle
+                </button>
+            </div>
+            <div class="panel-body">
+                <table id="example"  class="display cell-border" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th style="width:40%">Title</th>
+                            <th style="width:20%">Author</th>
+                            <th style="width:20%">Date</th>
+                            <th style="width:20%">Aksiyon</th>
+                        </tr>
+                    </thead>
+                    <tbody id="Blogs">
+                        @foreach (var blog in Model)
+                        {
+                            <tr id="@blog.Id">
+                                <td style="width:40%">@blog.Title</td>
+                                <td style="width:20%">@blog.AuthorId</td>
+                                <td style="width:20%">@blog.DateAdded.ToString("dd MMM yyyy H:mm")</td>
+                                <td style="width:20%;text-align:center">
+                                    <a type="button" title="Düzenle" class="btn btn-warning btn-sm open-EditCategoryDialog" data-category-name="@blog.Title" data-category-id="@blog.Id" data-toggle="modal" data-target="#editCategoryModal">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                    <a onclick=Delete("/Blog/Delete/@blog.Id") title="Sil" class="btn btn-danger btn-sm">
+                                        <i class="fa fa-trash-o"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th style="width:40%">Title</th>
+                            <th style="width:20%">Author</th>
+                            <th style="width:20%">Date</th>
+                            <th style="width:20%">Aksiyon</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <!--End Advanced Tables -->
+    </div>
+</div>
+@section Blog {
+    <script src="~/Admin/js/notie.min.js"></script>
+    <script type="text/javascript" src="/Admin/js/dataTables/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="/Admin/js/dataTables/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="~/Admin/js/Blog.js"></script>
+}
