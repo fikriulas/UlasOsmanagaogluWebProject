@@ -75,8 +75,8 @@ namespace UlasBlog.WebUI.Controllers
             if (ModelState.IsValid)
             {                
                 comment.dateAdded = DateTime.Now;
-                //uow.Comments.Add(comment);
-                //uow.SaveChanges();
+                uow.Comments.Add(comment);
+                uow.SaveChanges();
                 return Ok(comment); // success çalıştır.                
             }
             return BadRequest();

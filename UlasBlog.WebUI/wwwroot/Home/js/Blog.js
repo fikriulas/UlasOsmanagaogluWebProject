@@ -42,8 +42,12 @@
             window.scrollTo({ top: scrollDiv, behavior: 'smooth' }); // yorum yazıldığında smooth şekilde yrumun yapıldığı yere sayfayı götürecektir.
         },
         error: function (ErrorMessage) {
-
-            console.log("Error Girildi")            
+            iziToast.show({
+                title: 'Başarısız!',
+                message: 'Kontrol Edip, Tekrar Deneyin',
+                color: 'red', // blue, red, green, yellow
+                icon: 'fa fa-times'
+            });     
         },
         cache: false,
         contentType: false,
