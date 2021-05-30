@@ -41,7 +41,9 @@ Website: http://www.webthemez.com/
         .notie-textbox {
             margin-top: 55px;
         }
+       
     </style>
+
 </head>
 <body>
     <div id="wrapper">
@@ -55,7 +57,7 @@ Website: http://www.webthemez.com/
                 </button>
                 <a class="navbar-brand" href="index.html"><strong><i class="icon fa fa-plane"></i> BRILLIANT</strong></a>
 
-                <div id="sideNav" href="">
+                <div id="sideNav" href="" onclick="sidefunction()" class="closed">
                     <i class="fa fa-bars icon"></i>
                 </div>
             </div>
@@ -272,7 +274,7 @@ Website: http://www.webthemez.com/
             </ul>
         </nav>
         <!--/. NAV TOP  -->
-        <nav class="navbar-default navbar-side" role="navigation">
+        <nav id="navbarsideId" class="navbar-default navbar-side" role="navigation" style="left:0px">
             <div class="sidebar-collapse">
                 <ul class="nav" id="main-menu">
 
@@ -346,7 +348,29 @@ Website: http://www.webthemez.com/
     <script type="text/javascript" src="/Admin/js/chartjs.js"></script>
     @RenderSection("Category", false)
     @RenderSection("Blog", false)
-
+    <script type="text/javascript">
+    var editor = CKEDITOR.instances['editor'];
+    if (editor) { editor.destroy(true); }
+    CKEDITOR.replace('editor', {
+        enterMode: CKEDITOR.ENTER_BR,
+    });
+    CKFinder.setupCKEditor(null, '@Url.Content("~/Admin/ckfinder/")');
+    </script>
+    <script>
+        function sidefunction() {
+            if (document.getElementById("navbarsideId").style.left === "0px") {
+                document.getElementById("navbarsideId").style.left = "-260px";
+                document.getElementById("page-wrapper").style.marginLeft = "0px";
+                
+            }
+            else {
+                document.getElementById("navbarsideId").style.left = "0px";
+                //document.getElementById("page-wrapper").style.marginLeft = "260px";
+                document.getElementById("page-wrapper").style.removeProperty("margin-left");
+            }
+        }
+    </script>
 </body>
+
 
 </html>

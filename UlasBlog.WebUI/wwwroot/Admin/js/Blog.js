@@ -11,7 +11,6 @@ $(document).ready(function () {
 function myFunction() {
     var m = document.getElementById("0");
     m.style.display = "none";
-
 }
 
 $(document).on("click", ".open-EditCategoryDialog", function () {

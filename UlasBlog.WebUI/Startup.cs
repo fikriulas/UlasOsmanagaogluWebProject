@@ -15,7 +15,7 @@ using UlasBlog.Data.Concrete.EntityFramework;
 
 namespace UlasBlog.WebUI
 {
-    public class Startup
+    public partial class Startup
     {
         public Startup(IConfiguration configuration)
         {

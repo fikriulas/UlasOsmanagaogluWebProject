@@ -1,0 +1,99 @@
+﻿@model BlogDetail
+@{
+    ViewData["Title"] = "Blog";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<section class="site-section py-lg">
+    <div class="container">
+        <div class="row blog-entries element-animate">
+            <div class="col-md-12 col-lg-12 main-content">
+                <img src="/Home/Blog/Img/@Model.ImageUrl" alt="Image" class="img-fluid mb-5">
+                <div class="post-meta">
+                    <span class="author mr-2"><img src="/Home/images/person_1.jpg" alt="Colorlib" class="mr-2"> Colorlib</span>&bullet;
+                    <span class="mr-2">@Model.DateAdded.ToString("dd MMM yyyy H:mm") </span> &bullet;
+                    <span class="ml-2"><span class="fa fa-comments"></span> @Model.totalComment</span>
+                </div>
+                <h1 class="mb-4">@Model.Title</h1>
+                @foreach (var category in Model.Categories)
+                {
+                    <a class="category mb-5" href="#">@category.Name</a>
+                }
+                <div class="post-content-body">
+                    @Html.Raw(Model.HtmlContent)
+                </div>
+                <div class="pt-5">
+                    <p>
+                        Categories:
+                        @foreach (var category in Model.Categories)
+                        {
+                            <a href="#">@category.Name</a>
+                        }
+                    </p>
+                </div>
+                <div class="pt-5">
+                    @if (Model.totalComment == 0)
+                    {
+                        <div id="noComment">
+                            <h3 class="mb-5" >@Model.totalComment Yorum</h3>
+                            <p style="margin-top:-30px;margin-bottom:-15px;">Henüz yorum yapılmamış, ilk yorumu siz yapın!</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <h3 class="mb-5" id="totalComment">@Model.totalComment Yorum</h3>
+                    }
+                    <ul class="comment-list" id="CommentList">
+                        @foreach (var comment in Model.Comments)
+                        {
+                            <li class="comment">
+                                <div class="vcard">
+                                    <img src="/Home/images/person_1.jpg" alt="Image placeholder">
+                                </div>
+                                <div class="comment-body">
+                                    <h3>@comment.Name</h3>
+                                    <div class="meta">@comment.dateAdded.ToString("dd MMM yyyy")</div>
+                                    <p>@comment.Message</p>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                    <!-- END comment-list -->
+                    <div class="comment-form-wrap pt-5">
+                        <h3 class="mb-5">Bir Yorum Yapın</i></h3>
+                        <form id="AddComment" asp-controller="Home" asp-action="AddComment" method="post" enctype="multipart/form-data" class="p-5 bg-light">
+                            <div class="form-group">
+                                <label asp-for="Comment.Name"></label>
+                                <input type="text" class="form-control" asp-for="Comment.Name">
+                                @Html.ValidationMessageFor(model => model.Comment.Name, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Comment.Email"></label>
+                                <input type="email" class="form-control" asp-for="Comment.Email">
+                                @Html.ValidationMessageFor(model => model.Comment.Email, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Comment.Message"></label>
+                                <textarea asp-for="Comment.Message" cols="30" rows="10" class="form-control"></textarea>
+                                @Html.ValidationMessageFor(model => model.Comment.Message, "", new { @class = "text-danger" })
+                                <span id='remainingC' style="float:right;"></span>
+                            </div>
+                            <div class="form-group">
+                                <input type="hidden" asp-for="Comment.BlogId" value="@Model.Id" />
+                                <button type="submit" class="btn btn-primary"> Gönder </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- END main-content -->
+        </div>
+    </div>
+</section>
+@section Blog {
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"></script>
+    <script src="~/Home/js/Blog.js"></script>
+}
+
+

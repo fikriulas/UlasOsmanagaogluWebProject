@@ -20,10 +20,17 @@
   <ItemGroup>
     <Folder Include="wwwroot\Admin\plugins\" />
     <Folder Include="wwwroot\Home\Blog\Img\" />
+    <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\UlasBlog.Data\UlasBlog.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="CKFinder">
+      <HintPath>wwwroot\Admin\ckfinder\bin\Release\CKFinder.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

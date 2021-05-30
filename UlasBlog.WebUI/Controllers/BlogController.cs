@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,10 +15,12 @@ namespace UlasBlog.WebUI.Controllers
 {
     public class BlogController : Controller
     {
+        private readonly IHostingEnvironment _hostingEnvironment;
         private IUnitOfWork uow;
-        public BlogController(IUnitOfWork _uow)
+        public BlogController(IUnitOfWork _uow, IHostingEnvironment hostingEnvironment)
         {
             uow = _uow;
+            _hostingEnvironment = hostingEnvironment;
         }
         public IActionResult Index()
         {
@@ -101,7 +105,10 @@ namespace UlasBlog.WebUI.Controllers
             }
             return BadRequest("İşlem Başarısız, Silmek İstediğiniz Blog Bulunamadı");
         }
-    }
 
+        
+    }
 }
+
+
 

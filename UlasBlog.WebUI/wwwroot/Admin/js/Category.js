@@ -96,5 +96,3 @@ function Delete(url) {
         }
     });
 }
-
-
