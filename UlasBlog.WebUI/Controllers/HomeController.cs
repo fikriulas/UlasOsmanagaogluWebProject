@@ -81,6 +81,42 @@ namespace UlasBlog.WebUI.Controllers
             }
             return BadRequest();
         }
+        public IActionResult Blogs(int Id)
+        {
+            var blogs = uow.Blogs.GetAll()
+                .Include(i => i.BlogCategories)
+                .ThenInclude(i => i.Category)
+                .Where(i => i.IsAppproved)
+                .Select(i => new BlogDetail()
+                {
+                    Id = i.Id,
+                    Title = i.Title,
+                    Description = i.Description,
+                    DateAdded = i.DateAdded,
+                    AuthorId = i.AuthorId,
+                    Vote = i.Vote,
+                    ImageUrl = i.ImageUrl,
+                    Comments = i.Comments.Select(b => new Comment()
+                    {                        
+                        Id = b.Id                        
+                    }).ToList(),
+                    totalComment = i.Comments.Count(),
+                    Categories = i.BlogCategories.Where(d => d.CategoryId == Id).Select(c => c.Category).ToList()
+                }).ToList();
+
+            //blogs = blogs.Include(i => i.Categories)
+            // .Where(i => i.Categories.Any(b => b.Id == Id));
+
+
+            /*return View(
+                    new BlogList()
+                    {
+                        Blogs = blogs
+                    }                
+                );
+            */
+            return View(blogs);
+        }
 
 
 
