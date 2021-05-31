@@ -4,13 +4,10 @@
     <title>Colorlib Wordify &mdash; Minimal Blog Template</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300, 400,700|Inconsolata:400,700" rel="stylesheet">
-
     <link rel="stylesheet" href="/Home/css/bootstrap.css">
     <link rel="stylesheet" href="/Home/css/animate.css">
     <link rel="stylesheet" href="/Home/css/owl.carousel.min.css">
-
     <link rel="stylesheet" href="/Home/fonts/ionicons/css/ionicons.min.css">
     <link rel="stylesheet" href="/Home/fonts/fontawesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="/Home/fonts/flaticon/font/flaticon.css">
@@ -51,26 +48,8 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="#">Business</a>
                             </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="category.html" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Travel</a>
-                                <div class="dropdown-menu" aria-labelledby="dropdown04">
-                                    <a class="dropdown-item" href="category.html">Asia</a>
-                                    <a class="dropdown-item" href="category.html">Europe</a>
-                                    <a class="dropdown-item" href="category.html">Dubai</a>
-                                    <a class="dropdown-item" href="category.html">Africa</a>
-                                    <a class="dropdown-item" href="category.html">South America</a>
-                                </div>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="category.html" id="dropdown05" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Categories</a>
-                                <div class="dropdown-menu" aria-labelledby="dropdown05">
-                                    <a class="dropdown-item" href="category.html">Lifestyle</a>
-                                    <a class="dropdown-item" href="category.html">Food</a>
-                                    <a class="dropdown-item" href="category.html">Adventure</a>
-                                    <a class="dropdown-item" href="category.html">Travel</a>
-                                    <a class="dropdown-item" href="category.html">Business</a>
-                                </div>
-                            </li>
+                            <!--Category-->
+                                @await Component.InvokeAsync("CategoryMenu")                            
                             <li class="nav-item">
                                 <a class="nav-link" href="about.html">About</a>
                             </li>
@@ -117,7 +96,7 @@
                     </div>
                     <!-- END main-content -->
                     <div class="col-md-12 col-lg-4 sidebar">
-                        <div class="sidebar-box search-form-wrap">                            
+                        <div class="sidebar-box search-form-wrap">
                         </div>
                         <!-- END sidebar-box -->
                         <div class="sidebar-box">

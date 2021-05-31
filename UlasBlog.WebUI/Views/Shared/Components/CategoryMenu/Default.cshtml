@@ -1,0 +1,13 @@
+﻿@model IEnumerable<Category> 
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="category.html" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Kategoriler</a>
+    <div class="dropdown-menu" aria-labelledby="dropdown04">
+        @foreach (var category in Model)
+        {
+            <a class="dropdown-item" asp-controller="Home" asp-action="Blogs" asp-route-Id="@category.Id">@category.Name</a>
+        }
+    </div>
+</li>
