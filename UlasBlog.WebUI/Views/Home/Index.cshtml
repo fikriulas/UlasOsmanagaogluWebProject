@@ -1,4 +1,6 @@
-﻿@model IEnumerable<BlogDetail>
+﻿@using X.PagedList;
+@using X.PagedList.Mvc.Core;
+@model IPagedList<BlogDetail>
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -19,3 +21,21 @@
         </a>
     </div>
 }
+<div class="col-md-12 text-center mt-5">
+    <nav aria-label="Page navigationa" class="text-center">
+        @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page }),
+           new X.PagedList.Web.Common.PagedListRenderOptions
+           {
+
+               DisplayLinkToNextPage = X.PagedList.Web.Common.PagedListDisplayMode.Always,
+               DisplayLinkToPreviousPage = X.PagedList.Web.Common.PagedListDisplayMode.Always,               
+               DisplayPageCountAndCurrentLocation = false,
+               MaximumPageNumbersToDisplay = 10,
+               LiElementClasses = new string[] { "page-item" },
+               UlElementClasses = new string[] { "pagination" },
+               PageClasses = new string[] { "page-link" }
+           })
+
+    </nav>
+</div>
+

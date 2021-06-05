@@ -3891,14 +3891,16 @@ input[type="button"].btn-block {
   border-radius: 0.25rem; }
 
 .page-link {
-  position: relative;
-  display: block;
-  padding: 0.5rem 0.75rem;
-  margin-left: -1px;
-  line-height: 1.25;
-  color: #6610f2;
-  background-color: #fff;
-  border: 1px solid #dee2e6; }
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.90rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #6610f2;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 50% !important;
+}
   .page-link:hover {
     z-index: 2;
     color: #4709ac;
@@ -3913,14 +3915,17 @@ input[type="button"].btn-block {
   .page-link:not(:disabled):not(.disabled) {
     cursor: pointer; }
 
+  .page-item{
+      margin-left:5px;
+      margin-right:5px;
+  }
 .page-item:first-child .page-link {
   margin-left: 0;
-  border-top-left-radius: 0.25rem;
-  border-bottom-left-radius: 0.25rem; }
+  border-radius: 50% !important; }
 
 .page-item:last-child .page-link {
-  border-top-right-radius: 0.25rem;
-  border-bottom-right-radius: 0.25rem; }
+    border-radius:50% !important;
+  }
 
 .page-item.active .page-link {
   z-index: 1;

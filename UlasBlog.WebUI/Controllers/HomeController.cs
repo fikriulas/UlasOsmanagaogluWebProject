@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 using UlasBlog.Data.Abstract;
 using UlasBlog.Entity;
 using UlasBlog.WebUI.Models;
+using X.PagedList;
 
 namespace UlasBlog.WebUI.Controllers
 {
@@ -20,7 +22,7 @@ namespace UlasBlog.WebUI.Controllers
             uow = _uow;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int page = 1)
         {
             var blogs = uow.Blogs.GetAll()
                 .Include(i => i.Comments)
@@ -31,7 +33,7 @@ namespace UlasBlog.WebUI.Controllers
                     ImageUrl = i.ImageUrl,
                     DateAdded = i.DateAdded,
                     totalComment = i.Comments.Count
-                }).AsQueryable();
+                }).AsQueryable().ToPagedList(page,1);
             if (blogs != null)
             {
                 return View(blogs);
@@ -66,6 +68,8 @@ namespace UlasBlog.WebUI.Controllers
                     totalComment = i.Comments.Count(),
                     Categories = i.BlogCategories.Select(c => c.Category).ToList()
                 }).FirstOrDefault();
+
+            
             return View(blog);
         }
         [HttpPost]
