@@ -29,28 +29,31 @@ namespace UlasBlog.WebUI.Controllers
                 .Select(i => new BlogDetail()
                 {
                     Id = i.Id,
+                    SlugUrl = i.SlugUrl,
                     Title = i.Title,
                     ImageUrl = i.ImageUrl,
                     DateAdded = i.DateAdded,
                     totalComment = i.Comments.Count
-                }).AsQueryable().ToPagedList(page,1);
+                }).AsQueryable().ToPagedList(page, 1);
             if (blogs != null)
             {
                 return View(blogs);
             }
             return View(); // error page;            
         }
-        public IActionResult Blog(int Id)
+        [Route("/Blog/{SlugUrl}")]
+        public IActionResult Blog(string SlugUrl)
         {
             var blog = uow.Blogs.GetAll()
                 .Include(i => i.Comments)
                 .Include(i => i.BlogCategories)
                 .ThenInclude(i => i.Category)
-                .Where(i => i.Id == Id)
+                .Where(i => i.SlugUrl == SlugUrl)
                 .Where(i => i.IsAppproved)
                 .Select(i => new BlogDetail()
                 {
                     Id = i.Id,
+                    SlugUrl = i.SlugUrl,
                     Title = i.Title,
                     Description = i.Description,
                     HtmlContent = i.HtmlContent,
@@ -69,7 +72,7 @@ namespace UlasBlog.WebUI.Controllers
                     Categories = i.BlogCategories.Select(c => c.Category).ToList()
                 }).FirstOrDefault();
 
-            
+
             return View(blog);
         }
         [HttpPost]
@@ -77,7 +80,7 @@ namespace UlasBlog.WebUI.Controllers
         public IActionResult AddComment(Comment comment)
         {
             if (ModelState.IsValid)
-            {                
+            {
                 comment.dateAdded = DateTime.Now;
                 uow.Comments.Add(comment);
                 uow.SaveChanges();
@@ -85,7 +88,8 @@ namespace UlasBlog.WebUI.Controllers
             }
             return BadRequest();
         }
-        public IActionResult Blogs(int Id)
+        [Route("/Kategori/{Id}")]
+        public IActionResult Blogs(int Id, int page = 1)
         {
             var blogs = uow.Blogs.GetAll()
                 .Include(i => i.BlogCategories)
@@ -101,25 +105,17 @@ namespace UlasBlog.WebUI.Controllers
                     Vote = i.Vote,
                     ImageUrl = i.ImageUrl,
                     Comments = i.Comments.Select(b => new Comment()
-                    {                        
-                        Id = b.Id                        
+                    {
+                        Id = b.Id
                     }).ToList(),
                     totalComment = i.Comments.Count(),
                     Categories = i.BlogCategories.Where(d => d.CategoryId == Id).Select(c => c.Category).ToList()
-                }).ToList();
+                });
 
-            //blogs = blogs.Include(i => i.Categories)
-            // .Where(i => i.Categories.Any(b => b.Id == Id));
-
-
-            /*return View(
-                    new BlogList()
-                    {
-                        Blogs = blogs
-                    }                
-                );
-            */
-            return View(blogs);
+            var yeni = blogs
+                .Where(i => i.Categories.Any(b => b.Id == Id)).AsQueryable().ToPagedList(page,1);
+            
+           return View(yeni);
         }
 
 

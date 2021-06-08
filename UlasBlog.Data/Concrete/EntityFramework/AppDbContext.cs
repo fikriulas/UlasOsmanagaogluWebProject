@@ -19,6 +19,9 @@ namespace UlasBlog.Data.Concrete.EntityFramework
         {
             modelBuilder.Entity<BlogCategory>()
                 .HasKey(pk => new { pk.BlogId, pk.CategoryId }); // tablonun iki tane primary key'i var.
+            modelBuilder.Entity<Blog>()
+                .HasIndex(u => u.SlugUrl)
+                .IsUnique(true);
         }
 
     }

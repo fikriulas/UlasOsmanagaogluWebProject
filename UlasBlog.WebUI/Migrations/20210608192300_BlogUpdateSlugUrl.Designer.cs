@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UlasBlog.Data.Concrete.EntityFramework;
 
 namespace UlasBlog.WebUI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210608192300_BlogUpdateSlugUrl")]
+    partial class BlogUpdateSlugUrl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,7 +56,7 @@ namespace UlasBlog.WebUI.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("SlugUrl")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -65,10 +67,6 @@ namespace UlasBlog.WebUI.Migrations
                         .HasColumnType("smallint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SlugUrl")
-                        .IsUnique()
-                        .HasFilter("[SlugUrl] IS NOT NULL");
 
                     b.ToTable("Blogs");
                 });

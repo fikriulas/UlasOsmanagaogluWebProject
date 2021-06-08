@@ -18,6 +18,7 @@ namespace UlasBlog.WebUI.Models
         public string ImageUrl { get; set; }
         public bool IsAppproved { get; set; }
         public int totalComment { get; set; }
+        public string SlugUrl { get; set; }
         public List<Category> Categories { get; set; }
         public List<Comment> Comments { get; set; }
         public Comment Comment { get; set; }

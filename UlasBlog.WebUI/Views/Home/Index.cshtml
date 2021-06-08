@@ -8,7 +8,7 @@
 @foreach (var blog in Model)
 {
     <div class="col-md-6">
-        <a asp-controller="Home" asp-action="Blog" asp-route-id="@blog.Id" class="blog-entry element-animate" data-animate-effect="fadeIn">
+        <a asp-controller="Home" asp-action="Blog" asp-route-SlugUrl="@blog.SlugUrl"class="blog-entry element-animate" data-animate-effect="fadeIn">
             <img src="/Home/Blog/Img/@blog.ImageUrl" alt="Image placeholder">
             <div class="blog-content-body">
                 <div class="post-meta">
@@ -35,7 +35,6 @@
                UlElementClasses = new string[] { "pagination" },
                PageClasses = new string[] { "page-link" }
            })
-
     </nav>
 </div>
 
