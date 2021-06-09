@@ -41,7 +41,7 @@ namespace UlasBlog.WebUI.Controllers
             }
             return View(); // error page;            
         }
-        [Route("/Blog/{SlugUrl}")]
+        [Route("Blog/{SlugUrl}")]
         public IActionResult Blog(string SlugUrl)
         {
             var blog = uow.Blogs.GetAll()

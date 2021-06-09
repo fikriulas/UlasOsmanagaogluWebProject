@@ -22,7 +22,7 @@
             var number = parseInt($('#totalComment').text());
             number += 1;
 
-            var veri = '<li class="comment">' +
+            var veri = '<li id="'+comment.id+'" class="comment">' +
                 '<div class="vcard">' +
                 '<img src="/Home/images/person_1.jpg" alt="Image placeholder"></div>' +
                 '<div class="comment-body">' +
@@ -38,7 +38,7 @@
                 color: 'green', // blue, red, green, yellow
                 icon: 'fa fa-check'
             });            
-            var scrollDiv = document.getElementById("AddComment").offsetTop;
+            var scrollDiv = document.getElementById(comment.id).offsetTop;
             window.scrollTo({ top: scrollDiv, behavior: 'smooth' }); // yorum yazıldığında smooth şekilde yrumun yapıldığı yere sayfayı götürecektir.
         },
         error: function (ErrorMessage) {

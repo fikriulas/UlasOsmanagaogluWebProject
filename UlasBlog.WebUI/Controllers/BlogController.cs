@@ -14,7 +14,7 @@ using UlasBlog.Entity;
 using UlasBlog.WebUI.Models;
 
 namespace UlasBlog.WebUI.Controllers
-{
+{    
     public class BlogController : Controller
     {
         private readonly IHostingEnvironment _hostingEnvironment;
@@ -24,6 +24,8 @@ namespace UlasBlog.WebUI.Controllers
             uow = _uow;
             _hostingEnvironment = hostingEnvironment;
         }
+        
+        [Route("/Admin/Blog/")]
         public IActionResult Index()
         {
             var blogs = uow.Blogs.GetAll();

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace UlasBlog.WebUI.Controllers
 {
+    [Route("[controller]/[action]")]
     public class AdminController : Controller
     {
         public IActionResult Index()
