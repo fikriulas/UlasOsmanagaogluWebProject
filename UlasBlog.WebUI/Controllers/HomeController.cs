@@ -21,7 +21,7 @@ namespace UlasBlog.WebUI.Controllers
         {
             uow = _uow;
         }
-
+        [Route("/{page?}")]
         public IActionResult Index(int page = 1)
         {
             var blogs = uow.Blogs.GetAll()

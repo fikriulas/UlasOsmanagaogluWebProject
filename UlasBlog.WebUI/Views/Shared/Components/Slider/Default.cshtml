@@ -10,7 +10,7 @@
                     @foreach (var blog in Model)
                     {
                         <div>
-                            <a asp-controller="Home" asp-action="Blog" asp-route-id="@blog.Id" class="a-block d-flex align-items-center height-lg" style="background-image: url('/Home/Blog/Img/@blog.ImageUrl'); ">
+                            <a asp-controller="Home" asp-action="Blog" asp-route-SlugUrl="@blog.SlugUrl" class="a-block d-flex align-items-center height-lg" style="background-image: url('/Home/Blog/Img/@blog.ImageUrl'); ">
                                 <div class="text half-to-full">
                                     @foreach (var category in blog.Categories)
                                     {

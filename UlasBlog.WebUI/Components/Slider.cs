@@ -10,22 +10,17 @@ using UlasBlog.WebUI.Models;
 namespace UlasBlog.WebUI.Components
 {
     public class Slider : ViewComponent
-    {
-        /*
-         * ana sayfada sağ taraftaki sidebarı temsil eder.
-         * burada 3 adet blog ve tüm kategoriler listeleneceği için blogandcategory modeli
-         * kullanılmıştır. 
-         * */
+    {        
         private IUnitOfWork uow;
         public Slider(IUnitOfWork _unitOfWork)
         {
             uow = _unitOfWork;
         }
         public IViewComponentResult Invoke()
-        {
-            // vote'a göre ilk 3 bloğu alır. 
+        {            
             var blogs = uow.Blogs.GetAll()
-                .Where(i => i.IsSlider == true)
+                .Where(i => i.IsSlider)
+                .Where(i => i.IsAppproved)                
                 .Include(i => i.Comments)
                 .Include(i => i.BlogCategories)
                 .ThenInclude(i => i.Category)
@@ -36,6 +31,7 @@ namespace UlasBlog.WebUI.Components
                     Description = i.Description,
                     DateAdded = i.DateAdded,
                     Vote = i.Vote,
+                    SlugUrl = i.SlugUrl,
                     ImageUrl = i.ImageUrl,
                     totalComment = i.Comments.Count(),
                     Categories = i.BlogCategories.Select(b => b.Category).ToList()

@@ -58,7 +58,7 @@ namespace UlasBlog.WebUI.Controllers
                         }
                     }
                     blog.DateAdded = DateTime.Now;
-                    blog.ViewCount = 0;
+                    blog.ViewCount = 0;                    
                     uow.Blogs.Add(blog);
                     uow.SaveChanges();
                     List<BlogCategory> blogCategories = new List<BlogCategory>();
@@ -82,9 +82,6 @@ namespace UlasBlog.WebUI.Controllers
                     return BadRequest(error);
                 }
             }
-            string messages = string.Join("; ", ModelState.Values
-                                        .SelectMany(x => x.Errors)
-                                        .Select(x => x.ErrorMessage));
             return BadRequest();
         }
         public IActionResult Delete(int id)
