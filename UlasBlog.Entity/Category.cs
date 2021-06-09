@@ -12,6 +12,7 @@ namespace UlasBlog.Entity
         [Display(Name = "Kategori Adı")]        
         [StringLength(35, ErrorMessage = "Kategori Adı 35 Karakterden Uzun Olamaz.")]
         public string Name { get; set; }
+        public string SlugUrl { get; set; }
         public List<BlogCategory> BlogCategories { get; set; }
     }
 }

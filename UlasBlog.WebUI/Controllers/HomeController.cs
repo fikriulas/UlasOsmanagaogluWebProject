@@ -97,8 +97,8 @@ namespace UlasBlog.WebUI.Controllers
             }
             return BadRequest();
         }
-        [Route("/Kategori/{Id}")]
-        public IActionResult Blogs(int Id, int page = 1)
+        [Route("/{SlugUrl}/{page}")]
+        public IActionResult Blogs(string SlugUrl,int Id, int page = 1)
         {
             var blogs = uow.Blogs.GetAll()
                 .Include(i => i.BlogCategories)
@@ -118,11 +118,11 @@ namespace UlasBlog.WebUI.Controllers
                         Id = b.Id
                     }).ToList(),
                     totalComment = i.Comments.Count(),
-                    Categories = i.BlogCategories.Where(d => d.CategoryId == Id).Select(c => c.Category).ToList()
+                    Categories = i.BlogCategories.Select(c => c.Category).ToList()
                 });
 
             var yeni = blogs
-                .Where(i => i.Categories.Any(b => b.Id == Id)).AsQueryable().ToPagedList(page, 1);
+                .Where(i => i.Categories.Any(b => b.SlugUrl == SlugUrl)).AsQueryable().ToPagedList(page, 1);
 
             return View(yeni);
         }
