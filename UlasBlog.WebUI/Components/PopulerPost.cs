@@ -32,6 +32,7 @@ namespace UlasBlog.WebUI.Components
                     Id = i.Id,
                     Title = i.Title,
                     DateAdded = i.DateAdded,
+                    SlugUrl = i.SlugUrl,
                     ViewCount = i.ViewCount,
                     ImageUrl = i.ImageUrl,
                     totalComment = i.Comments.Count(),

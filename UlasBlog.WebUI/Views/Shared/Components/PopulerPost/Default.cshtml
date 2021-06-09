@@ -2,17 +2,32 @@
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-
-<div class="sidebar-box">
+@{ 
+    var yourStyle = "";
+    if(ViewContext.RouteData.Values["Controller"].ToString() == "Home" && ViewContext.RouteData.Values["Action"].ToString() == "Blogs")
+    {
+        yourStyle = "margin-top:10%";
+    }
+    else if(ViewContext.RouteData.Values["Controller"].ToString() == "Home" && ViewContext.RouteData.Values["Action"].ToString() == "Blog")
+    {
+        yourStyle = "margin-top:9%";
+    }
+    else
+    {
+        yourStyle = "";
+    }
+}
+<div class="sidebar-box" style="@yourStyle" >
+     
+     
     <h3 class="heading">Popular Posts</h3>
     <div class="post-entry-sidebar">
         <ul>
-
             @foreach (var blog in Model)
             {
                 <li>
-                    <a href="">
-                        <img src="/Home/Blog/Img/@(blog.ImageUrl == null ? "no-image.png" : blog.ImageUrl)" alt="Image placeholder" class="mr-4">
+                    <a asp-controller="Home" asp-action="Blog" asp-route-SlugUrl="@blog.SlugUrl">
+                        <img src="/Home/Blog/Img/@(blog.ImageUrl == null ? "no-image.png" : blog.ImageUrl)" alt="Image placeholder" class="mr-4" style="width:90px;height:60px;">
                         <div class="text">
                             <h4>@blog.Title</h4>
                             <div class="post-meta">
