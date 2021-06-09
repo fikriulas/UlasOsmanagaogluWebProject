@@ -60,6 +60,7 @@ namespace UlasBlog.WebUI.Controllers
                     DateAdded = i.DateAdded,
                     AuthorId = i.AuthorId,
                     Vote = i.Vote,
+                    ViewCount = i.ViewCount,
                     ImageUrl = i.ImageUrl,
                     Comments = i.Comments.Select(b => new Comment()
                     {
@@ -71,6 +72,14 @@ namespace UlasBlog.WebUI.Controllers
                     totalComment = i.Comments.Count(),
                     Categories = i.BlogCategories.Select(c => c.Category).ToList()
                 }).FirstOrDefault();
+
+            var blogview = uow.Blogs.GetAll()
+               .Where(i => i.SlugUrl == SlugUrl)
+               .FirstOrDefault();
+
+            blogview.ViewCount += 1;
+            uow.Blogs.Edit(blogview);
+            uow.SaveChanges();
 
 
             return View(blog);
@@ -113,9 +122,9 @@ namespace UlasBlog.WebUI.Controllers
                 });
 
             var yeni = blogs
-                .Where(i => i.Categories.Any(b => b.Id == Id)).AsQueryable().ToPagedList(page,1);
-            
-           return View(yeni);
+                .Where(i => i.Categories.Any(b => b.Id == Id)).AsQueryable().ToPagedList(page, 1);
+
+            return View(yeni);
         }
 
 

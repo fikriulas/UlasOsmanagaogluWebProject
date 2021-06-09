@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\Admin\plugins\" />
-    <Folder Include="wwwroot\Home\Blog\Img\" />
     <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 

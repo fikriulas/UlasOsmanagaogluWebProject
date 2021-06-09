@@ -60,10 +60,8 @@ $("#addBlog").submit(function (event) {
             notie.alert({ type: 'success', text: "Ekleme İşlemi Başarılı", time: 3 }) // Hides after 2 seconds
         },
         error: function (ErrorMessage) {
-            console.log("Error Girildi")
             console.log(ErrorMessage)
             if (ErrorMessage.responseText != "") {
-                console.log("if girildi")
                 console.log(ErrorMessage.responseText)
                 $("#addBlogModal").removeClass("in");
                 $(".modal-backdrop").remove();

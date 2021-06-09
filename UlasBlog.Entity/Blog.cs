@@ -27,6 +27,7 @@ namespace UlasBlog.Entity
         public bool IsHome { get; set; }
         public bool IsSlider { get; set; }
         public string SlugUrl { get; set; }
+        public int ViewCount { get; set; }
         public List<BlogCategory> BlogCategories { get; set; }
         public List<Comment> Comments { get; set; }
     }
