@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ using UlasBlog.Entity;
 using UlasBlog.WebUI.Models;
 
 namespace UlasBlog.WebUI.Controllers
-{    
+{
     public class BlogController : Controller
     {
         private readonly IHostingEnvironment _hostingEnvironment;
@@ -24,7 +25,7 @@ namespace UlasBlog.WebUI.Controllers
             uow = _uow;
             _hostingEnvironment = hostingEnvironment;
         }
-        
+
         [Route("/Admin/Blog/")]
         public IActionResult Index()
         {
@@ -48,7 +49,7 @@ namespace UlasBlog.WebUI.Controllers
             if (ModelState.IsValid)
             {
                 try
-                {                    
+                {
                     var path = "";
                     if (ImageUrl != null)
                     {
@@ -56,11 +57,11 @@ namespace UlasBlog.WebUI.Controllers
                         using (var stream = new FileStream(path, FileMode.Create))
                         {
                             await ImageUrl.CopyToAsync(stream);
-                            blog.ImageUrl = ImageUrl.FileName;                            
+                            blog.ImageUrl = ImageUrl.FileName;
                         }
                     }
                     blog.DateAdded = DateTime.Now;
-                    blog.ViewCount = 0;                    
+                    blog.ViewCount = 0;
                     uow.Blogs.Add(blog);
                     uow.SaveChanges();
                     List<BlogCategory> blogCategories = new List<BlogCategory>();
@@ -86,6 +87,112 @@ namespace UlasBlog.WebUI.Controllers
             }
             return BadRequest();
         }
+        [HttpGet]
+        public IActionResult Edit(int Id)
+        {
+            var blog = uow.Blogs.GetAll()
+                .Include(i => i.Comments)
+                .Include(i => i.BlogCategories)
+                .ThenInclude(i => i.Category)
+                .Where(i => i.Id == Id)
+                .Select(i => new BlogDetail()
+                {
+                    Id = i.Id,
+                    Title = i.Title,
+                    Description = i.Description,
+                    AuthorId = i.AuthorId,
+                    ImageUrl = i.ImageUrl,
+                    IsHome = i.IsHome,
+                    IsAppproved = i.IsAppproved,
+                    IsSlider = i.IsSlider,
+                    HtmlContent = i.HtmlContent,
+                    Categories = i.BlogCategories.Select(b => new Category()
+                    {
+                        Id = b.Category.Id,
+                        Name = b.Category.Name,
+                    }).ToList(),
+                    Comments = i.Comments.Select(c => new Comment()
+                    {
+                        Name = c.Name,
+                        Id = c.Id
+                    }).ToList(),
+                }).FirstOrDefault();
+            var Categories = new List<SelectListItem>();
+            List<string> catName = new List<string> { };
+            List<string> catId = new List<string> { };
+
+            foreach (var item in uow.Categories.GetAll())
+            {
+                Categories.Add(new SelectListItem
+                {
+                    Text = item.Name,
+                    Value = item.Id.ToString()
+                });
+                catId.Add(item.Id.ToString());
+                catName.Add(item.Name);
+            }
+            ViewBag.Categories = Categories;            
+            ViewBag.catId = catId.ToArray();
+
+            if (blog == null)
+            {
+                RedirectToAction("404");// blog bulunamadı.
+            }
+            return View(blog);
+            
+        }
+        public async Task<IActionResult> Edit(Blog blog, string[] categories, IFormFile ImageUrl)
+        {
+
+            blog.SlugUrl = SeoUrl.AdresDuzenle(blog.Title);
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var path = "";
+                    if (ImageUrl != null)
+                    {
+                        var ExistingBlog = uow.Blogs.Get(blog.Id);// Editlemeden önceki blog'u getir.
+                        DeleteImage(ExistingBlog.ImageUrl); // Editlemeden önceki blog'un image'inin sil.
+                        path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Home\\Blog\\Img\\", ImageUrl.FileName);
+                        using (var stream = new FileStream(path, FileMode.Create))
+                        {
+                            await ImageUrl.CopyToAsync(stream);
+                            blog.ImageUrl = ImageUrl.FileName;
+                        }
+                    }
+                    var entity = new Blog();
+                    entity = blog;
+                    entity = uow.Blogs.GetAll()
+                     .Include(i => i.BlogCategories)
+                     .ThenInclude(i => i.Category)
+                     .FirstOrDefault(i => i.Id == blog.Id);
+                    if (categories.Length != 0)
+                    {
+                        blog.BlogCategories.Clear();
+                        for (int i = 0; i < categories.Length; i++)
+                        {
+                            blog.BlogCategories.Add(new BlogCategory()
+                            {
+                                BlogId = entity.Id,
+                                CategoryId = Convert.ToInt32(categories[i]),
+                            });
+                        }
+                    }
+                    uow.Blogs.Edit(entity);
+                    uow.SaveChanges();
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    var error = ex.Message;
+                    //log tutulacak.
+                    return BadRequest(error);
+                }
+            }
+            return BadRequest();
+
+        }
         public IActionResult Delete(int id)
         {
             var blog = uow.Blogs.Get(id);
@@ -95,8 +202,7 @@ namespace UlasBlog.WebUI.Controllers
                 {
                     if (blog.ImageUrl != null)
                     {
-                        var deletePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Home\\Blog\\Img\\", blog.ImageUrl);
-                        System.IO.File.Delete(deletePath);
+                        DeleteImage(blog.ImageUrl);
                     }
                     uow.Blogs.Delete(blog);
                     uow.SaveChanges();
@@ -111,12 +217,22 @@ namespace UlasBlog.WebUI.Controllers
             }
             return BadRequest("İşlem Başarısız, Silmek İstediğiniz Blog Bulunamadı");
         }
-        [Route("/Blog/test/{testUrl}")]
-        public IActionResult SeoTest(string testUrl)
-        {          
-            return Content("SeoTest: " + SeoUrl.AdresDuzenle(testUrl));
+        private bool DeleteImage(string url)
+        {
+            try
+            {
+                var deletePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Home\\Blog\\Img\\", url);
+                System.IO.File.Delete(deletePath);
+            }
+            catch (Exception ex)
+            {
+                var error = ex.Message;
+                //log tutulacak.
+                return false;
+            }
+            return true;
         }
-        
+
     }
 
 }

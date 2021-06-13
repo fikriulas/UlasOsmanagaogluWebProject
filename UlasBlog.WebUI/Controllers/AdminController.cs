@@ -5,10 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace UlasBlog.WebUI.Controllers
-{
-    [Route("[controller]/[action]")]
+{    
     public class AdminController : Controller
     {
+        [Route("/Admin")]
         public IActionResult Index()
         {
             return View();

@@ -1,0 +1,25 @@
+﻿@model IEnumerable<BlogDetail>
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+<h3>Son Yazılar</h3>
+<div class="post-entry-sidebar">
+    <ul>
+        @foreach (var blog in Model)
+        {
+            <li>
+                <a href="">
+                    <img src="/Home/Blog/Img/@(blog.ImageUrl == null ? "no-image.png" : blog.ImageUrl)" alt="Image placeholder" class="mr-4" style="width:90px;height:60px;">
+                    <div class="text">
+                        <h4>@blog.Title</h4>
+                        <div class="post-meta">
+                            <span class="mr-2">@blog.DateAdded.ToString("dd MMM yyyy") </span> &bullet;
+                            <span class="ml-2"><span class="fa fa-comments"></span> @blog.totalComment</span>
+                        </div>
+                    </div>
+                </a>
+            </li>
+
+        }
+    </ul>
+</div>

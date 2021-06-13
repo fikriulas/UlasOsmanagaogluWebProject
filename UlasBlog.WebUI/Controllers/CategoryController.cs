@@ -16,6 +16,7 @@ namespace UlasBlog.WebUI.Controllers
         {
             uow = _uow;
         }
+        [Route("/Admin/Category")]
         public IActionResult Index()
         {
             var categories = uow.Categories.GetAll();

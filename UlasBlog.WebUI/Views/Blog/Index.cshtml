@@ -18,7 +18,6 @@
 <div id="page-inner">
     <div class="col-md-12">
         @Html.Partial("_AddBlogForm", new Blog())
-        @Html.Partial("_EditBlogForm", new Blog())
         <!-- Advanced Tables -->
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -42,9 +41,9 @@
                             <tr id="@blog.Id">
                                 <td style="width:40%">@blog.Title</td>
                                 <td style="width:20%">@blog.AuthorId</td>
-                                <td style="width:20%">@blog.DateAdded.ToString("dd MMM yyyy H:mm")</td>
+                                <td style="width:20%">@blog.DateAdded.ToString("dd MMM yyyy")</td>
                                 <td style="width:20%;text-align:center">
-                                    <a type="button" title="Düzenle" class="btn btn-warning btn-sm open-EditCategoryDialog" data-category-name="@blog.Title" data-category-id="@blog.Id" data-toggle="modal" data-target="#editCategoryModal">
+                                    <a type="button" title="Düzenle" class="btn btn-warning btn-sm" asp-controller="Blog" asp-action="Edit" asp-route-Id="@blog.Id" >
                                         <i class="fa fa-edit"></i>
                                     </a>
                                     <a onclick=Delete("/Blog/Delete/@blog.Id") title="Sil" class="btn btn-danger btn-sm">

@@ -35,6 +35,10 @@ $("#addBlog").submit(function (event) {
             $("#ajax-loading").hide();
         },
         success: function (blog) {
+            const date = new Date();
+            const formattedDate = date.toLocaleDateString('en-GB', {
+                day: '2-digit', month: 'short', year: 'numeric'
+            }).replace(/ /g, ' ');
             var trclass = "";
             var bosluk = " ";
             var count = $("#Blogs > tr").length;
@@ -43,20 +47,21 @@ $("#addBlog").submit(function (event) {
             else
                 trclass = "even";
             var veri = '<tr id="' + blog.id + '" class="' + trclass + '">' +
-                '<td style="width:10%;text-align:center" class="sorting_1">'+blog.id+'</td>' +
-                '<td style="width:60%;text-align:center">'+blog.title+'</td>' +
+                '<td style="width:40%"> ' + blog.title + '</td>' +
+                '<td style="width:20%"> ' + blog.authorId + '</td>' +
+                '<td style="width:20%"> ' + formattedDate + '</td> ' +
                 '<td style="width:30%;text-align:center">' +
                 '<a type="button" title="Düzenle" class="btn btn-warning btn-sm open-EditCategoryDialog" data-category-name="title 5" data-category-id="6" data-toggle="modal" data-target="#editCategoryModal">' +
                 '<i class="fa fa-edit"></i>' +
                 '</a>' +
-                '<a style="margin-left:3.5px;" onclick=Delete("/Blog/Delete/'+blog.id+'") title="Sil" class="btn btn-danger btn-sm">' +
+                '<a style="margin-left:3.5px;" onclick=Delete("/Blog/Delete/' + blog.id + '") title="Sil" class="btn btn-danger btn-sm">' +
                 '<i class="fa fa-trash-o"></i>' +
-                '</a></td></tr>';
+                '</a></td></tr>';            
             $("#Blogs").append(veri);
             $("#addBlogModal").removeClass("in");
             $(".modal-backdrop").remove();
             $("#addBlogModal").hide();
-            $("#ajax-loading").hide(); 
+            $("#ajax-loading").hide();
             notie.alert({ type: 'success', text: "Ekleme İşlemi Başarılı", time: 3 }) // Hides after 2 seconds
         },
         error: function (ErrorMessage) {
@@ -66,7 +71,7 @@ $("#addBlog").submit(function (event) {
                 $("#addBlogModal").removeClass("in");
                 $(".modal-backdrop").remove();
                 $("#addBlogModal").hide();
-                $("#ajax-loading").hide();                
+                $("#ajax-loading").hide();
                 notie.alert({ type: 'error', text: "Ekleme başarısız, Bir Sorunla Karşılaşıldı. Yöneticiyle İletişime Geçin" })
             }
             else {
@@ -78,6 +83,7 @@ $("#addBlog").submit(function (event) {
         processData: false
     });
 });
+
 
 function Delete(url) {
     event.preventDefault(); // prevent form submit
@@ -105,16 +111,16 @@ function Delete(url) {
                 },
                 success: function (Id) {
                     var m = document.getElementById(Id);
-                    m.style.display = "none";                    
+                    m.style.display = "none";
                     notie.alert({ type: 'success', text: 'Silme İşlemi Başarılı!', time: 3 }) // Hides after 2 seconds
                 },
                 error: function (returnData) {
-                    notie.alert({ type: 'error', text: returnData.responseText })                    
+                    notie.alert({ type: 'error', text: returnData.responseText })
                 }
             });
         }
     });
-}   
+}
 
 
 

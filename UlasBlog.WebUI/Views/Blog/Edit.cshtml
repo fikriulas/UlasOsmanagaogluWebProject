@@ -1,0 +1,104 @@
+﻿@model BlogDetail
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="header">
+    <h1 class="page-header">
+        Blog <small>Blogları Listeleyin</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="#">Ana Sayfa</a></li>
+        <li><a href="#">Blog</a></li>
+        <li class="active">Index</li>
+    </ol>
+
+</div>
+<div id="page-inner">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addBlogModal">
+                    Blog Ekle
+                </button>
+            </div>
+            <div class="panel-body">
+                <form id="editBlog" asp-controller="Blog" asp-action="Edit" method="post" enctype="multipart/form-data">
+
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select class="js-example-basic-multiple" id="categories" name="categories[]" multiple="multiple" asp-items="ViewBag.Categories" style="width:100%">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Title"></label>
+                        <input type="hidden" asp-for="Id" value="" />
+                        <input type="text" class="form-control" asp-for="Title" placeholder="Enter Blog Name">
+                        @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description"></label>
+                        <input type="text" class="form-control" asp-for="Description" placeholder="Enter Description">
+                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ImageUrl" data-toggle="collapse" href="#collapseExample" aria-controls="collapseExample"></label>
+                        <div class="collapse" id="collapseExample">
+                            <div class="card card-body text-center">
+                                <img src="/Home/Blog/Img/@Model.ImageUrl" alt="Alternate Text" />
+
+                            </div>
+                        </div>
+                        <input type="file" class="form-control-file" asp-for="ImageUrl">
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="HtmlContent"></label>
+                        <input type="text" class="form-control" asp-for="HtmlContent" placeholder="Enter Content">
+                        @Html.ValidationMessageFor(model => model.HtmlContent, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox" style="margin-left:3px;">
+                            <div class="checkbox3 checkbox-round checkbox-inline">
+                                <input type="checkbox" asp-for="IsAppproved" id="checkbox-1">
+                                <label for="checkbox-1">
+                                    Is Aprooved ?
+                                </label>
+                            </div>
+                            <div class="checkbox3 checkbox-round checkbox-inline">
+                                <input type="checkbox" asp-for="IsHome" id="checkbox-2">
+                                <label for="checkbox-2">
+                                    Is Home ?
+                                </label>
+                            </div>
+                            <div class="checkbox3 checkbox-round checkbox-inline">
+                                <input type="checkbox" asp-for="IsSlider" id="checkbox-3">
+                                <label for="checkbox-3">
+                                    Is Slider ?
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Blog {
+    <script>
+        var sampleTags = new Array();
+        var array = @Html.Raw(Json.Serialize(@ViewBag.catId));
+
+        $('#categories').val(array).change();
+
+    </script>
+    <script src="~/Admin/js/notie.min.js"></script>
+    <script type="text/javascript" src="/Admin/js/dataTables/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="/Admin/js/dataTables/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="~/Admin/js/Blog.js"></script>
+}
