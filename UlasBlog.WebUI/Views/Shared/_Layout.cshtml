@@ -24,6 +24,7 @@
                     <div class="row">
                         <div class="col-9 social">
                             <a href="#"><span class="fa fa-twitter"></span></a>
+                            <a href="#"><span class="fa fa-twitter"></span></a>
                             <a href="#"><span class="fa fa-facebook"></span></a>
                             <a href="#"><span class="fa fa-instagram"></span></a>
                             <a href="#"><span class="fa fa-youtube-play"></span></a>
@@ -85,21 +86,12 @@
                     <!-- END main-content -->
                     <div class="col-md-12 col-lg-4 sidebar">
 
-                        <!-- END sidebar-box -->                        
+                        <!-- END sidebar-box -->
                         <!-- END sidebar-box -->
                         @await Component.InvokeAsync("PopulerPost")
                         <!-- END sidebar-box -->
-                        <div class="sidebar-box">
-                            <h3 class="heading">Categories</h3>
-                            <ul class="categories">
-                                <li><a href="#">Food <span>(12)</span></a></li>
-                                <li><a href="#">Travel <span>(22)</span></a></li>
-                                <li><a href="#">Lifestyle <span>(37)</span></a></li>
-                                <li><a href="#">Business <span>(42)</span></a></li>
-                                <li><a href="#">Adventure <span>(14)</span></a></li>
-                            </ul>
-                        </div>
-                        <!-- END sidebar-box -->                        
+                        @await Component.InvokeAsync("CategorySidebar")
+                        <!-- END sidebar-box -->
                     </div>
                     <!-- END sidebar -->
                 </div>
