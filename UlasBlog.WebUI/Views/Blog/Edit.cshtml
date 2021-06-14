@@ -42,11 +42,10 @@
                         @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
                     </div>
                     <div class="form-group">
-                        <label asp-for="ImageUrl" data-toggle="collapse" href="#collapseExample" aria-controls="collapseExample"></label>
+                        <label asp-for="ImageUrl" data-toggle="collapse" href="#collapseExample" title="Mevcut Resmi Görmek İçin Tıklayın" aria-controls="collapseExample">Image <i class="fa fa-angle-down"></i></label>
                         <div class="collapse" id="collapseExample">
                             <div class="card card-body text-center">
-                                <img src="/Home/Blog/Img/@Model.ImageUrl" alt="Alternate Text" />
-
+                                <img id="myImg" src="/Home/Blog/Img/@Model.ImageUrl" style="width:100%;max-width:300px">
                             </div>
                         </div>
                         <input type="file" class="form-control-file" asp-for="ImageUrl">
@@ -85,7 +84,45 @@
     </div>
 </div>
 
+<!-- Trigger the Modal -->
+
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+    <!-- The Close Button -->
+    <span class="close">&times;</span>
+
+    <!-- Modal Content (The Image) -->
+    <img class="modal-content" id="img01">
+
+    <!-- Modal Caption (Image Text) -->
+    <div id="caption"></div>
+</div>
+
 @section Blog {
+    <script>
+        // Get the modal
+        var modal = document.getElementById("myModal");
+
+        // Get the image and insert it inside the modal - use its "alt" text as a caption
+        var img = document.getElementById("myImg");
+        var modalImg = document.getElementById("img01");
+        var captionText = document.getElementById("caption");
+        img.onclick = function () {
+            modal.style.display = "block";
+            modalImg.src = this.src;
+            captionText.innerHTML = this.alt;
+        }
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+    </script>
     <script>
         var sampleTags = new Array();
         var array = @Html.Raw(Json.Serialize(@ViewBag.catId));
