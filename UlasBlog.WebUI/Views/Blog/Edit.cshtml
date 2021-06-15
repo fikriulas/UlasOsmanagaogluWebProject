@@ -5,25 +5,21 @@
 }
 <div class="header">
     <h1 class="page-header">
-        Blog <small>Blogları Listeleyin</small>
+        Blog <small>Blogları Düzenleyin</small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="#">Ana Sayfa</a></li>
         <li><a href="#">Blog</a></li>
-        <li class="active">Index</li>
+        <li class="active">Düzenle</li>
     </ol>
 
 </div>
 <div id="page-inner">
     <div class="col-md-12">
         <div class="panel panel-default">
-            <div class="panel-heading">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addBlogModal">
-                    Blog Ekle
-                </button>
-            </div>
-            <div class="panel-body">
-                <form id="editBlog" asp-controller="Blog" asp-action="Edit" method="post" enctype="multipart/form-data">
+            <form id="editBlog" asp-controller="Blog" asp-action="Edit" method="post" enctype="multipart/form-data">
+                <div class="panel-body">
+
 
                     <div class="form-group">
                         <label>Category</label>
@@ -32,7 +28,7 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="Title"></label>
-                        <input type="hidden" asp-for="Id" value="" />
+                        <input type="hidden" asp-for="Id" value="@Model.Id" />
                         <input type="text" class="form-control" asp-for="Title" placeholder="Enter Blog Name">
                         @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
                     </div>
@@ -78,15 +74,16 @@
                         </div>
                     </div>
 
-                </form>
-            </div>
+                </div>
+                <div class="panel-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 <!-- Trigger the Modal -->
-
-
 <!-- The Modal -->
 <div id="myModal" class="modal">
 

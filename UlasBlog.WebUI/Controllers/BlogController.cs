@@ -39,6 +39,7 @@ namespace UlasBlog.WebUI.Controllers
                     Value = item.Id.ToString()
                 });
             }
+            ViewBag.SuccessSave = TempData["SuccessSave"] ?? null;
             ViewBag.Categories = Categories;
             return View(blogs);
         }
@@ -141,10 +142,11 @@ namespace UlasBlog.WebUI.Controllers
             return View(blog);
             
         }
+        [HttpPost]
         public async Task<IActionResult> Edit(Blog blog, string[] categories, IFormFile ImageUrl)
         {
-
-            blog.SlugUrl = SeoUrl.AdresDuzenle(blog.Title);
+            if(blog.Title !=null)
+                blog.SlugUrl = SeoUrl.AdresDuzenle(blog.Title);
             if (ModelState.IsValid)
             {
                 try
@@ -161,37 +163,47 @@ namespace UlasBlog.WebUI.Controllers
                             blog.ImageUrl = ImageUrl.FileName;
                         }
                     }
-                    var entity = new Blog();
-                    entity = blog;
+                    
+                    var entity = new Blog();                    
                     entity = uow.Blogs.GetAll()
                      .Include(i => i.BlogCategories)
                      .ThenInclude(i => i.Category)
                      .FirstOrDefault(i => i.Id == blog.Id);
                     if (categories.Length != 0)
                     {
-                        blog.BlogCategories.Clear();
+                        entity.BlogCategories.Clear();
                         for (int i = 0; i < categories.Length; i++)
                         {
-                            blog.BlogCategories.Add(new BlogCategory()
+                            entity.BlogCategories.Add(new BlogCategory()
                             {
-                                BlogId = entity.Id,
+                                BlogId = blog.Id,
                                 CategoryId = Convert.ToInt32(categories[i]),
                             });
                         }
                     }
+                    entity.Title = blog.Title;
+                    entity.Description = blog.Description;
+                    entity.HtmlContent = blog.HtmlContent;
+                    entity.IsAppproved = blog.IsAppproved;
+                    entity.IsHome = blog.IsHome;
+                    entity.IsSlider = blog.IsSlider;
+                    entity.ImageUrl = blog.ImageUrl;            
                     uow.Blogs.Edit(entity);
                     uow.SaveChanges();
-                    return Ok();
+                    TempData["SuccessSave"] = "Blog Successfully Changed.";
+                    return RedirectToAction("Index");
                 }
                 catch (Exception ex)
                 {
                     var error = ex.Message;
                     //log tutulacak.
-                    return BadRequest(error);
+                    return View(blog);
                 }
             }
-            return BadRequest();
-
+            else
+            {
+                return View(blog);
+            }            
         }
         public IActionResult Delete(int id)
         {
