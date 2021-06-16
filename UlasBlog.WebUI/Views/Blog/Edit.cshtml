@@ -1,4 +1,4 @@
-﻿@model BlogDetail
+﻿@model BlogEdit
 @{
     ViewData["Title"] = "Edit";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -41,7 +41,14 @@
                         <label asp-for="ImageUrl" data-toggle="collapse" href="#collapseExample" title="Mevcut Resmi Görmek İçin Tıklayın" aria-controls="collapseExample">Image <i class="fa fa-angle-down"></i></label>
                         <div class="collapse" id="collapseExample">
                             <div class="card card-body text-center">
-                                <img id="myImg" src="/Home/Blog/Img/@Model.ImageUrl" style="width:100%;max-width:300px">
+                                @if (Model.ImageUrl == null)
+                                {
+                                    @: <p>Resim bulunmamaktadır.</p>
+                                }
+                                else
+                                {
+                                    <img id="myImg" src="/Home/Blog/Img/@Model.ImageUrl" style="width:100%;max-width:300px">
+                                }                                
                             </div>
                         </div>
                         <input type="file" class="form-control-file" asp-for="ImageUrl">
@@ -76,7 +83,8 @@
 
                 </div>
                 <div class="panel-footer">
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary">Düzenle</button>
+                    <a type="button" asp-controller="Blog" asp-action="Index" class="btn btn-info" style="float:right;">İptal</a>
                 </div>
             </form>
         </div>

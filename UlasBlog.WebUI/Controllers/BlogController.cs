@@ -39,7 +39,7 @@ namespace UlasBlog.WebUI.Controllers
                     Value = item.Id.ToString()
                 });
             }
-            ViewBag.SuccessSave = TempData["SuccessSave"] ?? null;
+            ViewBag.SuccessSave = TempData["SuccessSave"] ?? null; // Edit post methodundan geliyor.
             ViewBag.Categories = Categories;
             return View(blogs);
         }
@@ -96,7 +96,7 @@ namespace UlasBlog.WebUI.Controllers
                 .Include(i => i.BlogCategories)
                 .ThenInclude(i => i.Category)
                 .Where(i => i.Id == Id)
-                .Select(i => new BlogDetail()
+                .Select(i => new BlogEdit()
                 {
                     Id = i.Id,
                     Title = i.Title,
@@ -162,8 +162,7 @@ namespace UlasBlog.WebUI.Controllers
                             await ImageUrl.CopyToAsync(stream);
                             blog.ImageUrl = ImageUrl.FileName;
                         }
-                    }
-                    
+                    }                    
                     var entity = new Blog();                    
                     entity = uow.Blogs.GetAll()
                      .Include(i => i.BlogCategories)

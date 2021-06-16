@@ -23,7 +23,7 @@ Website: http://www.webthemez.com/
     <!-- Morris Chart Styles-->
     <link href="/Admin/js/morris/morris-0.4.3.min.css" rel="stylesheet" />
     <!-- Custom Styles-->
-    <link href="/Admin/css/custom-styles.css" rel="stylesheet" />    
+    <link href="/Admin/css/custom-styles.css" rel="stylesheet" />
 
     <!-- Google Fonts-->
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
@@ -279,10 +279,10 @@ Website: http://www.webthemez.com/
                 <ul class="nav" id="main-menu">
 
                     <li>
-                        <a class="active-menu" href="index.html"><i class="fa fa-dashboard"></i> Dashboard</a>
+                        <a id="AdminIndex"  asp-controller="Admin" asp-action="Index"><i class="fa fa-dashboard"></i> Dashboard</a>
                     </li>
                     <li>
-                        <a asp-controller="Category" asp-action="index"><i class="fa fa-desktop"></i> Categori</a>
+                        <a id="CategoryIndex" asp-controller="Category" asp-action="index"><i class="fa fa-desktop"></i> Categori</a>
                     </li>
                     <!--
                     <li>
@@ -298,7 +298,7 @@ Website: http://www.webthemez.com/
                     </li>
                         -->
                     <li>
-                        <a asp-controller="Blog" asp-action="Index"><i class="fa fa-qrcode"></i> Blog</a>
+                        <a id="BlogIndex" asp-controller="Blog" asp-action="Index"><i class="fa fa-qrcode"></i> Blog</a>
                     </li>
                     <li>
                         <a href="tab-panel.html"><i class="fa fa-qrcode"></i> Ayarlar</a>
@@ -371,6 +371,21 @@ Website: http://www.webthemez.com/
             notie.alert({ type: 'success', text: "İşlem Başarıyla Gerçekleşti." })
         </script>
     }
+<script>
+       @if (ViewContext.RouteData.Values["Controller"].ToString() == "Blog" && ViewContext.RouteData.Values["Action"].ToString() == "Index")
+       {
+           @:document.getElementById("BlogIndex").className = "active-menu";
+       }
+       else if(ViewContext.RouteData.Values["Controller"].ToString() == "Category" && ViewContext.RouteData.Values["Action"].ToString() == "Index"){
+           @:document.getElementById("CategoryIndex").className = "active-menu";
+       }
+       else if(ViewContext.RouteData.Values["Controller"].ToString() == "Admin" && ViewContext.RouteData.Values["Action"].ToString() == "Index"){
+           @:document.getElementById("AdminIndex").className = "active-menu";
+       }
+       else {
+           @:document.getElementById("AdminIndex").className = "active-menu";
+       }
+</script>
 </body>
 
 
