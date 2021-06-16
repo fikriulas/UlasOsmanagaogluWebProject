@@ -20,6 +20,7 @@ namespace UlasBlog.Entity
         [Display(Name = "Mesaj")]
         [StringLength(500, ErrorMessage = "Mesaj Alanı 500 Karakterden Uzun Olamaz.")]
         public string Message { get; set; }
+        [Display(Name = "Tarih")]
         public DateTime dateAdded { get; set; }
         public int BlogId { get; set; }
         public Blog Blog { get; set; }

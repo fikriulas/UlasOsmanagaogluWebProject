@@ -115,6 +115,9 @@ namespace UlasBlog.WebUI.Controllers
                     Comments = i.Comments.Select(c => new Comment()
                     {
                         Name = c.Name,
+                        Email = c.Email,
+                        dateAdded = c.dateAdded,
+                        Message = c.Message,
                         Id = c.Id
                     }).ToList(),
                 }).FirstOrDefault();
@@ -228,6 +231,27 @@ namespace UlasBlog.WebUI.Controllers
             }
             return BadRequest("İşlem Başarısız, Silmek İstediğiniz Blog Bulunamadı");
         }
+        public IActionResult CommentDelete(Comment comment)
+        {
+            var Deletedcomment = uow.Comments.Get(comment.Id);
+            if (Deletedcomment != null)
+            {
+                try
+                {                    
+                    uow.Comments.Delete(Deletedcomment);
+                    uow.SaveChanges();
+                    return Ok(comment.Id);
+                }
+                catch (Exception ex)
+                {
+                    var error = ex.Message;
+                    //log tutulacak.
+                    return BadRequest("Ekleme başarısız, Bir Sorunla Karşılaşıldı. Yöneticiyle İletişime Geçin");
+                }
+            }
+            return BadRequest("İşlem Başarısız, Silmek İstediğiniz Blog Bulunamadı");
+        }
+
         private bool DeleteImage(string url)
         {
             try

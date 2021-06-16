@@ -3,6 +3,7 @@
     ViewData["Title"] = "Edit";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
+@Html.Partial("_DetailComment", new Comment())
 <div class="header">
     <h1 class="page-header">
         Blog <small>Blogları Düzenleyin</small>
@@ -12,7 +13,7 @@
         <li><a href="#">Blog</a></li>
         <li class="active">Düzenle</li>
     </ol>
-
+    
 </div>
 <div id="page-inner">
     <div class="col-md-12">
@@ -48,7 +49,7 @@
                                 else
                                 {
                                     <img id="myImg" src="/Home/Blog/Img/@Model.ImageUrl" style="width:100%;max-width:300px">
-                                }                                
+                                }
                             </div>
                         </div>
                         <input type="file" class="form-control-file" asp-for="ImageUrl">
@@ -88,22 +89,66 @@
                 </div>
             </form>
         </div>
+
+        <!--Comments Start-->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Yorumlar
+            </div>
+            <div class="panel-body">
+                <table id="example" class="display cell-border" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th style="width:40%">Name</th>
+                            <th style="width:20%">E-Mail</th>
+                            <th style="width:20%">Date</th>
+                            <th style="width:20%">Ayrıntı</th>
+                        </tr>
+                    </thead>
+                    <tbody id="Blogs">
+                        @foreach (var comment in Model.Comments)
+                        {
+                            <tr id="@comment.Id">
+                                <td style="width:40%">@comment.Name</td>
+                                <td style="width:20%">@comment.Email</td>
+                                <td style="width:20%">@comment.dateAdded.ToString("dd MMM yyyy")</td>
+                                <td style="width:20%;text-align:center">
+                                    <a type="button" title="Düzenle" class="btn btn-warning btn-sm open-EditCommentDialog" data-comment-name="@comment.Name" data-comment-id="@comment.Id" data-comment-message="@comment.Message" data-comment-email="@comment.Email" data-comment-date="@comment.dateAdded" data-toggle="modal" data-target="#editCommentModal">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th style="width:40%">Name</th>
+                            <th style="width:20%">E-Mail</th>
+                            <th style="width:20%">Tarih</th>
+                            <th style="width:20%">Ayrıntı</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <!--Comments End-->
     </div>
 </div>
 
 <!-- Trigger the Modal -->
 <!-- The Modal -->
-<div id="myModal" class="modal">
+<div id="myModal" class="modalIMG">
 
     <!-- The Close Button -->
     <span class="close">&times;</span>
 
     <!-- Modal Content (The Image) -->
-    <img class="modal-content" id="img01">
+    <img class="modal-contentIMG" id="img01">
 
     <!-- Modal Caption (Image Text) -->
     <div id="caption"></div>
 </div>
+
 
 @section Blog {
     <script>

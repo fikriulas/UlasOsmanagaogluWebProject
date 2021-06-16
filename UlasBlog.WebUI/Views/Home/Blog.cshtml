@@ -16,7 +16,7 @@
                 <h1 class="mb-4">@Model.Title</h1>
                 @foreach (var category in Model.Categories)
                 {
-                    <a class="category mb-5" href="#">@category.Name</a>
+                    <a class="category mb-5" asp-controller="Home" asp-action="Blogs" asp-route-SlugUrl="@category.SlugUrl" asp-route-page="1">@category.Name</a>
                 }
                 <div class="post-content-body">
                     @Html.Raw(Model.HtmlContent)

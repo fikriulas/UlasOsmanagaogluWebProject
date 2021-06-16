@@ -34,6 +34,6 @@ namespace UlasBlog.WebUI.Models
         public List<Category> Categories { get; set; }
         public List<Comment> Comments { get; set; }
         public Comment Comment { get; set; }
-    }
+    }    
     
 }

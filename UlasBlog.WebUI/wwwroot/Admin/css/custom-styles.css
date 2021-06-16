@@ -863,7 +863,7 @@ ul.dropdown-menu.dropdown-messages li a div {
     }
 
 /* The Modal (background) */
-.modal {
+.modalIMG {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
@@ -878,7 +878,7 @@ ul.dropdown-menu.dropdown-messages li a div {
 }
 
 /* Modal Content (Image) */
-.modal-content {
+.modal-contentIMG {
     margin: auto;
     display: block;
     width: 80%;
@@ -898,7 +898,7 @@ ul.dropdown-menu.dropdown-messages li a div {
 }
 
 /* Add Animation - Zoom in the Modal */
-.modal-content, #caption {
+.modal-contentIMG, #caption {
     animation-name: zoom;
     animation-duration: 0.6s;
 }
@@ -933,7 +933,7 @@ ul.dropdown-menu.dropdown-messages li a div {
 
 /* 100% Image Width on Smaller Screens */
 @media only screen and (max-width: 700px) {
-    .modal-content {
+    .modal-contentIMG {
         width: 100%;
     }
 }

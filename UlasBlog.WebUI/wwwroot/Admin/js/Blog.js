@@ -13,11 +13,17 @@ function myFunction() {
     m.style.display = "none";
 }
 
-$(document).on("click", ".open-EditCategoryDialog", function () {
-    var categoryName = $(this).data('category-name');
-    var categoryId = $(this).data('category-id');
-    $(".modal-body #Name").val(categoryName);
-    $(".modal-body #Id").val(categoryId);
+$(document).on("click", ".open-EditCommentDialog", function () {
+    var commentName = $(this).data('comment-name');
+    var commentId = $(this).data('comment-id');
+    var commentEmail = $(this).data('comment-email');
+    var commentDate = $(this).data('comment-date');
+    var commentMessage = $(this).data('comment-message');
+    $(".modal-body #Name").val(commentName);
+    $(".modal-body #Id").val(commentId);
+    $(".modal-body #Email").val(commentEmail);
+    $(".modal-body #dateAdded").val(commentDate);
+    $(".modal-body #Message").val(commentMessage);
 });
 
 $("#addBlog").submit(function (event) {
@@ -58,9 +64,8 @@ $("#addBlog").submit(function (event) {
                 '<i class="fa fa-trash-o"></i>' +
                 '</a></td></tr>';            
             $("#Blogs").append(veri);
-            $("#addBlogModal").removeClass("in");
-            $(".modal-backdrop").remove();
-            $("#addBlogModal").hide();
+            jQuery.noConflict();
+            $('#addBlogModal').modal('hide');
             $("#ajax-loading").hide();
             notie.alert({ type: 'success', text: "Ekleme İşlemi Başarılı", time: 3 }) // Hides after 2 seconds
         },
@@ -68,9 +73,8 @@ $("#addBlog").submit(function (event) {
             console.log(ErrorMessage)
             if (ErrorMessage.responseText != "") {
                 console.log(ErrorMessage.responseText)
-                $("#addBlogModal").removeClass("in");
-                $(".modal-backdrop").remove();
-                $("#addBlogModal").hide();
+                jQuery.noConflict();
+                $('#addBlogModal').modal('hide');
                 $("#ajax-loading").hide();
                 notie.alert({ type: 'error', text: "Ekleme başarısız, Bir Sorunla Karşılaşıldı. Yöneticiyle İletişime Geçin" })
             }
@@ -123,6 +127,46 @@ function Delete(url) {
 }
 
 
-
+$("#deleteComment").submit(function (event) {
+    console.log("buradayiz");
+    event.preventDefault();
+    var form = $(this);
+    var formData = new FormData(this);
+    $.ajax({
+        url: form.attr("action"),
+        type: 'POST',
+        data: formData,
+        beforeSend: function () {
+            $("#ajax-loading").show();
+        },
+        complete: function () {
+            $("#ajax-loading").hide();
+        },
+        success: function (Id) {
+            var m = document.getElementById(Id);
+            m.style.display = "none";
+            jQuery.noConflict();
+            $('#editCommentModal').modal('hide'); 
+            $("#ajax-loading").hide();
+            notie.alert({ type: 'success', text: "Silme İşlemi Başarılı", time: 3 }) // Hides after 2 seconds
+        },
+        error: function (ErrorMessage) {
+            console.log(ErrorMessage)
+            if (ErrorMessage.responseText != "") {
+                console.log(ErrorMessage.responseText)
+                jQuery.noConflict();
+                $('#editCommentModal').modal('hide');
+                $("#ajax-loading").hide();
+                notie.alert({ type: 'error', text: "Silme İşlemi başarısız, Bir Sorunla Karşılaşıldı. Yöneticiyle İletişime Geçin" })
+            }
+            else {
+                console.log("Else girildi.")
+            }
+        },
+        cache: false,
+        contentType: false,
+        processData: false
+    });
+});
 
 
