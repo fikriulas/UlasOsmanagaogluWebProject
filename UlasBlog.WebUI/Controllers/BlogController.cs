@@ -122,7 +122,6 @@ namespace UlasBlog.WebUI.Controllers
                     }).ToList(),
                 }).FirstOrDefault();
             var Categories = new List<SelectListItem>();
-            List<string> catName = new List<string> { };
             List<string> catId = new List<string> { };
 
             foreach (var item in uow.Categories.GetAll())
@@ -132,16 +131,14 @@ namespace UlasBlog.WebUI.Controllers
                     Text = item.Name,
                     Value = item.Id.ToString()
                 });
-                catId.Add(item.Id.ToString());
-                catName.Add(item.Name);
+
+            }
+            foreach (var category in blog.Categories)
+            { 
+                catId.Add(category.Id.ToString());                
             }
             ViewBag.Categories = Categories;            
             ViewBag.catId = catId.ToArray();
-
-            if (blog == null)
-            {
-                RedirectToAction("404");// blog bulunamadı.
-            }
             return View(blog);
             
         }
@@ -189,7 +186,8 @@ namespace UlasBlog.WebUI.Controllers
                     entity.IsAppproved = blog.IsAppproved;
                     entity.IsHome = blog.IsHome;
                     entity.IsSlider = blog.IsSlider;
-                    entity.ImageUrl = blog.ImageUrl;            
+                    if(blog.ImageUrl != null)    
+                        entity.ImageUrl = blog.ImageUrl;            
                     uow.Blogs.Edit(entity);
                     uow.SaveChanges();
                     TempData["SuccessSave"] = "Blog Successfully Changed.";

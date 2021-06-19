@@ -66,6 +66,7 @@ namespace UlasBlog.WebUI.Controllers
                     {
                         Name = b.Name,
                         Email = b.Email,
+                        Message = b.Message,
                         Id = b.Id,
                         dateAdded = b.dateAdded
                     }).ToList(),

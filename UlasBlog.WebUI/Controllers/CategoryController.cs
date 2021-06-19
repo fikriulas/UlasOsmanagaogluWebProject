@@ -20,6 +20,7 @@ namespace UlasBlog.WebUI.Controllers
         public IActionResult Index()
         {
             var categories = uow.Categories.GetAll();
+            ViewBag.SuccessSave = TempData["EditCategory"] ?? null; // Edit post methodundan geliyor.
             return View(categories);
         }
         [HttpGet]
@@ -33,10 +34,20 @@ namespace UlasBlog.WebUI.Controllers
         {
             if (ModelState.IsValid)
             {
-                category.SlugUrl = SeoUrl.AdresDuzenle(category.SlugUrl);
-                uow.Categories.Add(category);
-                uow.SaveChanges();
-                return Ok(category); // success çalıştır.                
+                try
+                {
+                    category.SlugUrl = SeoUrl.AdresDuzenle(category.Name);
+                    uow.Categories.Add(category);
+                    uow.SaveChanges();
+                    return Ok(category); // success çalıştır. 
+                }
+                catch (Exception ex)
+                {
+                    var error = ex.Message;
+                    //log tutulacak.
+                    return BadRequest(error);
+                }
+
             }
             return BadRequest();
             //return RedirectToAction("Index", category);
@@ -57,8 +68,18 @@ namespace UlasBlog.WebUI.Controllers
         {
             if (ModelState.IsValid)
             {
-                uow.Categories.Edit(category);
-                uow.SaveChanges();                
+                try
+                {
+                    uow.Categories.Edit(category);
+                    uow.SaveChanges();
+                    TempData["EditCategory"] = "Güncelleme Başarılı";
+                }
+                catch (Exception ex)
+                {
+                    var error = ex.Message;
+                    TempData["EditCategory"] = "Güncelleme Başarısız, Yönetici İle İletişime Geçin";
+                    return RedirectToAction("Index");
+                }                              
             }
             return RedirectToAction("Index");
         }

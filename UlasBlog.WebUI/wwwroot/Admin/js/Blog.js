@@ -128,7 +128,7 @@ function Delete(url) {
 
 
 $("#deleteComment").submit(function (event) {
-    console.log("buradayiz");
+    
     event.preventDefault();
     var form = $(this);
     var formData = new FormData(this);

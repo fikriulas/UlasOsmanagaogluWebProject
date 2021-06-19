@@ -24,12 +24,12 @@
             <div class="panel-heading">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCategoryModal">
                     Kategori Ekle
-                </button>                
+                </button>
             </div>
             <div class="panel-body">
                 <table id="example" class="display" style="width:100%">
                     <thead>
-                        <tr>  
+                        <tr>
                             <th>Id</th>
                             <th>Adı</th>
                             <th>Aksiyon</th>
@@ -68,7 +68,14 @@
         <!--End Advanced Tables -->
     </div>
 </div>
+@if (ViewData["EditCategory"] != null)
+{
+    <script>
+        notie.alert({ type: 'success', text: "@ViewData["EditCategory"]" })
+    </script>
+}
 @section Category {
+    <script src="~/Admin/js/notie.min.js"></script>
     <script type="text/javascript" src="/Admin/js/dataTables/jquery-3.5.1.js"></script>
     <script type="text/javascript" src="/Admin/js/dataTables/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>

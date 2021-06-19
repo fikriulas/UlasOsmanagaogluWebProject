@@ -43,14 +43,14 @@ $("#addCategoryf").submit(function (event) {
                 trclass = "even";
 
             var veri = '<tr id=' + data.id + ' class=' + trclass + '><td class="sorting_1">' + data.id + '</td><td>' + data.name + '</td><td><a  type="button" title="Düzenle" class="btn btn-warning btn-sm open-EditCategoryDialog" data-category-name="' + data.name + '" data-category-id="' + data.id + '" data-toggle="modal" data-target="#editCategoryModal"><i class="fa fa-edit"></i></a><a style="margin-left:3.5px;" onclick=Delete("/Category/Delete/' + data.id + '") title="Sil" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i></a></td></tr>';
-
             $("#Categories").append(veri);
             jQuery.noConflict();
             $('#addCategoryModal').modal('hide');
             $("#ajax-loading").hide();
+            notie.alert({ type: 'success', text: "Ekleme İşlemi Başarılı", time: 3 }) // Hides after 2 seconds
         },
         error: function () {
-            console.log("Eklenmedi")
+            notie.alert({ type: 'error', text: 'İşlem Başarısız!' })
         }
     });
 });
@@ -83,7 +83,7 @@ function Delete(url) {
                 success: function (Id) {
                     var m = document.getElementById(Id);
                     m.style.display = "none";
-                    console.log("silme işlemi başarlı")
+                    notie.alert({ type: 'success', text: "Silme İşlemi Başarılı", time: 3 }) // Hides after 2 seconds
                     //notie.alert({ type: 'success', text: 'Silme İşlemi Başarılı!', time: 3 }) // Hides after 2 seconds
                 },
                 error: function () {
