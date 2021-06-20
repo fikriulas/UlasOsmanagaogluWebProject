@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UlasBlog.Data.Abstract;
 using UlasBlog.Data.Concrete.EntityFramework;
+using UlasBlog.WebUI.IdentityCore;
 
 namespace UlasBlog.WebUI
 {
@@ -28,6 +30,8 @@ namespace UlasBlog.WebUI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("UlasBlog.WebUI")));
+            services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection"), b => b.MigrationsAssembly("UlasBlog.WebUI")));
+            services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppIdentityDbContext>();
             services.AddControllersWithViews().AddRazorRuntimeCompilation().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 ); ; // runtime comp.
@@ -61,6 +65,8 @@ namespace UlasBlog.WebUI
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+            //Identity için middware eklenir.
+            app.UseAuthentication();
         }
     }
 }
