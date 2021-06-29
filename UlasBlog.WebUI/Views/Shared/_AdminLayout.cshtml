@@ -249,6 +249,14 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a asp-controller="Admin" asp-action="Contact" class="nav-link">
+                                <i class="nav-icon far fa-image"></i>
+                                <p>
+                                    İletişim
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon far fa-envelope"></i>
                                 <p>
@@ -570,13 +578,15 @@
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="/Admin/AdminLTE//Admin/AdminLTE/dist/js/pages/dashboard.js"></script>
     <!-- Toastr -->
-    <script src="/Admin/AdminLTE/plugins/toastr/toastr.min.js"></script>    
+    <script src="/Admin/AdminLTE/plugins/toastr/toastr.min.js"></script>
     @if (ViewData["SuccessSave"] != null)
     {
 <script>
-            toastr.success("İşlem Başarılı");
-</script>}
+    toastr.success("İşlem Başarılı");
+</script>
+}
     @RenderSection("Category", false)
     @RenderSection("Blog", false)
+    @RenderSection("Contact", false)
 </body>
 </html>
