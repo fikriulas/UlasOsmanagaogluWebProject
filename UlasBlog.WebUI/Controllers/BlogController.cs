@@ -46,7 +46,8 @@ namespace UlasBlog.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(Blog blog, string[] categories, IFormFile ImageUrl)
         {
-            blog.SlugUrl = SeoUrl.AdresDuzenle(blog.Title);
+            if(blog.Title != null)
+                blog.SlugUrl = SeoUrl.AdresDuzenle(blog.Title);
             if (ModelState.IsValid)
             {
                 try

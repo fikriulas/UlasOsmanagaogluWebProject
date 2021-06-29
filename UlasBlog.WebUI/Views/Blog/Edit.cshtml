@@ -4,145 +4,157 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 @Html.Partial("_DetailComment", new Comment())
-<div class="header">
-    <h1 class="page-header">
-        Blog <small>Blogları Düzenleyin</small>
-    </h1>
-    <ol class="breadcrumb">
-        <li><a href="#">Ana Sayfa</a></li>
-        <li><a href="#">Blog</a></li>
-        <li class="active">Düzenle</li>
-    </ol>
-    
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Blog Düzenle</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Admin</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Blog" asp-action="Index">Blog</a></li>
+                    <li class="breadcrumb-item active">Düzenle</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
 </div>
-<div id="page-inner">
-    <div class="col-md-12">
-        <div class="panel panel-default">
-            <form id="editBlog" asp-controller="Blog" asp-action="Edit" method="post" enctype="multipart/form-data">
-                <div class="panel-body">
-                    <div class="form-group">
-                        <label>Category</label>
-                        <select class="js-example-basic-multiple" id="categories" name="categories[]" multiple="multiple" asp-items="ViewBag.Categories" style="width:100%">
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Title"></label>
-                        <input type="hidden" asp-for="Id" value="@Model.Id" />
-                        <input type="text" class="form-control" asp-for="Title" placeholder="Enter Blog Name">
-                        @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Description"></label>
-                        <input type="text" class="form-control" asp-for="Description" placeholder="Enter Description">
-                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="ImageUrl" data-toggle="collapse" href="#collapseExample" title="Mevcut Resmi Görmek İçin Tıklayın" aria-controls="collapseExample">Image <i class="fa fa-angle-down"></i></label>
-                        <div class="collapse" id="collapseExample">
-                            <div class="card card-body text-center">
-                                @if (Model.ImageUrl == null)
-                                {
-                                    @: <p>Resim bulunmamaktadır.</p>
-                                }
-                                else
-                                {
-                                    <img id="myImg" src="/Home/Blog/Img/@Model.ImageUrl" style="width:100%;max-width:300px">
-                                }
-                            </div>
-                        </div>
-                        <input type="file" class="form-control-file" asp-for="ImageUrl">
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="HtmlContent"></label>
-                        <input type="text" class="form-control" asp-for="HtmlContent" placeholder="Enter Content">
-                        @Html.ValidationMessageFor(model => model.HtmlContent, "", new { @class = "text-danger" })
-                    </div>
-                    <div class="form-group">
-                        <div class="checkbox" style="margin-left:3px;">
-                            <div class="checkbox3 checkbox-round checkbox-inline">
-                                <input type="checkbox" asp-for="IsAppproved" id="checkbox-1">
-                                <label for="checkbox-1">
-                                    Is Aprooved ?
-                                </label>
-                            </div>
-                            <div class="checkbox3 checkbox-round checkbox-inline">
-                                <input type="checkbox" asp-for="IsHome" id="checkbox-2">
-                                <label for="checkbox-2">
-                                    Is Home ?
-                                </label>
-                            </div>
-                            <div class="checkbox3 checkbox-round checkbox-inline">
-                                <input type="checkbox" asp-for="IsSlider" id="checkbox-3">
-                                <label for="checkbox-3">
-                                    Is Slider ?
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title">@Model.Title</h3>
 
-                </div>
-                <div class="panel-footer">
-                    <button type="submit" class="btn btn-primary">Düzenle</button>
-                    <a type="button" asp-controller="Blog" asp-action="Index" class="btn btn-info" style="float:right;">İptal</a>
-                </div>
-            </form>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                <i class="fas fa-minus"></i>
+            </button>
         </div>
-
-        <!--Comments Start-->
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                Yorumlar
-            </div>
-            <div class="panel-body">
-                <table id="example" class="display cell-border" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th style="width:40%">Name</th>
-                            <th style="width:20%">E-Mail</th>
-                            <th style="width:20%">Date</th>
-                            <th style="width:20%">Ayrıntı</th>
-                        </tr>
-                    </thead>
-                    <tbody id="Blogs">
-                        @foreach (var comment in Model.Comments)
-                        {
-                            <tr id="@comment.Id">
-                                <td style="width:40%">@comment.Name</td>
-                                <td style="width:20%">@comment.Email</td>
-                                <td style="width:20%">@comment.dateAdded.ToString("dd MMM yyyy")</td>
-                                <td style="width:20%;text-align:center">
-                                    <a type="button" title="Düzenle" class="btn btn-warning btn-sm open-EditCommentDialog" data-comment-name="@comment.Name" data-comment-id="@comment.Id" data-comment-message="@comment.Message" data-comment-email="@comment.Email" data-comment-date="@comment.dateAdded" data-toggle="modal" data-target="#editCommentModal">
-                                        <i class="fa fa-edit"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th style="width:40%">Name</th>
-                            <th style="width:20%">E-Mail</th>
-                            <th style="width:20%">Tarih</th>
-                            <th style="width:20%">Ayrıntı</th>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-        <!--Comments End-->
     </div>
+    <form id="editBlog" asp-controller="Blog" asp-action="Edit" method="post" enctype="multipart/form-data">
+        <div class="card-body">
+            <div class="form-group">
+                <label>Category</label>
+                <select class="js-example-basic-multiple" id="categories" name="categories[]" multiple="multiple" asp-items="ViewBag.Categories" style="width:100%">
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Title"></label>
+                <input type="hidden" asp-for="Id" value="@Model.Id" />
+                <input type="text" class="form-control" asp-for="Title" placeholder="Enter Blog Name">
+                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label asp-for="Description"></label>
+                <input type="text" class="form-control" asp-for="Description" placeholder="Enter Description">
+                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label asp-for="ImageUrl" data-toggle="collapse" href="#collapseExample" title="Mevcut Resmi Görmek İçin Tıklayın" aria-controls="collapseExample">Image <i class="fa fa-angle-down"></i></label>
+                <div class="collapse" id="collapseExample">
+                    <div class="card card-body text-center">
+                        @if (Model.ImageUrl == null)
+                        {
+                            @: <p>Resim bulunmamaktadır.</p>
+                        }
+                        else
+                        {
+                            <img id="myImg" src="/Home/Blog/Img/@Model.ImageUrl" style="width:100%;max-width:300px">
+                        }
+                    </div>
+                </div>
+                <input type="file" class="form-control-file" asp-for="ImageUrl">
+            </div>
+            <div class="form-group">
+                <label asp-for="HtmlContent"></label>
+                <input type="text" class="form-control" asp-for="HtmlContent" placeholder="Enter Content">
+                @Html.ValidationMessageFor(model => model.HtmlContent, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" asp-for="IsHome">
+                    <label class="custom-control-label" for="IsHome">Anasayfa</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" asp-for="IsAppproved">
+                    <label class="custom-control-label" for="IsAppproved">Onay</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" asp-for="IsSlider">
+                    <label class="custom-control-label" for="IsSlider">Slider</label>
+                </div>
+            </div>
+            
+
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-success">Düzenle</button>
+            <a type="button" asp-controller="Blog" asp-action="Index" class="btn btn-secondary" style="float:right;">İptal</a>
+        </div>
+    </form>
+    <!-- /.card-body -->
+</div>
+
+<div class="card card-info">
+    <div class="card-header">
+        <h3 class="card-title">Yorumlar</h3>
+
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                <i class="fas fa-minus"></i>
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="example" class="table table-bordered table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th style="width:40%">Name</th>
+                    <th style="width:20%">E-Mail</th>
+                    <th style="width:20%">Date</th>
+                    <th style="width:20%">Ayrıntı</th>
+                </tr>
+            </thead>
+            <tbody id="Blogs">
+                @foreach (var comment in Model.Comments)
+                {
+                    <tr id="@comment.Id">
+                        <td style="width:40%">@comment.Name</td>
+                        <td style="width:20%">@comment.Email</td>
+                        <td style="width:20%">@comment.dateAdded.ToString("dd MMM yyyy")</td>
+                        <td style="width:20%;text-align:center">
+                            <a type="button" title="Düzenle" class="btn btn-warning btn-sm open-EditCommentDialog" data-comment-name="@comment.Name" data-comment-id="@comment.Id" data-comment-message="@comment.Message" data-comment-email="@comment.Email" data-comment-date="@comment.dateAdded" data-toggle="modal" data-target="#editCommentModal">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th style="width:40%">Name</th>
+                    <th style="width:20%">E-Mail</th>
+                    <th style="width:20%">Tarih</th>
+                    <th style="width:20%">Ayrıntı</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="card-footer">
+    </div>
+    <!-- /.card-body -->
 </div>
 
 <!-- Trigger the Modal -->
 <!-- The Modal -->
 <div id="myModal" class="modalIMG">
-
     <!-- The Close Button -->
     <span class="close">&times;</span>
-
     <!-- Modal Content (The Image) -->
     <img class="modal-contentIMG" id="img01">
-
     <!-- Modal Caption (Image Text) -->
     <div id="caption"></div>
 </div>
@@ -179,8 +191,28 @@
 
     </script>
     <script src="~/Admin/js/notie.min.js"></script>
-    <script type="text/javascript" src="/Admin/js/dataTables/jquery-3.5.1.js"></script>
-    <script type="text/javascript" src="/Admin/js/dataTables/jquery.dataTables.min.js"></script>
+    <!-- DataTables  & Plugins -->
+    <script src="/Admin/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/jszip/jszip.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/pdfmake/pdfmake.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/pdfmake/vfs_fonts.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+    <script>
+        $(function () {
+            $("#example").DataTable({
+                "responsive": true, "lengthChange": false, "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#example_wrapper .col-md-6:eq(0)');
+        });
+    </script>
+    <script src="/Admin/AdminLTE/dist/js/adminlte.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

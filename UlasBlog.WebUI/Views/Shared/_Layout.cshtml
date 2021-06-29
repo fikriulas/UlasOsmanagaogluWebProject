@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="~/Home/css/iziToast.min.css" />
     <!-- Theme Style -->
     <link rel="stylesheet" href="/Home/css/style.css">
+
 </head>
 <body>
     <div class="wrap">
@@ -50,12 +51,12 @@
                                 <a class="nav-link" href="#">Business</a>
                             </li>
                             <!--Category-->
-                                @await Component.InvokeAsync("CategoryMenu")                            
+                            @await Component.InvokeAsync("CategoryMenu")
                             <li class="nav-item">
                                 <a class="nav-link" href="about.html">About</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="contact.html">Contact</a>
+                                <a class="nav-link" asp-controller="Home" asp-action="Contact">İletişim</a>
                             </li>
                         </ul>
                     </div>
@@ -80,7 +81,7 @@
                             @RenderBody()
                         </div>
                         <div class="row mt-5">
-                            
+
                         </div>
                     </div>
                     <!-- END main-content -->
@@ -120,7 +121,7 @@
                             </div>
                             <div class="col-md-1"></div>
                             <div class="col-md-4">
-                                
+
                                 <div class="mb-5">
                                     <h3>Social</h3>
                                     <ul class="list-unstyled footer-social">
@@ -159,10 +160,8 @@
     <script src="/Home/js/owl.carousel.min.js"></script>
     <script src="/Home/js/jquery.waypoints.min.js"></script>
     <script src="/Home/js/jquery.stellar.min.js"></script>
-
-
     <script src="/Home/js/main.js"></script>
     @RenderSection("Blog", false)
-
+    @RenderSection("Contact", false)
 </body>
 </html>

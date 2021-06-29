@@ -42,15 +42,19 @@ $("#addCategoryf").submit(function (event) {
             else
                 trclass = "even";
 
-            var veri = '<tr id=' + data.id + ' class=' + trclass + '><td class="sorting_1">' + data.id + '</td><td>' + data.name + '</td><td><a  type="button" title="Düzenle" class="btn btn-warning btn-sm open-EditCategoryDialog" data-category-name="' + data.name + '" data-category-id="' + data.id + '" data-toggle="modal" data-target="#editCategoryModal"><i class="fa fa-edit"></i></a><a style="margin-left:3.5px;" onclick=Delete("/Category/Delete/' + data.id + '") title="Sil" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i></a></td></tr>';
+            var veri = '<tr id=' + data.id + ' class=' + trclass + '><td class="sorting_1">' + data.id + '</td><td>' + data.name + '</td><td><a  type="button" title="Düzenle" class="btn btn-info btn-sm open-EditCategoryDialog" data-category-name="' + data.name + '" data-category-id="' + data.id + '" data-toggle="modal" data-target="#editCategoryModal"><i class="fas fa-pencil-alt"></i> Edit</a><a style="margin-left:3.5px;" onclick=Delete("/Category/Delete/' + data.id + '") title="Sil" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</a></td></tr>';
             $("#Categories").append(veri);
-            jQuery.noConflict();
-            $('#addCategoryModal').modal('hide');
+            $("#addCategoryModal").removeClass("in");
+            $(".modal-backdrop").remove();
+            $('body').removeClass('modal-open');
+            $('body').css('padding-right', '');
+            $("#addCategoryModal").hide();
             $("#ajax-loading").hide();
-            notie.alert({ type: 'success', text: "Ekleme İşlemi Başarılı", time: 3 }) // Hides after 2 seconds
+            $("#ajax-loading").hide();
+            toastr.success("İşlem Başarılı");            
         },
         error: function () {
-            notie.alert({ type: 'error', text: 'İşlem Başarısız!' })
+            toastr.danger("İşlem Başarısız");    
         }
     });
 });
@@ -83,12 +87,10 @@ function Delete(url) {
                 success: function (Id) {
                     var m = document.getElementById(Id);
                     m.style.display = "none";
-                    notie.alert({ type: 'success', text: "Silme İşlemi Başarılı", time: 3 }) // Hides after 2 seconds
-                    //notie.alert({ type: 'success', text: 'Silme İşlemi Başarılı!', time: 3 }) // Hides after 2 seconds
+                    toastr.success("İşlem Başarılı");                                
                 },
                 error: function () {
-                    notie.alert({ type: 'error', text: 'İşlem Başarısız!' })
-                    //console.log("İşlem başarısız")
+                    toastr.danger("İşlem Başarısız");            
                 }
             });
         }

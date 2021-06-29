@@ -25,6 +25,8 @@ namespace UlasBlog.WebUI.Controllers
         public IActionResult Index(int page = 1)
         {
             var blogs = uow.Blogs.GetAll()
+                .Where(i => i.IsAppproved)
+                .Where(i =>i.IsHome)
                 .Include(i => i.Comments)
                 .Select(i => new BlogDetail()
                 {
@@ -73,17 +75,21 @@ namespace UlasBlog.WebUI.Controllers
                     totalComment = i.Comments.Count(),
                     Categories = i.BlogCategories.Select(c => c.Category).ToList()
                 }).FirstOrDefault();
-
-            var blogview = uow.Blogs.GetAll()
+            if(blog!=null)
+            {
+                var blogview = uow.Blogs.GetAll()
                .Where(i => i.SlugUrl == SlugUrl)
                .FirstOrDefault();
 
-            blogview.ViewCount += 1;
-            uow.Blogs.Edit(blogview);
-            uow.SaveChanges();
-
-
-            return View(blog);
+                blogview.ViewCount += 1;
+                uow.Blogs.Edit(blogview);
+                uow.SaveChanges();
+                return View(blog);
+            }
+            else
+            {
+                return View("_404NotFound");
+            }            
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -127,6 +133,34 @@ namespace UlasBlog.WebUI.Controllers
                 .Where(i => i.Categories.Any(b => b.SlugUrl == SlugUrl)).AsQueryable().ToPagedList(page, 1);
 
             return View(yeni);
+        }       
+        public IActionResult Contact()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Contact(Contact contact)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    contact.dateAdded = DateTime.Now;
+                    uow.Contacts.Add(contact);
+                    uow.SaveChanges();
+                    return Ok(); // success çalıştır.  
+                }
+                catch (Exception ex)
+                {
+                    var error = ex.Message;                    
+                    //log tutulacak.
+                    return BadRequest("Bir Hata Oluştu.");
+                }
+                              
+            }
+            var validError = "Kontrol edip, tekrar deneyin";
+            return BadRequest(validError);
+            
         }
 
 

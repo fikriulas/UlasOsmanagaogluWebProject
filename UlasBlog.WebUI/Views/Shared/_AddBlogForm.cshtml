@@ -37,28 +37,23 @@
                         @Html.ValidationMessageFor(model => model.HtmlContent, "", new { @class = "text-danger" })
                     </div>
                     <div class="form-group">
-                        <div class="checkbox" style="margin-left:3px;">
-                            <div class="checkbox3 checkbox-round checkbox-inline">
-                                <input type="checkbox" asp-for="IsAppproved" id="checkbox-1">
-                                <label for="checkbox-1">
-                                    Is Aprooved ?
-                                </label>
-                            </div>
-                            <div class="checkbox3 checkbox-round checkbox-inline">
-                                <input type="checkbox" checked asp-for="IsHome" id="checkbox-2">
-                                <label for="checkbox-2">
-                                    Is Home ?
-                                </label>
-                            </div>
-                            <div class="checkbox3 checkbox-round checkbox-inline">
-                                <input type="checkbox" asp-for="IsSlider" id="checkbox-3">
-                                <label for="checkbox-3">
-                                    Is Slider ?
-                                </label>
-                            </div>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" checked asp-for="IsHome">
+                            <label class="custom-control-label" for="IsHome">Onay</label>
                         </div>
                     </div>
-
+                    <div class="form-group">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" checked asp-for="IsAppproved">
+                            <label class="custom-control-label" for="IsAppproved">Anasayfa</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" asp-for="IsSlider">
+                            <label class="custom-control-label" for="IsSlider">Slider</label>
+                        </div>
+                    </div>                    
                 </div>
                 <div class="modal-footer">
                     <label id="ajax-loading" style="float:left;display:none">

@@ -4,9 +4,6 @@ $(document).ready(function () {
         placeholder: ' Select any Category'
     });
 });
-$(document).ready(function () {
-    $('#example').DataTable();
-});
 
 function myFunction() {
     var m = document.getElementById("0");
@@ -57,17 +54,18 @@ $("#addBlog").submit(function (event) {
                 '<td style="width:20%"> ' + blog.authorId + '</td>' +
                 '<td style="width:20%"> ' + formattedDate + '</td> ' +
                 '<td style="width:30%;text-align:center">' +
-                '<a type="button" title="Düzenle" class="btn btn-warning btn-sm open-EditCategoryDialog" data-category-name="title 5" data-category-id="6" data-toggle="modal" data-target="#editCategoryModal">' +
-                '<i class="fa fa-edit"></i>' +
-                '</a>' +
+                '<a class="btn btn-info btn-sm" type="button" title="Düzenle" class="btn btn-warning btn-sm" href="/Blog/Edit/'+blog.id+'"><i class="fas fa-pencil-alt"></i>Edit</a>'+                                            
                 '<a style="margin-left:3.5px;" onclick=Delete("/Blog/Delete/' + blog.id + '") title="Sil" class="btn btn-danger btn-sm">' +
-                '<i class="fa fa-trash-o"></i>' +
-                '</a></td></tr>';            
-            $("#Blogs").append(veri);
-            jQuery.noConflict();
-            $('#addBlogModal').modal('hide');
+                '<i class="fas fa-trash"> Delete</i>' +
+                '</a></td></tr>';      
+            $("#Blogs").append(veri);        
+            $("#addBlogModal").removeClass("in");
+            $(".modal-backdrop").remove();
+            $('body').removeClass('modal-open');
+            $('body').css('padding-right', '');
+            $("#addBlogModal").hide();           
             $("#ajax-loading").hide();
-            notie.alert({ type: 'success', text: "Ekleme İşlemi Başarılı", time: 3 }) // Hides after 2 seconds
+            toastr.success("İşlem Başarılı");            
         },
         error: function (ErrorMessage) {
             console.log(ErrorMessage)
@@ -76,7 +74,7 @@ $("#addBlog").submit(function (event) {
                 jQuery.noConflict();
                 $('#addBlogModal').modal('hide');
                 $("#ajax-loading").hide();
-                notie.alert({ type: 'error', text: "Ekleme başarısız, Bir Sorunla Karşılaşıldı. Yöneticiyle İletişime Geçin" })
+                toastr.error("İşlem Başarısız, Yönetici ile iletişime geçin.");
             }
             else {
                 console.log("Else girildi.")
@@ -116,10 +114,10 @@ function Delete(url) {
                 success: function (Id) {
                     var m = document.getElementById(Id);
                     m.style.display = "none";
-                    notie.alert({ type: 'success', text: 'Silme İşlemi Başarılı!', time: 3 }) // Hides after 2 seconds
+                    toastr.success("İşlem Başarılı");            
                 },
                 error: function (returnData) {
-                    notie.alert({ type: 'error', text: returnData.responseText })
+                    toastr.error("İşlem Başarısız, Yönetici ile iletişime geçin.");
                 }
             });
         }
@@ -145,10 +143,13 @@ $("#deleteComment").submit(function (event) {
         success: function (Id) {
             var m = document.getElementById(Id);
             m.style.display = "none";
-            jQuery.noConflict();
-            $('#editCommentModal').modal('hide'); 
+            $("#editCommentModal").removeClass("in");
+            $(".modal-backdrop").remove();
+            $('body').removeClass('modal-open');
+            $('body').css('padding-right', '');
+            $("#editCommentModal").hide();  
             $("#ajax-loading").hide();
-            notie.alert({ type: 'success', text: "Silme İşlemi Başarılı", time: 3 }) // Hides after 2 seconds
+            toastr.success("İşlem Başarılı");
         },
         error: function (ErrorMessage) {
             console.log(ErrorMessage)
@@ -157,7 +158,7 @@ $("#deleteComment").submit(function (event) {
                 jQuery.noConflict();
                 $('#editCommentModal').modal('hide');
                 $("#ajax-loading").hide();
-                notie.alert({ type: 'error', text: "Silme İşlemi başarısız, Bir Sorunla Karşılaşıldı. Yöneticiyle İletişime Geçin" })
+                toastr.error("İşlem Başarısız, Yönetici ile iletişime geçin.");
             }
             else {
                 console.log("Else girildi.")

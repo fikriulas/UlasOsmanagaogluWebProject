@@ -12,6 +12,10 @@
     {
         yourStyle = "margin-top:9%";
     }
+    else if (ViewContext.RouteData.Values["Controller"].ToString() == "Home" && ViewContext.RouteData.Values["Action"].ToString() == "Contact")
+    {
+        yourStyle = "margin-top:18%";
+    }
     else
     {
         yourStyle = "";

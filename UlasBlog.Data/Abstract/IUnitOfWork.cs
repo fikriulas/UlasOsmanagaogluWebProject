@@ -9,6 +9,7 @@ namespace UlasBlog.Data.Abstract
         IBlogRepository Blogs { get; }
         ICategoryRepository Categories { get; }
         ICommentRepository Comments { get; }
+        IContactRepository Contacts { get; }
         IBlogCategoryRepository BlogCategory { get; }
         int SaveChanges();
     }
