@@ -23,7 +23,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="card">
+                <div class="card card-gray-dark">
                     <div class="card-header">
                         <h3 class="card-title">
                             Gelen Mesajlar
@@ -110,6 +110,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
+    <!--SummerNote-->
+    <script>
+        $(document).ready(function () {
+            $('#reply').summernote({
+                placeholder: 'Yanıtınız..',
+                tabsize: 2,
+                height: 100
+            });
+        });
+    </script>
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
     <script src="~/Home/js/Contact.js"></script>
 
 }

@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UlasBlog.Data.Abstract;
-
+using UlasBlog.Entity;
+using MailKit.Net.Smtp;
+using MimeKit;
 namespace UlasBlog.WebUI.Controllers
 {    
     public class AdminController : Controller
@@ -32,6 +34,39 @@ namespace UlasBlog.WebUI.Controllers
                 return View("_404NotFound");
             }            
         }
+        [HttpPost]
+        public IActionResult ReplyMessage(Contact contact, string reply)
+        {
+            if (reply == null)
+                return BadRequest(": Yanıt Alanı Boş Bırakılamaz.");
+            try
+            {
+                var settings = uow.Settings.Get(5);
+                MimeMessage message = new MimeMessage();
+                MailboxAddress from = new MailboxAddress(settings.MailUserName, settings.MailUserName);
+                message.From.Add(from);
+
+                MailboxAddress to = new MailboxAddress(contact.Name,contact.Email);
+                message.To.Add(to);
+
+                message.Subject = contact.dateAdded.ToString("MM/dd/yyyy MM:ss") + " Tarihli Mesajınız Hakkında" ;
+                BodyBuilder bodyBuilder = new BodyBuilder();
+                bodyBuilder.HtmlBody = reply.ToString();
+                message.Body = bodyBuilder.ToMessageBody();
+                SmtpClient client = new SmtpClient();
+                client.Connect(settings.SmtpAddress, int.Parse(settings.Port), true);
+                client.Authenticate(settings.MailUserName, settings.MailPassword);
+                client.Send(message);
+                client.Disconnect(true);
+                client.Dispose();
+            }
+            catch (Exception ex)
+            {
+                var error = ex.Message;
+                return BadRequest();
+            }
+            return Ok();            
+        }
         public IActionResult ContactDelete(int id)
         {
             var contact = uow.Contacts.Get(id);
@@ -55,6 +90,44 @@ namespace UlasBlog.WebUI.Controllers
             }
             
         }
+        public IActionResult Settings()
+        {
+            try
+            {
+                var settings = uow.Settings.Get(5);
+                if (settings != null)
+                    return View(settings);
+                else
+                    return View("_404NotFound");
+
+            }
+            catch (Exception ex)
+            {
+                var error = ex.Message;
+                return View("_404NotFound");
+            }            
+        }
+        [HttpPost]
+        public IActionResult Settings(Settings settings)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    settings.UpdateDate = DateTime.Now;
+                    uow.Settings.Edit(settings);
+                    uow.SaveChanges();
+                    return Ok(); 
+                }
+                catch (Exception ex)
+                {
+                    var error = ex.Message;
+                    return BadRequest(error);
+                }
+            }
+            return BadRequest();
+        }
+
 
 
     }

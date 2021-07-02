@@ -17,6 +17,7 @@ namespace UlasBlog.Data.Concrete.EntityFramework
         private IBlogRepository _blogs;
         private ICommentRepository _comments;
         private IContactRepository _contacts;
+        private ISettingsRepository _settings;
         private IBlogCategoryRepository _BlogCategory;
 
         public ICategoryRepository Categories
@@ -56,6 +57,14 @@ namespace UlasBlog.Data.Concrete.EntityFramework
             get
             {
                 return _contacts ?? (_contacts = new EfContactRepository(dbContext));
+            }
+        }
+
+        public ISettingsRepository Settings
+        {
+            get
+            {
+                return _settings ?? (_settings = new EfSettingsRepository(dbContext));
             }
         }
 

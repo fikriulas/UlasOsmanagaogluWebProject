@@ -257,6 +257,14 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a asp-controller="Admin" asp-action="Settings" class="nav-link">
+                                <i class="nav-icon far fa-image"></i>
+                                <p>
+                                    Ayarlar
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon far fa-envelope"></i>
                                 <p>
@@ -543,6 +551,12 @@
         <!-- /.control-sidebar -->
     </div>
     <!-- ./wrapper -->
+    <script type="text/javascript">
+        $("#password").password('toggle');
+    </script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-show-password/1.0.3/bootstrap-show-password.min.js"></script>
     <!-- jQuery -->
     <script src="/Admin/AdminLTE/plugins/jquery/jquery.min.js"></script>
     <!-- jQuery UI 1.11.4 -->
@@ -583,10 +597,10 @@
     {
 <script>
     toastr.success("İşlem Başarılı");
-</script>
-}
+</script>}
     @RenderSection("Category", false)
     @RenderSection("Blog", false)
     @RenderSection("Contact", false)
+    @RenderSection("Settings", false)
 </body>
 </html>

@@ -11,7 +11,7 @@
     $(".modal-body #Email").val(email);
 });
 
-$("#ContactForm").submit(function (event) {
+$("#replyMessage").submit(function (event) {
     event.preventDefault();
     var form = $(this);
     var formData = new FormData(this);
@@ -26,35 +26,25 @@ $("#ContactForm").submit(function (event) {
             $("#ajax-loading").hide();
         },
         success: function () {
-            document.getElementById("ContactForm").reset();
-            iziToast.show({
-                title: 'Başarılı!',
-                message: 'Mesajınız iletildi.',
-                color: 'green', // blue, red, green, yellow
-                icon: 'fa fa-check'
-            });
+            document.getElementById("replyMessage").reset();
+            $("#editContactModal").removeClass("in");
+            $(".modal-backdrop").remove();
+            $('body').removeClass('modal-open');
+            $('body').css('padding-right', '');
+            $("#editContactModal").hide();
+            $("#ajax-loading").hide();            
+            console.log("toastr harici");
+            toastr.success("Mesaj iletildi.");
         },
         error: function (errorMessage) {
-            iziToast.show({
-                title: 'Başarısız!',
-                message: errorMessage.responseText,
-                color: 'red', // blue, red, green, yellow
-                icon: 'fa fa-times'
-            });
+            console.log(errorMessage);
+            toastr.error("Bir sorun oluştu" + errorMessage.responseText);
         },
         cache: false,
         contentType: false,
         processData: false
     });
 });
-//yanıt gönder butonuna tıklandığında css değişiklikleri.
-function replySection() {    
-    document.getElementById('replySection').style.display = "block";
-    const btn = document.getElementById("replyBtn");
-    btn.classList.remove('btn-warning');
-    btn.classList.add('btn-success');
-    btn.innerText = "Yanıtı Gönder";
-}
 
 function Delete(url) {
     event.preventDefault(); // prevent form submit
@@ -93,3 +83,40 @@ function Delete(url) {
         }
     });
 }
+
+$("#ContactForm").submit(function (event) {
+    event.preventDefault();
+    var form = $(this);
+    var formData = new FormData(this);
+    $.ajax({
+        url: form.attr("action"),
+        type: 'POST',
+        data: formData,
+        beforeSend: function () {
+            $("#ajax-loading").show();
+        },
+        complete: function () {
+            $("#ajax-loading").hide();
+        },
+        success: function () {
+            document.getElementById("ContactForm").reset();
+            iziToast.show({
+                title: 'Başarılı!',
+                message: 'Mesajınız iletildi.',
+                color: 'green', // blue, red, green, yellow
+                icon: 'fa fa-check'
+            });
+        },
+        error: function (errorMessage) {
+            iziToast.show({
+                title: 'Başarısız!',
+                message: errorMessage.responseText,
+                color: 'red', // blue, red, green, yellow
+                icon: 'fa fa-times'
+            });
+        },
+        cache: false,
+        contentType: false,
+        processData: false
+    });
+});
