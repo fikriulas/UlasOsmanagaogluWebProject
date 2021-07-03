@@ -34,40 +34,43 @@
                         <table id="ContactDatatable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
+                                    <th style="width:5%">Reply</th>
                                     <th style="width:40%">Name</th>
                                     <th style="width:20%">E-Mail</th>
                                     <th style="width:20%">Date</th>
-                                    <th style="width:20%">Aksiyon</th>
+                                    <th style="width:15%">Aksiyon</th>
                                 </tr>
                             </thead>
                             <tbody id="Contacts">
                                 @foreach (var contact in Model)
                                 {
-                                    <tr id="@contact.Id">
-                                        <td style="width:40%">@contact.Name</td>
-                                        <td style="width:20%">@contact.Email</td>
-                                        <td style="width:20%">@contact.dateAdded.ToString("dd MMM yyyy")</td>
-                                        <td style="width:20%;text-align:center">
-                                            <a type="button" title="Düzenle" class="btn btn-warning btn-sm open-editContactModal" data-contact-name="@contact.Name" data-contact-date="@contact.dateAdded" data-contact-message="@contact.Message" data-contact-email="@contact.Email" data-contact-id="@contact.Id" data-toggle="modal" data-target="#editContactModal" asp-controller="Admin" asp-action="Edit" asp-route-Id="@contact.Id">
-                                                <i class="fas fa-pencil-alt">
-                                                </i>
-                                                Edit
-                                            </a>
-                                            <a onclick=Delete("/Admin/ContactDelete/@contact.Id") title="Sil" class="btn btn-danger btn-sm">
-                                                <i class="fas fa-trash">
-                                                </i>
-                                                Delete
-                                            </a>
-                                        </td>
-                                    </tr>
+                                <tr id="@contact.Id">
+                                    <td style="width:5%;" align="center">@Html.Raw(contact.IsRead ? "<i class='far fa-star'></i>": "<i class='fas fa-star'></i>")</td>
+                                    <td style="width:40%">@contact.Name</td>
+                                    <td style="width:20%">@contact.Email</td>
+                                    <td style="width:20%">@contact.dateAdded.ToString("dd MMM yyyy")</td>
+                                    <td style="width:15%;text-align:center">
+                                        <a type="button" title="Düzenle" class="btn btn-warning btn-sm open-editContactModal" data-contact-name="@contact.Name" data-contact-date="@contact.dateAdded" data-contact-message="@contact.Message" data-contact-email="@contact.Email" data-contact-id="@contact.Id" data-toggle="modal" data-target="#editContactModal" asp-controller="Admin" asp-action="Edit" asp-route-Id="@contact.Id">
+                                            <i class="fas fa-pencil-alt">
+                                            </i>
+                                            Edit
+                                        </a>
+                                        <a onclick=Delete("/Admin/ContactDelete/@contact.Id") title="Sil" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash">
+                                            </i>
+                                            Delete
+                                        </a>
+                                    </td>
+                                </tr>
                                 }
                             </tbody>
                             <tfoot>
                                 <tr>
+                                    <th style="width:5%">Reply</th>
                                     <th style="width:40%">Name</th>
                                     <th style="width:20%">E-Mail</th>
                                     <th style="width:20%">Date</th>
-                                    <th style="width:20%">Aksiyon</th>
+                                    <th style="width:15%">Aksiyon</th>
                                 </tr>
                             </tfoot>
                         </table>

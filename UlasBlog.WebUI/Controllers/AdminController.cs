@@ -24,7 +24,7 @@ namespace UlasBlog.WebUI.Controllers
         public IActionResult Contact()
         {
             try
-            {
+            {                
                 var contact = uow.Contacts.GetAll();
                 return View(contact);
             }
@@ -56,9 +56,13 @@ namespace UlasBlog.WebUI.Controllers
                 SmtpClient client = new SmtpClient();
                 client.Connect(settings.SmtpAddress, int.Parse(settings.Port), true);
                 client.Authenticate(settings.MailUserName, settings.MailPassword);
-                client.Send(message);
-                client.Disconnect(true);
-                client.Dispose();
+                //client.Send(message);
+                //client.Disconnect(true);
+                //client.Dispose();
+                contact.IsRead = true;
+                uow.Contacts.Edit(contact);
+                uow.SaveChanges();
+                
             }
             catch (Exception ex)
             {
@@ -127,7 +131,7 @@ namespace UlasBlog.WebUI.Controllers
             }
             return BadRequest();
         }
-
+        
 
 
     }

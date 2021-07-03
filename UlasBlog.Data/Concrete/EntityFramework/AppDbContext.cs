@@ -27,6 +27,7 @@ namespace UlasBlog.Data.Concrete.EntityFramework
             modelBuilder.Entity<Category>()
                 .HasIndex(u => u.SlugUrl)
                 .IsUnique(true);
+
         }
 
     }
