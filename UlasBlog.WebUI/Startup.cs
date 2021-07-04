@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using UlasBlog.Data.Abstract;
 using UlasBlog.Data.Concrete.EntityFramework;
 using UlasBlog.WebUI.IdentityCore;
+using UlasBlog.WebUI.IdentityCore.CustomValidation;
 
 namespace UlasBlog.WebUI
 {
@@ -32,12 +33,16 @@ namespace UlasBlog.WebUI
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("UlasBlog.WebUI")));
             services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection"), b => b.MigrationsAssembly("UlasBlog.WebUI")));
             services.AddIdentity<AppUser, IdentityRole>(opts=> {
+
+                opts.User.RequireUniqueEmail = true;
+                opts.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._şığüç";
+                //password default validation
                 opts.Password.RequiredLength = 6;
                 opts.Password.RequireNonAlphanumeric = false;
                 opts.Password.RequireUppercase = true;
                 opts.Password.RequireLowercase = true;
                 opts.Password.RequireDigit = true;
-            }).AddEntityFrameworkStores<AppIdentityDbContext>();
+            }).AddPasswordValidator<CustomPasswordValidator>().AddEntityFrameworkStores<AppIdentityDbContext>();
             services.AddControllersWithViews().AddRazorRuntimeCompilation().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 ); ; // runtime comp.
@@ -71,7 +76,7 @@ namespace UlasBlog.WebUI
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-            //Identity i�in middware eklenir.
+            //Identity için middware eklenir.
             app.UseAuthentication();
         }
     }
