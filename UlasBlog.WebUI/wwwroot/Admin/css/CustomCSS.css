@@ -1,4 +1,16 @@
-﻿#myImg {
+﻿.dataTables_filter {
+    float: right;
+}
+.dataTables_filter label {
+    margin-left:5px;
+    font-weight: normal;
+    white-space: nowrap;
+    text-align: left;
+}
+.dataTables_paginate ul.pagination {
+    justify-content: flex-end;
+}
+#myImg {
     border-radius: 5px;
     cursor: pointer;
     transition: 0.3s;

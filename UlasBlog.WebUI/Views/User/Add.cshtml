@@ -1,0 +1,73 @@
+﻿@model UserViewModel
+@{
+    ViewData["Title"] = "Add";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Kullanıcı Oluştur</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Admin</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="User" asp-action="Index">Kullanıcılar</a></li>
+                    <li class="breadcrumb-item active">Oluştur</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-gray-dark">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            Kullanıcı Oluştur
+                        </h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <form id="addUser" asp-controller="User" asp-action="Add" method="post" enctype="multipart/form-data">
+
+                        <div class="card-body">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>                            
+                            <div class="form-group">
+                                <label asp-for="UserName"></label>
+                                <input type="text" class="form-control" asp-for="UserName">
+                                @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Email"></label>
+                                <input type="text" class="form-control" asp-for="Email">
+                                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Password"></label>
+                                <input class="form-control" asp-for="Password">
+                                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-success">Oluştur</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</section>
+@section Users{
+    <script src="/Admin/AdminLTE/dist/js/adminlte.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="~/Admin/js/Users.js"></script>
+}

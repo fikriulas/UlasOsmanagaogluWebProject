@@ -1,0 +1,117 @@
+﻿@model IEnumerable<AppUser>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Kullanıcı Listesi</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Admin</a></li>
+                    <li class="breadcrumb-item active">Kullanıcılar</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-gray-dark">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            Kullanıcı Listesi - <a asp-controller="User" asp-action="Add" class="btn btn-success">
+                                <i class="fas fa-plus-square mr-1"></i> Kullanıcı Oluştur
+                            </a>
+                        </h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="UsersDatatable" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th style="width:40%">Name</th>
+                                    <th style="width:20%">E-Mail</th>                                    
+                                    <th style="width:15%">Aksiyon</th>
+                                </tr>
+                            </thead>
+                            <tbody id="Users">
+                                @foreach (var user in Model)
+                                {
+                                    <tr id="@user.Id">
+                                        <td style="width:40%">@user.UserName</td>
+                                        <td style="width:20%">@user.Email</td>
+
+                                        <td style="width:15%;text-align:center">
+                                            <a type="button" title="Düzenle" class="btn btn-warning btn-sm open-addUserModal" data-contact-name="@user.UserName" data-toggle="modal" data-target="#addUserModal" asp-controller="User" asp-action="Add" asp-route-Id="@user.Id">
+                                                <i class="fas fa-pencil-alt">
+                                                </i>
+                                                Edit
+                                            </a>
+                                            <a onclick=Delete("/Admin/ContactDelete/@user.Id") title="Sil" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash">
+                                                </i>
+                                                Delete
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th style="width:40%">Name</th>
+                                    <th style="width:20%">E-Mail</th>                                    
+                                    <th style="width:15%">Aksiyon</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</section>
+@section Users{
+    <!-- DataTables  & Plugins -->
+    <script src="/Admin/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/jszip/jszip.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/pdfmake/pdfmake.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/pdfmake/vfs_fonts.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+    <script>
+        $(function () {
+            $("#UsersDatatable").DataTable({
+                "responsive": true, "lengthChange": false, "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#UsersDatatable_wrapper .col-md-6:eq(0)');
+        });
+    </script>
+    <script src="/Admin/AdminLTE/dist/js/adminlte.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="~/Admin/js/Users.js"></script>
+    @if (ViewData["AddUser"] != null)
+    {
+        <script>
+            toastr.success("Kullanıcı Eklendi");
+        </script>
+    }
+}
