@@ -50,10 +50,7 @@
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="index3.html" class="nav-link">Home</a>
-                </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <a href="#" class="nav-link">Contact</a>
+                    <a asp-controller="home" asp-action="Index" class="nav-link">Ana Sayfa</a>
                 </li>
             </ul>
 
@@ -169,19 +166,10 @@
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-header">EXAMPLES</li>
-                        <li class="nav-item">
-                            <a href="pages/calendar.html" class="nav-link">
-                                <i class="nav-icon far fa-calendar-alt"></i>
-                                <p>
-                                    Calendar
-                                    <span class="badge badge-info right">2</span>
-                                </p>
-                            </a>
-                        </li>
+                        <li class="nav-header">MENÜ</li>
                         <li class="nav-item">
                             <a asp-controller="Category" asp-action="Index" class="nav-link">
-                                <i class="nav-icon fas fa-columns"></i>
+                                <i class="nav-icon fas fa-layer-group"></i>
                                 <p>
                                     Kategory
                                 </p>
@@ -189,7 +177,7 @@
                         </li>
                         <li class="nav-item">
                             <a asp-controller="Blog" asp-action="Index" class="nav-link">
-                                <i class="nav-icon far fa-image"></i>
+                                <i class="nav-icon fas fa-book"></i>
                                 <p>
                                     Blog
                                 </p>
@@ -197,7 +185,7 @@
                         </li>
                         <li class="nav-item">
                             <a asp-controller="Admin" asp-action="Contact" class="nav-link">
-                                <i class="nav-icon far fa-image"></i>
+                                <i class="nav-icon far fa-id-card"></i>
                                 <p>
                                     İletişim
                                 </p>
@@ -205,7 +193,7 @@
                         </li>
                         <li class="nav-item">
                             <a asp-controller="Admin" asp-action="Settings" class="nav-link">
-                                <i class="nav-icon far fa-image"></i>
+                                <i class="nav-icon fas fa-cogs"></i>
                                 <p>
                                     Ayarlar
                                 </p>
@@ -213,7 +201,7 @@
                         </li>
                         <li class="nav-item">
                             <a asp-controller="User" asp-action="Index" class="nav-link">
-                                <i class="nav-icon fas fa-columns"></i>
+                                <i class="nav-icon fas fa-users"></i>
                                 <p>
                                     Kullanıcılar
                                 </p>
