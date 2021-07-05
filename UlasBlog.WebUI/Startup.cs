@@ -34,6 +34,7 @@ namespace UlasBlog.WebUI
             services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection"), b => b.MigrationsAssembly("UlasBlog.WebUI")));
             services.AddIdentity<AppUser, IdentityRole>(opts=> {
 
+                //user default validation
                 opts.User.RequireUniqueEmail = true;
                 opts.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._şığüç";
                 //password default validation
@@ -42,10 +43,12 @@ namespace UlasBlog.WebUI
                 opts.Password.RequireUppercase = true;
                 opts.Password.RequireLowercase = true;
                 opts.Password.RequireDigit = true;
-            }).AddPasswordValidator<CustomPasswordValidator>().AddUserValidator<CustomUserValidator>().AddEntityFrameworkStores<AppIdentityDbContext>();
+            }).AddPasswordValidator<CustomPasswordValidator>()
+            .AddUserValidator<CustomUserValidator>()
+            .AddErrorDescriber<CustomIdentityErrorDescriber>()
+            .AddEntityFrameworkStores<AppIdentityDbContext>();
             services.AddControllersWithViews().AddRazorRuntimeCompilation().AddNewtonsoftJson(options =>
-    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-); ; // runtime comp.
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); // runtime comp.
             services.AddControllersWithViews();
             services.AddTransient<IUnitOfWork, EfUnitOfWork>();
         }
