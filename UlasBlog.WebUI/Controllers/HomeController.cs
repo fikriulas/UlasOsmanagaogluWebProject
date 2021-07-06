@@ -162,6 +162,19 @@ namespace UlasBlog.WebUI.Controllers
             return BadRequest(validError);
             
         }
+        public IActionResult Login()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Login(LoginViewModel login)
+        {
+            if (ModelState.IsValid)
+            {
+                return View();
+            }
+            return View();
+        }
 
 
 
