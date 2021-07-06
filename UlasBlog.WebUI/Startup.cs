@@ -33,26 +33,10 @@ namespace UlasBlog.WebUI
         {
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("UlasBlog.WebUI")));
             services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection"), b => b.MigrationsAssembly("UlasBlog.WebUI")));
-            //Cookie bazlı kimlik doğrulama
-            CookieBuilder cookieBuilder = new CookieBuilder();
-            cookieBuilder.Name = "MyBlog";
-            cookieBuilder.HttpOnly = true; // sadece http isteği üzerinden cookie bilgisi okur. Client cookie bilgisini göremez.            
-            
-            //cookieBuilder.Expiration = System.TimeSpan.FromMinutes(60); //cookie 60 dk kalır.
-            cookieBuilder.SameSite = SameSiteMode.Strict; // sadece ilgili site üzerinden bu cookie erişilir. Başka site üzerinden bu cookie erişilmez. (lax bu özelliği kapatır.) Strict ile csrf açığı kapatılır.
-            cookieBuilder.SecurePolicy = CookieSecurePolicy.SameAsRequest;   //always seçilirse cookie bilgisini sadece https üzerinden gönderir./sameasRequest ile http ve https üzerinden gönderir. İsteğe bağlı.
-            services.ConfigureApplicationCookie(opts =>
-            {
-                opts.ExpireTimeSpan = System.TimeSpan.FromMinutes(60);
-                opts.LoginPath = new PathString("/Home/Index"); // yetkisi olmayan kullanıcıların yönlendirileceği path.
-                //opts.LogoutPath = new PathString("/Home/Index"); // logout olduğunda yönlendirilecek path.
-                opts.Cookie = cookieBuilder;
-                opts.SlidingExpiration = true; // cookiebuilder.expiration'da belirlenen sürenin yarısında kullanıcı giriş yaparsa bu expiration süresi ikiye katlanır.  
 
-            });
-            //Cokie end 
-            services.AddIdentity<AppUser, IdentityRole>(opts=> {
-                
+            services.AddIdentity<AppUser, IdentityRole>(opts =>
+            {
+
                 //user default validation
                 opts.User.RequireUniqueEmail = true;
                 opts.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._şığüç";
@@ -66,6 +50,24 @@ namespace UlasBlog.WebUI
             .AddUserValidator<CustomUserValidator>()
             .AddErrorDescriber<CustomIdentityErrorDescriber>()
             .AddEntityFrameworkStores<AppIdentityDbContext>();
+            //Cookie bazlı kimlik doğrulama
+            CookieBuilder cookieBuilder = new CookieBuilder();
+            cookieBuilder.Name = "MyBlog";
+            cookieBuilder.HttpOnly = true; // sadece http isteği üzerinden cookie bilgisi okur. Client cookie bilgisini göremez.            
+
+            //cookieBuilder.Expiration = System.TimeSpan.FromMinutes(60); //cookie 60 dk kalır.
+            cookieBuilder.SameSite = SameSiteMode.Strict; // sadece ilgili site üzerinden bu cookie erişilir. Başka site üzerinden bu cookie erişilmez. (lax bu özelliği kapatır.) Strict ile csrf açığı kapatılır.
+            cookieBuilder.SecurePolicy = CookieSecurePolicy.SameAsRequest;   //always seçilirse cookie bilgisini sadece https üzerinden gönderir./sameasRequest ile http ve https üzerinden gönderir. İsteğe bağlı.
+            services.ConfigureApplicationCookie(opts =>
+            {
+                opts.ExpireTimeSpan = System.TimeSpan.FromMinutes(60);
+                opts.LoginPath = new PathString("/Home/Login"); // yetkisi olmayan kullanıcıların yönlendirileceği path.
+                //opts.LogoutPath = new PathString("/Home/Index"); // logout olduğunda yönlendirilecek path.
+                opts.Cookie = cookieBuilder;
+                opts.SlidingExpiration = true; // cookiebuilder.expiration'da belirlenen sürenin yarısında kullanıcı giriş yaparsa bu expiration süresi ikiye katlanır.  
+
+            });
+            //Cokie end 
             services.AddControllersWithViews().AddRazorRuntimeCompilation().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); // runtime comp.
             services.AddControllersWithViews();
@@ -75,6 +77,7 @@ namespace UlasBlog.WebUI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -85,21 +88,20 @@ namespace UlasBlog.WebUI
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            //Identity için middware eklenir.
+            app.UseAuthentication();
             app.UseRouting();
-
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-            //Identity için middware eklenir.
-            app.UseAuthentication();
+            
         }
     }
 }

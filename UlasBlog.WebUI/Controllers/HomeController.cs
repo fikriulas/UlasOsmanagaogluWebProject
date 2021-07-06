@@ -168,8 +168,9 @@ namespace UlasBlog.WebUI.Controllers
             return BadRequest(validError);
 
         }
-        public IActionResult Login()
+        public IActionResult Login(string returnUrl)
         {
+            TempData["returnUrl"] = returnUrl; // actionlar arasında veri taşıyabilir.
             return View();
         }
         [HttpPost]
@@ -181,9 +182,13 @@ namespace UlasBlog.WebUI.Controllers
                 if (user != null)
                 {
                     await signInManager.SignOutAsync(); // login işleminden önce sistemde siteyle ilgili bir cookie olma durumuna karşın logout yapılır.
-                    Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user, login.Password, false, false);
+                    Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user, login.Password, login.RememberMe, false);
                     if (result.Succeeded)
                     {
+                        if (TempData["returnUrl"] != null)
+                        {
+                            return Redirect(TempData["returnUrl"].ToString());
+                        }
                         return RedirectToAction("Index", "Home");
                     }
                 }
@@ -192,8 +197,7 @@ namespace UlasBlog.WebUI.Controllers
                     ModelState.AddModelError("", "Hatali E-Mail Yada Şifre Girdiniz");
                 }
             }
-
-            return View();
+            return View(login);
         }
 
 

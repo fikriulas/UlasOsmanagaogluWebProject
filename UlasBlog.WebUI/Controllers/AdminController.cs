@@ -7,8 +7,11 @@ using UlasBlog.Data.Abstract;
 using UlasBlog.Entity;
 using MailKit.Net.Smtp;
 using MimeKit;
+using Microsoft.AspNetCore.Authorization;
+
 namespace UlasBlog.WebUI.Controllers
 {    
+    [Authorize]
     public class AdminController : Controller
     {
         private IUnitOfWork uow;

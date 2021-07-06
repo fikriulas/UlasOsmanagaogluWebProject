@@ -19,5 +19,6 @@ namespace UlasBlog.WebUI.Models
         [StringLength(50, ErrorMessage = "Şifre 15 Karakterden Uzun Olamaz")]
         [MinLength(6,ErrorMessage = "Şifre En Az 6 Karakterden Oluşmalıdır")]
         public string Password { get; set; }
+        public bool RememberMe { get; set; }
     }
 }
