@@ -11,11 +11,6 @@ namespace UlasBlog.WebUI.Components
 {
     public class CategoryMenu : ViewComponent
     {
-        /*
-         * ana sayfada sağ taraftaki sidebarı temsil eder.
-         * burada 3 adet blog ve tüm kategoriler listeleneceği için blogandcategory modeli
-         * kullanılmıştır. 
-         * */
         private IUnitOfWork uow;
         public CategoryMenu(IUnitOfWork _unitOfWork)
         {
@@ -23,7 +18,6 @@ namespace UlasBlog.WebUI.Components
         }
         public IViewComponentResult Invoke()
         {
-            // vote'a göre ilk 3 bloğu alır. 
             var categories = uow.Categories.GetAll();
             return View(categories);
         }

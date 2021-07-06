@@ -20,13 +20,15 @@
 <body class="hold-transition login-page">
     <div class="login-box">
         <div class="login-logo">
-            <a href="../../index2.html"><b>Yönetim</b>Paneli</a>
+            <a><b>Yönetim</b>Paneli</a>
         </div>
         <!-- /.login-logo -->
         <div class="card">
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Giriş Yapın</p>
-
+                <div class="text-danger text-center" asp-validation-summary="ModelOnly">
+                    
+                </div>
                 <form id="LoginForm" asp-controller="Home" asp-action="Login" method="post" enctype="multipart/form-data">
                     <div class="input-group mb-3">
                         <input asp-for="Email" class="form-control" placeholder="Email">

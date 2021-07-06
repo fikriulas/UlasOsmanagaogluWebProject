@@ -36,12 +36,14 @@ namespace UlasBlog.WebUI
             //Cookie bazlı kimlik doğrulama
             CookieBuilder cookieBuilder = new CookieBuilder();
             cookieBuilder.Name = "MyBlog";
-            cookieBuilder.HttpOnly = true; // sadece http isteği üzerinden cookie bilgisi okur. Client cookie bilgisini göremez.
-            cookieBuilder.Expiration = System.TimeSpan.FromMinutes(60 ); //cookie 60 dk kalır.
+            cookieBuilder.HttpOnly = true; // sadece http isteği üzerinden cookie bilgisi okur. Client cookie bilgisini göremez.            
+            
+            //cookieBuilder.Expiration = System.TimeSpan.FromMinutes(60); //cookie 60 dk kalır.
             cookieBuilder.SameSite = SameSiteMode.Strict; // sadece ilgili site üzerinden bu cookie erişilir. Başka site üzerinden bu cookie erişilmez. (lax bu özelliği kapatır.) Strict ile csrf açığı kapatılır.
             cookieBuilder.SecurePolicy = CookieSecurePolicy.SameAsRequest;   //always seçilirse cookie bilgisini sadece https üzerinden gönderir./sameasRequest ile http ve https üzerinden gönderir. İsteğe bağlı.
             services.ConfigureApplicationCookie(opts =>
             {
+                opts.ExpireTimeSpan = System.TimeSpan.FromMinutes(60);
                 opts.LoginPath = new PathString("/Home/Index"); // yetkisi olmayan kullanıcıların yönlendirileceği path.
                 //opts.LogoutPath = new PathString("/Home/Index"); // logout olduğunda yönlendirilecek path.
                 opts.Cookie = cookieBuilder;
@@ -50,7 +52,7 @@ namespace UlasBlog.WebUI
             });
             //Cokie end 
             services.AddIdentity<AppUser, IdentityRole>(opts=> {
-
+                
                 //user default validation
                 opts.User.RequireUniqueEmail = true;
                 opts.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._şığüç";
