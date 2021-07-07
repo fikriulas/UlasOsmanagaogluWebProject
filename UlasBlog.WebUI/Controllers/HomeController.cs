@@ -181,20 +181,37 @@ namespace UlasBlog.WebUI.Controllers
                 AppUser user = await userManager.FindByEmailAsync(login.Email); // gelen email ile kullanıcı var mı kontrol edilir.
                 if (user != null)
                 {
+                    if (await userManager.IsLockedOutAsync(user)) // kullanıcı lock olmuş mu bunun kontrolünü yapar.
+                    {
+                        ModelState.AddModelError("", "Hesabınız Bir Süreliğine Devre Dışı Bırakılmıştır");
+                        return View(login);
+                    }
                     await signInManager.SignOutAsync(); // login işleminden önce sistemde siteyle ilgili bir cookie olma durumuna karşın logout yapılır.
                     Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user, login.Password, login.RememberMe, false);
-                    if (result.Succeeded)
+                    if (result.Succeeded) // kullanıcı başarılı giriş yaparsa.
                     {
+                        await userManager.ResetAccessFailedCountAsync(user); // kullanıcı başarılı login olursa, başarısız login sayısı sıfırlanır.
                         if (TempData["returnUrl"] != null)
                         {
                             return Redirect(TempData["returnUrl"].ToString());
                         }
                         return RedirectToAction("Index", "Home");
                     }
+                    else // başarısız giriş yaparsa.
+                    {
+                        await userManager.AccessFailedAsync(user); // başarısız login sayısını bir attırır.
+                        int failAccess = await userManager.GetAccessFailedCountAsync(user); // başarısız giriş sayısını tutar.
+                        if (failAccess == 3)
+                        {
+                            await userManager.SetLockoutEndDateAsync(user, new System.DateTimeOffset(DateTime.Now.AddMinutes(20))); // kullanıcı başarısız giriş yaparsa, 20 dakika hesabı kitler.
+                            ModelState.AddModelError("", "Hesabınız Başarısız Girişlerden Dolayı 20 Dakika Kitlenmiştir");
+                        }
+                        ModelState.AddModelError("", "Hatalı E-Mail Yada Şifre Giriniz");
+                    }
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Hatali E-Mail Yada Şifre Girdiniz");
+                    ModelState.AddModelError("", "Hatalı E-Mail Yada Şifre Girdiniz");
                 }
             }
             return View(login);
