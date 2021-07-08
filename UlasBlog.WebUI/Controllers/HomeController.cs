@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-
+using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using MailKit.Net.Smtp;
 using System.Threading.Tasks;
 using UlasBlog.Data.Abstract;
 using UlasBlog.Entity;
@@ -171,6 +172,7 @@ namespace UlasBlog.WebUI.Controllers
         public IActionResult Login(string returnUrl)
         {
             TempData["returnUrl"] = returnUrl; // actionlar arasında veri taşıyabilir.
+            ViewBag.SuccessSave = TempData["PasswordReset"] ?? null; // Edit post methodundan geliyor.            
             return View();
         }
         [HttpPost]
@@ -216,7 +218,84 @@ namespace UlasBlog.WebUI.Controllers
             }
             return View(login);
         }
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult ForgotPassword(ForgotPasswordViewModel forgotPasswordView)
+        {
+            AppUser user = userManager.FindByEmailAsync(forgotPasswordView.Email).Result; // kullanıcı var mı kontrol edilir.
+            if (user != null)
+            {
+                string passwordResetToken = userManager.GeneratePasswordResetTokenAsync(user).Result;
+                string passwordLink = Url.Action("ResetPasswordConfirm", "Home", new
+                {
+                    userId = user.Id,
+                    token = passwordResetToken,
+                }, HttpContext.Request.Scheme);
+                //www.localhost.com/Home/ResetPasswordConfirm?userId?kfgj98708=kdfjglkfjdkjhklfjhlkfjghl
+                var settings = uow.Settings.Get(5);
+                MimeMessage message = new MimeMessage();
+                MailboxAddress from = new MailboxAddress(settings.MailUserName, settings.MailUserName);
+                message.From.Add(from);
+                MailboxAddress to = new MailboxAddress(user.UserName, user.Email);
+                message.To.Add(to);
+                message.Subject = "Şifremi Unuttum";
+                BodyBuilder bodyBuilder = new BodyBuilder();
+                bodyBuilder.HtmlBody = "<h2> Şifrenizi Sıfırlamak için aşağıdaki linke tıklayınız </h2><hr/>";
+                bodyBuilder.HtmlBody += $"<p><a href='{passwordLink}'> Şifre Yenilemek İçin Tıklayınız </a></p>";
+                message.Body = bodyBuilder.ToMessageBody();
+                SmtpClient client = new SmtpClient();
+                client.Connect(settings.SmtpAddress, int.Parse(settings.Port), true);
+                client.Authenticate(settings.MailUserName, settings.MailPassword);
+                client.Send(message);
+                client.Disconnect(true);
+                client.Dispose();
+                ViewBag.PasswordReset = "Şifre Değiştirildi";
+            }
+            else
+            {
+                ModelState.AddModelError("", "Kullanıcı Bulunamadı");
+            }
+            return View(forgotPasswordView);
+        }
+        public IActionResult ResetPasswordConfirm(string userId, string token)
+        {
+            TempData["userId"] = userId;
+            TempData["token"] = token;
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ResetPasswordConfirm([Bind("NewPassword")] ForgotPasswordViewModel model)
+        {
+            string token = TempData["token"].ToString();
+            string userId = TempData["userId"].ToString();
+            AppUser user = await userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                IdentityResult result = await userManager.ResetPasswordAsync(user, token, model.NewPassword);
+                if (result.Succeeded)
+                {
+                    await userManager.UpdateSecurityStampAsync(user); // securitystamp güncellendiğinde kullanıcı yeniden login olur. Böylece userin eski şifreyle olan oturumu sonlandırılmış olur.      
+                    TempData["PasswordReset"] = "Şifre Değiştirildi";
+                    return RedirectToAction("Login");
+                }
+                else
+                {
+                    foreach (var item in result.Errors)
+                    {
+                        ModelState.AddModelError("", item.Description);
+                    }
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Böyle Bir Kullanıcı Bulunamamıştır");
+            }
 
+            return View(model);
+        }
 
 
     }

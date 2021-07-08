@@ -49,6 +49,7 @@ namespace UlasBlog.WebUI
             }).AddPasswordValidator<CustomPasswordValidator>()
             .AddUserValidator<CustomUserValidator>()
             .AddErrorDescriber<CustomIdentityErrorDescriber>()
+            .AddDefaultTokenProviders()
             .AddEntityFrameworkStores<AppIdentityDbContext>();
             //Cookie bazlı kimlik doğrulama
             CookieBuilder cookieBuilder = new CookieBuilder();

@@ -26,8 +26,14 @@
         <div class="card">
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Giriş Yapın</p>
+                @if (ViewBag.SuccessSave != null)
+                {
+                    <div class="alert alert-default-success" role="alert">
+                        Şifreniz Başarıyla Değiştirildi
+                    </div>
+                }
                 <div class="text-danger text-center" asp-validation-summary="ModelOnly">
-                    
+
                 </div>
                 <form id="LoginForm" asp-controller="Home" asp-action="Login" method="post" enctype="multipart/form-data">
                     <div class="input-group mb-3">
@@ -77,7 +83,7 @@
                 <!-- /.social-auth-links -->
 
                 <p class="mb-1">
-                    <a href="forgot-password.html">Şifremi Unuttum</a>
+                    <a asp-controller="Home" asp-action="ForgotPassword">Şifremi Unuttum</a>
                 </p>
             </div>
             <!-- /.login-card-body -->
