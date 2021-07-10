@@ -3,6 +3,12 @@
     ViewData["Title"] = "Profile";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
+<style>
+    ul {
+        list-style-type: none;
+        margin-bottom: 0;
+    }
+</style>
 <div class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
@@ -26,57 +32,85 @@
                     <div class="card-header">
                         <h3 class="card-title">Profil</h3>
                     </div>
-                    <div class="card-body" style="display: block;">
-                        <form asp-controller="User" asp-action="UpdateProfile" method="post" enctype="multipart/form-data" class="form-horizontal">
+                    <form asp-controller="User" asp-action="Profile" method="post" enctype="multipart/form-data" class="form-horizontal">
+                        <div class="card-body" style="display: block;">
+                            <div class="alert alert-default-danger" role="alert" asp-validation-summary="ModelOnly">
+
+                            </div>
                             <div class="form-group row">
                                 <label asp-for="UserName" class="col-sm-2 col-form-label"></label>
                                 <div class="col-sm-10">
-                                    <input  class="form-control" asp-for="UserName" placeholder="Name">
+                                    <input class="form-control" asp-for="UserName" placeholder="Name">
                                 </div>
+                                @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
                             </div>
                             <div class="form-group row">
                                 <label asp-for="Email" class="col-sm-2 col-form-label"></label>
                                 <div class="col-sm-10">
-                                    <input  class="form-control" asp-for="Email" placeholder="Email">
+                                    <input class="form-control" asp-for="Email" placeholder="Email">
                                 </div>
+                                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
                             </div>
                             <div class="form-group row">
                                 <label for="inputEmail" class="col-sm-2 col-form-label">Şifre</label>
                                 <div class="col-sm-10">
                                     <div class="input-group mb-3">
-                                        <input name="NewPassword" id="NewPassword" class="form-control" placeholder="Enter the password" />
+                                        <input asp-for="Password" class="form-control" placeholder="Enter the password" />
                                         <div class="input-group-append">
                                             <div class="input-group-text">
                                                 <span class="fas fa-eye-slash" id="togglePassword"></span>
                                             </div>
                                         </div>
                                     </div>
+                                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
                                 </div>
                             </div>
-                        </form>
-                    </div>
-                    <!-- /.card-body -->
-                    <div class="card-footer">
-                        <button type="submit" class="btn btn-danger">Gönder</button>
-                    </div>
+
+                        </div>
+                        <!-- /.card-body -->
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-danger">Gönder</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </section>
-<script>
-    const togglePassword = document.querySelector('#togglePassword');
-    const password = document.querySelector('#NewPassword');
-    togglePassword.addEventListener('click', function (e) {
-        // toggle the type attribute
-        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-        password.setAttribute('type', type);
-        // toggle the eye / eye slash icon
-        if (document.getElementById("togglePassword").className === 'fas fa-eye-slash') {
-            document.getElementById("togglePassword").className = 'fa fa-fw fa-eye';
-        }
-        else {
-            document.getElementById("togglePassword").className = 'fas fa-eye-slash';
-        }
-    });
-</script>
+
+
+
+
+
+
+@section Profile{
+    @if (ViewBag.AlertMessage != null)
+    {
+        <script>
+        toastr.error("@ViewBag.AlertMessage")
+        </script>
+    }
+    @if (ViewBag.SuccessChange != null)
+    {
+        <script>
+        toastr.success("@ViewBag.SuccessChange")
+        </script>
+    }
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#Password');
+        togglePassword.addEventListener('click', function (e) {
+            // toggle the type attribute
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            // toggle the eye / eye slash icon
+            if (document.getElementById("togglePassword").className === 'fas fa-eye-slash') {
+                document.getElementById("togglePassword").className = 'fa fa-fw fa-eye';
+            }
+            else {
+                document.getElementById("togglePassword").className = 'fas fa-eye-slash';
+            }
+        });
+    </script>
+
+}

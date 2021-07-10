@@ -61,6 +61,41 @@ namespace UlasBlog.WebUI.Controllers
             UserViewModel userView = user.Adapt<UserViewModel>();
             return View(userView);
         }
+        [HttpPost]
+        public async Task<IActionResult> Profile(UserViewModel userViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                AppUser user = await userManager.FindByNameAsync(User.Identity.Name);
+                bool passwordCheck = await userManager.CheckPasswordAsync(user, userViewModel.Password);
+                if (passwordCheck)
+                {
+                    user.UserName = userViewModel.UserName;
+                    user.Email = userViewModel.Email;
+                    IdentityResult result = await userManager.UpdateAsync(user);
+                    if (result.Succeeded)
+                    {
+                        await userManager.UpdateSecurityStampAsync(user); // security stamp değişti. // 30 dakika sonra otomatik çıkış yaptıracak.
+                        await signInManager.SignOutAsync(); // çıkış yapılır
+                        await signInManager.SignInAsync(user, true); // giriş yapılır, cookie güncellenir.
+                        ViewBag.SuccessChange = "Güncelleme İşlemi Başarılı";
+                        return View();
+                    }
+                    else
+                    {
+                        foreach (var item in result.Errors)
+                        {
+                            ModelState.AddModelError("",item.Description);
+                        }
+                    }
+                }
+                else
+                {
+                    ViewBag.AlertMessage = "Şifrenizi Yanlış Girdiniz";
+                }
+            }
+            return View(userViewModel);
+        }
         public IActionResult PasswordChange()
         {
             return View();
@@ -100,6 +135,11 @@ namespace UlasBlog.WebUI.Controllers
                 }                
             }
             return View(password);            
+        }
+        public IActionResult Logout()
+        {
+            signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

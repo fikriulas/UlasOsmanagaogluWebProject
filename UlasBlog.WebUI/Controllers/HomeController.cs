@@ -197,7 +197,7 @@ namespace UlasBlog.WebUI.Controllers
                         {
                             return Redirect(TempData["returnUrl"].ToString());
                         }
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("Index", "Admin");
                     }
                     else // başarısız giriş yaparsa.
                     {

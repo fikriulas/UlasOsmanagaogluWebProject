@@ -26,6 +26,15 @@ namespace UlasBlog.WebUI.IdentityCore.CustomValidation
                 Description = $"{email} Kullanılmaktadır."
             };
         }
+        public override IdentityError DuplicateUserName(string userName)
+        {
+            //return base.DuplicateUserName(userName);
+            return new IdentityError()
+            {
+                Code = "DuplicateUserName",
+                Description = $"{userName} Kullanılmaktadır."
+            };
+        }
         public override IdentityError PasswordTooShort(int length)
         {
             //return base.PasswordTooShort(length);
