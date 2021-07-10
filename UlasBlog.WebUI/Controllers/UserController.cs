@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Mapster;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -52,6 +53,51 @@ namespace UlasBlog.WebUI.Controllers
                 }
             }
             return View(userViewModel);
+        }
+        public IActionResult Profile()
+        {
+            AppUser user = userManager.FindByNameAsync(User.Identity.Name).Result;
+            UserViewModel userView = user.Adapt<UserViewModel>();
+            return View(userView);
+        }
+        public IActionResult PasswordChange()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult PasswordChange(PasswordChange password)
+        {
+            if (ModelState.IsValid)
+            {
+                AppUser user = userManager.FindByNameAsync(User.Identity.Name).Result;
+                if (user != null)
+                {
+                    bool exist = userManager.CheckPasswordAsync(user, password.OldPassword).Result; // user'ın mevcut şifresnini doğruluğunu kontrol eder.
+                    if (exist)
+                    {
+                        IdentityResult result = userManager.ChangePasswordAsync(user, password.OldPassword, password.NewPassword).Result;
+                        if (result.Succeeded)
+                        {
+                            ViewBag.SuccessChange = "Şifre Başarıyla Değiştirildi.";
+                            return View();
+                        }
+                        else
+                        {
+                            foreach (var item in result.Errors)
+                            {
+                                ModelState.AddModelError("",item.Description);
+                            }
+                            
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("","Mevcut Şifreniz Doğru Değil");
+                    }
+                }                
+            }
+            return View(password);
+            
         }
     }
 }

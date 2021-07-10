@@ -1,0 +1,82 @@
+﻿@model UserViewModel
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Profil</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Admin</a></li>
+                    <li class="breadcrumb-item active">Profil</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-gray-dark">
+                    <div class="card-header">
+                        <h3 class="card-title">Profil</h3>
+                    </div>
+                    <div class="card-body" style="display: block;">
+                        <form asp-controller="User" asp-action="UpdateProfile" method="post" enctype="multipart/form-data" class="form-horizontal">
+                            <div class="form-group row">
+                                <label asp-for="UserName" class="col-sm-2 col-form-label"></label>
+                                <div class="col-sm-10">
+                                    <input  class="form-control" asp-for="UserName" placeholder="Name">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label asp-for="Email" class="col-sm-2 col-form-label"></label>
+                                <div class="col-sm-10">
+                                    <input  class="form-control" asp-for="Email" placeholder="Email">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="inputEmail" class="col-sm-2 col-form-label">Şifre</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group mb-3">
+                                        <input name="NewPassword" id="NewPassword" class="form-control" placeholder="Enter the password" />
+                                        <div class="input-group-append">
+                                            <div class="input-group-text">
+                                                <span class="fas fa-eye-slash" id="togglePassword"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-danger">Gönder</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#NewPassword');
+    togglePassword.addEventListener('click', function (e) {
+        // toggle the type attribute
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        // toggle the eye / eye slash icon
+        if (document.getElementById("togglePassword").className === 'fas fa-eye-slash') {
+            document.getElementById("togglePassword").className = 'fa fa-fw fa-eye';
+        }
+        else {
+            document.getElementById("togglePassword").className = 'fas fa-eye-slash';
+        }
+    });
+</script>
