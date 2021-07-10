@@ -12,10 +12,12 @@ namespace UlasBlog.WebUI.Controllers
 {
     public class UserController : Controller
     {
-        private UserManager<AppUser> userManager { get; }        
-        public UserController(UserManager<AppUser> userManager)
+        private UserManager<AppUser> userManager { get; }       
+        private SignInManager<AppUser> signInManager { get; }
+        public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             this.userManager = userManager;
+            this.signInManager = signInManager;
         }
         public IActionResult Index()
         {
@@ -31,7 +33,6 @@ namespace UlasBlog.WebUI.Controllers
         public async Task<IActionResult> Add(UserViewModel userViewModel)
         {
             List<string> dizi = new List<string>();
-
             if (ModelState.IsValid)
             {
                 AppUser user = new AppUser();
@@ -78,6 +79,9 @@ namespace UlasBlog.WebUI.Controllers
                         IdentityResult result = userManager.ChangePasswordAsync(user, password.OldPassword, password.NewPassword).Result;
                         if (result.Succeeded)
                         {
+                            userManager.UpdateSecurityStampAsync(user); // security stamp değişti. // 30 dakika sonra otomatik çıkış yaptıracak.
+                            signInManager.SignOutAsync();
+                            signInManager.PasswordSignInAsync(user, password.NewPassword, true, false); // kullanıcıyı logout yapıp login yaptırılır. Böylece yeni şifreyle cookie oluşturulur.
                             ViewBag.SuccessChange = "Şifre Başarıyla Değiştirildi.";
                             return View();
                         }
@@ -86,8 +90,7 @@ namespace UlasBlog.WebUI.Controllers
                             foreach (var item in result.Errors)
                             {
                                 ModelState.AddModelError("",item.Description);
-                            }
-                            
+                            }                            
                         }
                     }
                     else
@@ -96,8 +99,7 @@ namespace UlasBlog.WebUI.Controllers
                     }
                 }                
             }
-            return View(password);
-            
+            return View(password);            
         }
     }
 }
