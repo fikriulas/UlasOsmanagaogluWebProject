@@ -22,5 +22,13 @@ namespace UlasBlog.WebUI.Models
         [DataType(DataType.Password)]
         [StringLength(15, ErrorMessage = "Şifre 15 Karakterden Uzun Olamaz.")]
         public string Password { get; set; }
+        [Required(ErrorMessage = "İsim Alanı Gereklidir")]
+        [Display(Name = "İsim")]
+        [StringLength(20, ErrorMessage = "Kullanıcı Adı 35 Karakterden Uzun Olamaz.")]
+        public string Name { get; set; }
+        [Required(ErrorMessage = "Soyisim Alanı Gereklidir")]
+        [Display(Name = "Soyisim")]
+        [StringLength(35, ErrorMessage = "Kullanıcı Adı 35 Karakterden Uzun Olamaz.")]
+        public string Surname { get; set; }
     }
 }

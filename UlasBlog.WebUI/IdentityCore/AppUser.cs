@@ -8,6 +8,8 @@ namespace UlasBlog.WebUI.IdentityCore
 {
     public class AppUser:IdentityUser
     {
+        public string Name { get; set; }
+        public string Surname { get; set; }
 
     }
 }
