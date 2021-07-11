@@ -10,15 +10,15 @@ using UlasBlog.WebUI.Models;
 
 namespace UlasBlog.WebUI.Controllers
 {
-    public class UserController : Controller
+    public class UserController : BaseController
     {
-        private UserManager<AppUser> userManager { get; }       
-        private SignInManager<AppUser> signInManager { get; }
+
         public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+            :base(userManager,signInManager)
         {
-            this.userManager = userManager;
-            this.signInManager = signInManager;
+
         }
+       
         public IActionResult Index()
         {
             var users = userManager.Users;
@@ -46,10 +46,7 @@ namespace UlasBlog.WebUI.Controllers
                 }                    
                 else
                 {
-                    foreach (IdentityError item in result.Errors)
-                    {
-                        ModelState.AddModelError("", item.Description);                       
-                    }
+                    AddModelError(result);
                     return View(userViewModel);
                 }
             }
@@ -57,7 +54,7 @@ namespace UlasBlog.WebUI.Controllers
         }
         public IActionResult Profile()
         {
-            AppUser user = userManager.FindByNameAsync(User.Identity.Name).Result;
+            AppUser user = CurrentUser;
             UserViewModel userView = user.Adapt<UserViewModel>();
             return View(userView);
         }
@@ -66,7 +63,7 @@ namespace UlasBlog.WebUI.Controllers
         {
             if (ModelState.IsValid)
             {
-                AppUser user = await userManager.FindByNameAsync(User.Identity.Name);
+                AppUser user = CurrentUser;
                 bool passwordCheck = await userManager.CheckPasswordAsync(user, userViewModel.Password);
                 if (passwordCheck)
                 {
@@ -83,10 +80,7 @@ namespace UlasBlog.WebUI.Controllers
                     }
                     else
                     {
-                        foreach (var item in result.Errors)
-                        {
-                            ModelState.AddModelError("",item.Description);
-                        }
+                        AddModelError(result);
                     }
                 }
                 else
@@ -105,7 +99,7 @@ namespace UlasBlog.WebUI.Controllers
         {
             if (ModelState.IsValid)
             {
-                AppUser user = userManager.FindByNameAsync(User.Identity.Name).Result;
+                AppUser user = CurrentUser;
                 if (user != null)
                 {
                     bool exist = userManager.CheckPasswordAsync(user, password.OldPassword).Result; // user'ın mevcut şifresnini doğruluğunu kontrol eder.
@@ -122,10 +116,7 @@ namespace UlasBlog.WebUI.Controllers
                         }
                         else
                         {
-                            foreach (var item in result.Errors)
-                            {
-                                ModelState.AddModelError("",item.Description);
-                            }                            
+                            AddModelError(result);                           
                         }
                     }
                     else
