@@ -33,6 +33,7 @@ namespace UlasBlog.WebUI.Components
                     Vote = i.Vote,
                     SlugUrl = i.SlugUrl,
                     ImageUrl = i.ImageUrl,
+                    AuthorId = i.AuthorId,                    
                     totalComment = i.Comments.Count(),
                     Categories = i.BlogCategories.Select(b => b.Category).ToList()
                 }).ToList();

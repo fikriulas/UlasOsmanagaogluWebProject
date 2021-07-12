@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,6 +11,7 @@ using UlasBlog.WebUI.Models;
 
 namespace UlasBlog.WebUI.Controllers
 {
+    [Authorize]
     public class UserController : BaseController
     {
 

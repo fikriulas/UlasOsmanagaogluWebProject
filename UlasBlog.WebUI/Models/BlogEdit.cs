@@ -23,7 +23,7 @@ namespace UlasBlog.WebUI.Models
         public string HtmlContent { get; set; }
         public short Vote { get; set; }
         public DateTime DateAdded { get; set; }
-        public int AuthorId { get; set; }
+        public string AuthorId { get; set; }
         public string ImageUrl { get; set; }
         public bool IsAppproved { get; set; }
         public int totalComment { get; set; }

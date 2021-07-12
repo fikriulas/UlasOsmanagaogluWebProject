@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace UlasBlog.WebUI.Controllers
 {    
-    //[Authorize]
+    [Authorize]
     public class AdminController : Controller
     {
         private IUnitOfWork uow;

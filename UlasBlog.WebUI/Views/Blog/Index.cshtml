@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Blog>
+﻿@model IEnumerable<BlogDetail>
+@inject UserManager<AppUser> userManager
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -48,7 +49,12 @@
                                 {
                                     <tr id="@blog.Id">
                                         <td style="width:40%">@blog.Title</td>
-                                        <td style="width:20%">@blog.AuthorId</td>
+                                        <td style="width:20%">
+                                            @{
+                                                var userName = userManager.FindByIdAsync(blog.AuthorId).Result.Name;
+                                            }
+                                            @userName  
+                                        </td>
                                         <td style="width:20%">@blog.DateAdded.ToString("dd MMM yyyy")</td>
                                         <td style="width:20%;text-align:center">
                                             <a class="btn btn-info btn-sm" type="button" title="Düzenle" class="btn btn-warning btn-sm" asp-controller="Blog" asp-action="Edit" asp-route-Id="@blog.Id">
@@ -86,35 +92,34 @@
     <!-- /.container-fluid -->
 </section>
 
-    @section Blog {
-        <!-- Select2 -->
+@section Blog {
+    <!-- Select2 -->
+    <!-- DataTables  & Plugins -->
+    <script src="/Admin/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/jszip/jszip.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/pdfmake/pdfmake.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/pdfmake/vfs_fonts.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+    <script>
+        $(function () {
+            $("#BlogDatatable").DataTable({
+                "responsive": true, "lengthChange": false, "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#BlogDatatable_wrapper .col-md-6:eq(0)');
+        });
+    </script>
+    <script src="/Admin/AdminLTE/dist/js/adminlte.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="~/Admin/js/Blog.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
-        <!-- DataTables  & Plugins -->
-        <script src="/Admin/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
-        <script src="/Admin/AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-        <script src="/Admin/AdminLTE/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-        <script src="/Admin/AdminLTE/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-        <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-        <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-        <script src="/Admin/AdminLTE/plugins/jszip/jszip.min.js"></script>
-        <script src="/Admin/AdminLTE/plugins/pdfmake/pdfmake.min.js"></script>
-        <script src="/Admin/AdminLTE/plugins/pdfmake/vfs_fonts.js"></script>
-        <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-        <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/buttons.print.min.js"></script>
-        <script src="/Admin/AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-        <script>
-            $(function () {
-                $("#BlogDatatable").DataTable({
-                    "responsive": true, "lengthChange": false, "autoWidth": false,
-                    "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-                }).buttons().container().appendTo('#BlogDatatable_wrapper .col-md-6:eq(0)');
-            });
-        </script>
-        <script src="/Admin/AdminLTE/dist/js/adminlte.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        <script src="~/Admin/js/Blog.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
-        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
-    }
+}

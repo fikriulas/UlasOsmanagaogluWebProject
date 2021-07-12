@@ -41,6 +41,7 @@ namespace UlasBlog.WebUI.Controllers
                     SlugUrl = i.SlugUrl,
                     Title = i.Title,
                     ImageUrl = i.ImageUrl,
+                    AuthorId = i.AuthorId,
                     DateAdded = i.DateAdded,
                     totalComment = i.Comments.Count
                 }).AsQueryable().ToPagedList(page, 5);

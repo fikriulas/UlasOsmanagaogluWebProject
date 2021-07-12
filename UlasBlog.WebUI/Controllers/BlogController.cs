@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,24 +14,37 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UlasBlog.Data.Abstract;
 using UlasBlog.Entity;
+using UlasBlog.WebUI.IdentityCore;
 using UlasBlog.WebUI.Models;
 
 namespace UlasBlog.WebUI.Controllers
 {
+    [Authorize]
     public class BlogController : Controller
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         private IUnitOfWork uow;
-        public BlogController(IUnitOfWork _uow, IHostingEnvironment hostingEnvironment)
+        private UserManager<AppUser> userManager;
+        public BlogController(IUnitOfWork _uow, IHostingEnvironment hostingEnvironment, UserManager<AppUser> _userManager)
         {
             uow = _uow;
             _hostingEnvironment = hostingEnvironment;
+            userManager = _userManager;
         }
 
         [Route("/Admin/Blog/")]
         public IActionResult Index()
         {
-            var blogs = uow.Blogs.GetAll();
+            var blogs = uow.Blogs.GetAll()
+                .Select(i => new BlogDetail()
+                {
+                    Id = i.Id,
+                    Title = i.Title,
+                    DateAdded = i.DateAdded,
+                    //AuthorId = userManager.FindByNameAsync(i.AuthorId).Result.Name
+                    AuthorId = i.AuthorId
+                });
+            
             var Categories = new List<SelectListItem>();
             foreach (var item in uow.Categories.GetAll())
             {
@@ -52,6 +67,7 @@ namespace UlasBlog.WebUI.Controllers
             {
                 try
                 {
+                    var user = userManager.FindByNameAsync(User.Identity.Name).Result;                    
                     var path = "";
                     if (ImageUrl != null)
                     {
@@ -64,6 +80,7 @@ namespace UlasBlog.WebUI.Controllers
                     }
                     blog.DateAdded = DateTime.Now;
                     blog.ViewCount = 0;
+                    blog.AuthorId = user.Id;
                     uow.Blogs.Add(blog);
                     uow.SaveChanges();
                     List<BlogCategory> blogCategories = new List<BlogCategory>();

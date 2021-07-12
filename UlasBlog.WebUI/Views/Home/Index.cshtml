@@ -1,5 +1,6 @@
 ﻿@using X.PagedList;
 @using X.PagedList.Mvc.Core;
+@inject UserManager<AppUser> userManager
 @model IPagedList<BlogDetail>
 @{
     ViewData["Title"] = "Home Page";
@@ -8,11 +9,17 @@
 @foreach (var blog in Model)
 {
     <div class="col-md-6">
-        <a asp-controller="Home" asp-action="Blog" asp-route-SlugUrl="@blog.SlugUrl"class="blog-entry element-animate" data-animate-effect="fadeIn">
+        <a asp-controller="Home" asp-action="Blog" asp-route-SlugUrl="@blog.SlugUrl" class="blog-entry element-animate" data-animate-effect="fadeIn">
             <img src="/Home/Blog/Img/@(blog.ImageUrl == null ? "no-image.png" : blog.ImageUrl)" alt="Image placeholder" style="width:100%;height:233px;">
             <div class="blog-content-body">
                 <div class="post-meta">
-                    <span class="author mr-2"><img src="/Home/images/person_1.jpg" alt="Colorlib"> Colorlib</span>&bullet;
+                    <span class="author mr-2">
+                        <img src="/Home/images/person_1.jpg" alt="Colorlib">
+                        @{
+                            var userName = userManager.FindByIdAsync(blog.AuthorId).Result.Name;
+                        }
+                        @userName
+                    </span>&bullet;
                     <span class="mr-2">@blog.DateAdded.ToString("dd MMM yyyy")</span> &bullet;
                     <span class="ml-2"><span class="fa fa-comments"></span> @blog.totalComment</span>
                 </div>
@@ -28,7 +35,7 @@
            {
 
                DisplayLinkToNextPage = X.PagedList.Web.Common.PagedListDisplayMode.Always,
-               DisplayLinkToPreviousPage = X.PagedList.Web.Common.PagedListDisplayMode.Always,               
+               DisplayLinkToPreviousPage = X.PagedList.Web.Common.PagedListDisplayMode.Always,
                DisplayPageCountAndCurrentLocation = false,
                MaximumPageNumbersToDisplay = 10,
                LiElementClasses = new string[] { "page-item" },

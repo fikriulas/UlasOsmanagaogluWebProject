@@ -22,7 +22,7 @@ namespace UlasBlog.Entity
         public short Vote { get; set; }
         public string ImageUrl { get; set; }
         public DateTime DateAdded { get; set; }
-        public int AuthorId { get; set; }
+        public string AuthorId { get; set; }
         public bool IsAppproved { get; set; }
         public bool IsHome { get; set; }
         public bool IsSlider { get; set; }

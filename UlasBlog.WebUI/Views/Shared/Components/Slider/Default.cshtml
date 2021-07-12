@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<BlogDetail>
+@inject UserManager<AppUser> userManager
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -20,7 +21,13 @@
                                         </span>
                                     }
                                     <div class="post-meta">
-                                        <span class="author mr-2"><img src="/Home/images/person_1.jpg" alt="Colorlib"> Colorlib</span>&bullet;
+                                        <span class="author mr-2">
+                                            <img src="/Home/images/person_1.jpg" alt="Colorlib">
+                                            @{
+                                                var userName = userManager.FindByIdAsync(blog.AuthorId).Result.Name;
+                                            }
+                                            @userName
+                                        </span>&bullet;
                                         <span class="mr-2">@blog.DateAdded.ToString("dd MMM yyyy") </span> &bullet;
                                         <span class="ml-2"><span class="fa fa-comments"></span> @blog.totalComment</span>
                                     </div>
