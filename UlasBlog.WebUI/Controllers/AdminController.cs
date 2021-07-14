@@ -134,7 +134,10 @@ namespace UlasBlog.WebUI.Controllers
             }
             return BadRequest();
         }
-        
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
 
 
     }

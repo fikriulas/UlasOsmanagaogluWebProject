@@ -34,7 +34,7 @@ namespace UlasBlog.WebUI
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("UlasBlog.WebUI")));
             services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection"), b => b.MigrationsAssembly("UlasBlog.WebUI")));
 
-            services.AddIdentity<AppUser, IdentityRole>(opts =>
+            services.AddIdentity<AppUser, AppRole>(opts =>
             {
 
                 //user default validation
@@ -48,6 +48,7 @@ namespace UlasBlog.WebUI
                 opts.Password.RequireDigit = true;
             }).AddPasswordValidator<CustomPasswordValidator>()
             .AddUserValidator<CustomUserValidator>()
+            .AddRoleValidator<CustomRoleValidator>()
             .AddErrorDescriber<CustomIdentityErrorDescriber>()
             .AddDefaultTokenProviders()
             .AddEntityFrameworkStores<AppIdentityDbContext>();
@@ -63,7 +64,7 @@ namespace UlasBlog.WebUI
             {
                 opts.ExpireTimeSpan = System.TimeSpan.FromMinutes(60);
                 opts.LoginPath = new PathString("/Home/Login"); // yetkisi olmayan kullanıcıların yönlendirileceği path.
-                //opts.LogoutPath = new PathString("/Home/Index"); // logout olduğunda yönlendirilecek path.
+                opts.AccessDeniedPath = new PathString("/Admin/AccessDenied"); // rolü dışında giriş yapılırsa bu path'e yönlendirilir.
                 opts.Cookie = cookieBuilder;
                 opts.SlidingExpiration = true; // cookiebuilder.expiration'da belirlenen sürenin yarısında kullanıcı giriş yaparsa bu expiration süresi ikiye katlanır.  
 

@@ -15,13 +15,13 @@ namespace UlasBlog.WebUI.Controllers
     public class UserController : BaseController
     {
 
-        public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
-            :base(userManager,signInManager)
+        public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, RoleManager<AppRole> roleManager)
+            : base(userManager, signInManager, roleManager)
         {
 
         }
-       
-        public IActionResult Index()
+
+        public IActionResult Index() // kullanıcılar listelenir
         {
             var users = userManager.Users;
             ViewBag.SuccessSave = TempData["AddUser"] ?? null; // Edit post methodundan geliyor.
@@ -45,7 +45,7 @@ namespace UlasBlog.WebUI.Controllers
                 {
                     TempData["AddUser"] = "Kullanıcı Eklendi";
                     return RedirectToAction("Index");
-                }                    
+                }
                 else
                 {
                     AddModelError(result);
@@ -118,21 +118,50 @@ namespace UlasBlog.WebUI.Controllers
                         }
                         else
                         {
-                            AddModelError(result);                           
+                            AddModelError(result);
                         }
                     }
                     else
                     {
-                        ModelState.AddModelError("","Mevcut Şifreniz Doğru Değil");
+                        ModelState.AddModelError("", "Mevcut Şifreniz Doğru Değil");
                     }
-                }                
+                }
             }
-            return View(password);            
+            return View(password);
         }
         public IActionResult Logout()
         {
             signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+        public IActionResult Roles()
+        {
+            var roles = roleManager.Roles;
+            return View(roles);
+        }
+        public IActionResult CreateRole(RoleViewModel roleView)
+        {
+            if (ModelState.IsValid)
+            {
+                AppRole role = new AppRole();
+                role.Name = roleView.Name;
+                IdentityResult result = roleManager.CreateAsync(role).Result;
+                if (result.Succeeded)
+                {
+                    return Ok(role);
+                }
+                else
+                {
+                    AddModelError(result);
+                    //ModelState.SelectMany(x => x.Value.Errors);
+                    string messages = string.Join("; ", ModelState.Values
+                        .SelectMany(x => x.Errors)
+                        .Select(x => x.ErrorMessage)
+                        );
+                    return BadRequest(messages);
+                }
+            }
+            return BadRequest("Kontrol Edip Tekrar Deneyin");
         }
     }
 }

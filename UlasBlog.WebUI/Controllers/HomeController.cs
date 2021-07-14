@@ -22,11 +22,13 @@ namespace UlasBlog.WebUI.Controllers
         private IUnitOfWork uow;
         private SignInManager<AppUser> signInManager;
         private UserManager<AppUser> userManager;
-        public HomeController(IUnitOfWork _uow, SignInManager<AppUser> _signInManager, UserManager<AppUser> _userManager)
+        private RoleManager<AppRole> roleManager;
+        public HomeController(IUnitOfWork _uow, SignInManager<AppUser> _signInManager, UserManager<AppUser> _userManager, RoleManager<AppRole> _roleManager)
         {
             uow = _uow;
             signInManager = _signInManager;
             userManager = _userManager;
+            roleManager = _roleManager;
         }
         [Route("/{page?}")]
         public IActionResult Index(int page = 1)

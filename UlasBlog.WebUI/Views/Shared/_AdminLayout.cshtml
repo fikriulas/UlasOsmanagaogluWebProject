@@ -83,7 +83,7 @@
                 <!-- Notifications Dropdown Menu -->
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
-                        <i class="fas fa-users"></i>                        
+                        <i class="fas fa-users"></i>
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                         <span class="dropdown-item dropdown-header">Profil</span>
@@ -98,7 +98,8 @@
                         </a>
                         <div class="dropdown-divider"></div>
                         <a asp-controller="User" asp-action="Logout" class="dropdown-item">
-                            <i class="fas fa-sign-out-alt mr-2"></i>Çıkış Yap</a>
+                            <i class="fas fa-sign-out-alt mr-2"></i>Çıkış Yap
+                        </a>
                     </div>
                 </li>
                 <li class="nav-item">
@@ -528,7 +529,8 @@
     {
 <script>
     toastr.success("İşlem Başarılı");
-</script>}
+</script>
+}
 
     @RenderSection("Category", false)
     @RenderSection("Blog", false)
@@ -537,5 +539,6 @@
     @RenderSection("Users", false)
     @RenderSection("PasswordChange", false)
     @RenderSection("Profile", false)
+    @RenderSection("Roles", false)
 </body>
 </html>
