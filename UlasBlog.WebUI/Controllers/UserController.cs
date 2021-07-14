@@ -163,5 +163,50 @@ namespace UlasBlog.WebUI.Controllers
             }
             return BadRequest("Kontrol Edip Tekrar Deneyin");
         }
+        public IActionResult EditRole(RoleViewModel roleView)
+        {
+            if (ModelState.IsValid)
+            {
+                AppRole role = roleManager.FindByIdAsync(roleView.Id).Result;
+                role.Name = roleView.Name;
+                IdentityResult result = roleManager.UpdateAsync(role).Result;
+                if (result.Succeeded)
+                {
+                    return Ok(role);
+                }
+                else
+                {
+                    AddModelError(result);
+                    string message = string.Join("; ", ModelState.Values
+                        .SelectMany(x => x.Errors)
+                        .Select(x => x.ErrorMessage)
+                        );
+                    return BadRequest(message);
+                }
+            }
+            return BadRequest("Kontrol Edip Tekrar Deneyin");
+        }
+        public IActionResult DeleteRole(string Id)
+        {
+            AppRole role = roleManager.FindByIdAsync(Id).Result;
+            if (role != null)
+            {
+                IdentityResult result = roleManager.DeleteAsync(role).Result;
+                if (result.Succeeded)
+                {
+                    return Ok(Id);
+                }
+                else
+                {
+                    AddModelError(result);
+                    string message = string.Join("; ", ModelState.Values
+                        .SelectMany(x => x.Errors)
+                        .Select(x => x.ErrorMessage)
+                        );
+                    return BadRequest(message);
+                }
+            }
+            return BadRequest("Rol Veritabanında Bulunamadı");
+        }
     }
 }

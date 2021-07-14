@@ -4,6 +4,7 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 @Html.Partial("_AddRolesForm", new RoleViewModel())
+@Html.Partial("_EditRoleForm", new RoleViewModel())
 <div class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
@@ -46,12 +47,12 @@
                                     <tr id="@role.Id">
                                         <td style="width:40%">@role.Name</td>
                                         <td style="width:15%;text-align:center">
-                                            <a type="button" title="Düzenle" class="btn btn-warning btn-sm open-addRoleModal" data-role-name="@role.Name" data-toggle="modal" data-target="#addRoleModal">
+                                            <a type="button" title="Düzenle" class="btn btn-warning btn-sm open-editRoleModal" data-role-id="@role.Id" data-role-name="@role.Name" data-toggle="modal" data-target="#editRoleModal">
                                                 <i class="fas fa-pencil-alt">
                                                 </i>
                                                 Edit
                                             </a>
-                                            <a onclick=Delete("/User/RoleDelete/@role.Id") title="Sil" class="btn btn-danger btn-sm">
+                                            <a onclick=Delete("/User/DeleteRole/@role.Id") title="Sil" class="btn btn-danger btn-sm">
                                                 <i class="fas fa-trash">
                                                 </i>
                                                 Delete

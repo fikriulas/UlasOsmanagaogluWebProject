@@ -4,17 +4,12 @@ function myFunction() {
     m.style.display = "none";
 }
 
-$(document).on("click", ".open-EditCommentDialog", function () {
-    var commentName = $(this).data('comment-name');
-    var commentId = $(this).data('comment-id');
-    var commentEmail = $(this).data('comment-email');
-    var commentDate = $(this).data('comment-date');
-    var commentMessage = $(this).data('comment-message');
-    $(".modal-body #Name").val(commentName);
-    $(".modal-body #Id").val(commentId);
-    $(".modal-body #Email").val(commentEmail);
-    $(".modal-body #dateAdded").val(commentDate);
-    $(".modal-body #Message").val(commentMessage);
+$(document).on("click", ".open-editRoleModal", function () {
+    //var name = $(this).data('role-name');
+    var id = $(this).data('role-id');
+    var name = $('#' + id).find('td:first').html();    
+    $(".modal-body #Name").val(name);
+    $(".modal-body #Id").val(id);
 });
 
 $("#addRole").submit(function (event) {
@@ -40,20 +35,13 @@ $("#addRole").submit(function (event) {
                 trclass = "odd";
             else
                 trclass = "even";
-
-            var veri = "aa";
-            var anv = '<tr id="' + role.id + '" class="' + trclass + '">' +
-                'td style="width:40%" class="dtr-control sorting_1" tabindex="0">' + role.name + '</td>' +
-                'td style="width:15%;text-align:center">' +
-                '<a type="button" title="Düzenle" class="btn btn-warning btn-sm open-addRoleModal" data-role-name="' + role.name + '" data-toggle="modal" data-target="#addRoleModal"><i class="fas fa-pencil-alt"></i>Edit</a>' +
-                '<a onclick=Delete("/User/RoleDelete/' + role.id + '") title="Sil" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i>Delete</a></td></tr>';
             var veriki = '<tr id="' + role.id + '" class="even">' +
                 '<td style="width:40%" class="dtr-control sorting_1" tabindex="0">' + role.name + '</td>' +
                 '<td style="width:15%;text-align:center">' +
-                '<a type="button" title="Düzenle" class="btn btn-warning btn-sm mr-1 open-addRoleModal" data-role-name="' + role.name + '" data-toggle="modal" data-target="#addRoleModal">' +
+                '<a type="button" title="Düzenle" class="btn btn-warning btn-sm mr-1 open-editRoleModal" data-role-id="' + role.id + '" data-role-name="' + role.name + '" data-toggle="modal" data-target="#editRoleModal">' +
                 '<i class="fas fa-pencil-alt">' +
                 '</i>Edit</a>' +
-                '<a onclick="Delete("/User/RoleDelete/' + role.id + '")" title="Sil" class="btn btn-danger btn-sm">' +
+                '<a onclick=Delete("/User/DeleteRole/' + role.id + '") title="Sil" class="btn btn-danger btn-sm">' +
                 '<i class="fas fa-trash"></i> Delete </a> </td> </tr>';
 
             $("#Roles").append(veriki);
@@ -102,10 +90,10 @@ function Delete(url) {
                 success: function (Id) {
                     var m = document.getElementById(Id);
                     m.style.display = "none";
-                    toastr.success("İşlem Başarılı");
+                    toastr.success("Rol Başarıyla Silindi");
                 },
-                error: function (returnData) {
-                    toastr.error("İşlem Başarısız, Yönetici ile iletişime geçin.");
+                error: function (errorMessage) {
+                    toastr.error(errorMessage.responseText);
                 }
             });
         }
@@ -113,8 +101,7 @@ function Delete(url) {
 }
 
 
-$("#deleteComment").submit(function (event) {
-
+$("#editRoleForm").submit(function (event) {
     event.preventDefault();
     var form = $(this);
     var formData = new FormData(this);
@@ -128,34 +115,30 @@ $("#deleteComment").submit(function (event) {
         complete: function () {
             $("#ajax-loading").hide();
         },
-        success: function (Id) {
-            var m = document.getElementById(Id);
-            m.style.display = "none";
-            $("#editCommentModal").removeClass("in");
+        success: function (role) {
+            console.log("başarılıya girdi");
+            var trclass = "";
+            var bosluk = " ";
+            var count = $("#Roles > tr").length;
+            if (count % 2 == 0)
+                trclass = "odd";
+            else
+                trclass = "even";       
+            $('#' + role.id).find('td:first').text(role.name);
+            $("#editRoleModal").removeClass("in");
             $(".modal-backdrop").remove();
             $('body').removeClass('modal-open');
             $('body').css('padding-right', '');
-            $("#editCommentModal").hide();
+            $("#editRoleModal").hide();
             $("#ajax-loading").hide();
             toastr.success("İşlem Başarılı");
         },
         error: function (ErrorMessage) {
-            console.log(ErrorMessage)
-            if (ErrorMessage.responseText != "") {
-                console.log(ErrorMessage.responseText)
-                jQuery.noConflict();
-                $('#editCommentModal').modal('hide');
-                $("#ajax-loading").hide();
-                toastr.error("İşlem Başarısız, Yönetici ile iletişime geçin.");
-            }
-            else {
-                console.log("Else girildi.")
-            }
+            toastr.error(ErrorMessage.responseText);
         },
         cache: false,
         contentType: false,
         processData: false
     });
 });
-
 

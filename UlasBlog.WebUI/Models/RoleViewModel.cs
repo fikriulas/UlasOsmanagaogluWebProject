@@ -8,7 +8,7 @@ namespace UlasBlog.WebUI.Models
 {
     public class RoleViewModel
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         [Display(Name="Rol Adı")]
         [Required(ErrorMessage ="Rol Adı Gereklidir")]
         [MaxLength(20,ErrorMessage ="Rol Adı Maksimum 20 Karakterden Oluşabilir")]
