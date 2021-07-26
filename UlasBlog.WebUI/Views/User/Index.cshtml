@@ -3,6 +3,7 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
+@Html.Partial("_EditProfileForm", new UserViewModel())
 <div class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
@@ -35,38 +36,43 @@
                         <table id="UsersDatatable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th style="width:40%">Name</th>
-                                    <th style="width:20%">E-Mail</th>                                    
-                                    <th style="width:15%">Aksiyon</th>
+                                    <th style="width:20%">UserName</th>
+                                    <th style="width:20%">Name</th>
+                                    <th style="width:20%">Surname</th>
+                                    <th style="width:20%">E-Mail</th>
+                                    <th style="width:20%">Aksiyon</th>
                                 </tr>
                             </thead>
                             <tbody id="Users">
                                 @foreach (var user in Model)
                                 {
-                                    <tr id="@user.Id">
-                                        <td style="width:40%">@user.UserName</td>
-                                        <td style="width:20%">@user.Email</td>
-
-                                        <td style="width:15%;text-align:center">
-                                            <a type="button" title="Düzenle" class="btn btn-warning btn-sm open-addUserModal" data-contact-name="@user.UserName" data-toggle="modal" data-target="#addUserModal" asp-controller="User" asp-action="Add" asp-route-Id="@user.Id">
-                                                <i class="fas fa-pencil-alt">
-                                                </i>
-                                                Edit
-                                            </a>
-                                            <a onclick=Delete("/Admin/ContactDelete/@user.Id") title="Sil" class="btn btn-danger btn-sm">
-                                                <i class="fas fa-trash">
-                                                </i>
-                                                Delete
-                                            </a>
-                                        </td>
-                                    </tr>
+                                <tr id="@user.Id">
+                                    <td id="username" style="width:20%">@user.UserName</td>
+                                    <td id="name" style="width:20%">@user.Name</td>
+                                    <td id="surname" style="width:20%">@user.Surname</td>
+                                    <td id="email" style="width:20%">@user.Email</td>
+                                    <td style="width:20%;text-align:center">
+                                        <a type="button" title="Düzenle" class="btn btn-warning btn-sm open-editProfileModel" data-profile-id="@user.Id" data-profile-name="@user.Name" data-profile-surname="@user.Surname" data-profile-username="@user.UserName" data-profile-email="@user.Email" data-toggle="modal" data-target="#editProfileModel">
+                                            <i class="fas fa-pencil-alt">
+                                            </i>
+                                            Edit
+                                        </a>
+                                        <a onclick=Delete("/User/DeleteUser/@user.Id") title="Sil" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash">
+                                            </i>
+                                            Delete
+                                        </a>
+                                    </td>
+                                </tr>
                                 }
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th style="width:40%">Name</th>
-                                    <th style="width:20%">E-Mail</th>                                    
-                                    <th style="width:15%">Aksiyon</th>
+                                    <th style="width:20%">UserName</th>
+                                    <th style="width:20%">Name</th>
+                                    <th style="width:20%">Surname</th>
+                                    <th style="width:20%">E-Mail</th>
+                                    <th style="width:20%">Aksiyon</th>
                                 </tr>
                             </tfoot>
                         </table>

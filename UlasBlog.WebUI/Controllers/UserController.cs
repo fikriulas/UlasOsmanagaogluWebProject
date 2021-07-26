@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,16 @@ namespace UlasBlog.WebUI.Controllers
         }
         public IActionResult Add()
         {
+            var roles = new List<SelectListItem>();
+            foreach (var item in roleManager.Roles)
+            {
+                roles.Add(new SelectListItem
+                {
+                    Text = item.Name,
+                    Value = item.Name
+                });
+            }
+            ViewBag.Roles = roles;
             return View();
         }
         [HttpPost]
@@ -40,6 +51,8 @@ namespace UlasBlog.WebUI.Controllers
                 AppUser user = new AppUser();
                 user.UserName = userViewModel.UserName;
                 user.Email = userViewModel.Email;
+                user.Name = userViewModel.Name;
+                user.Surname = userViewModel.Surname;
                 IdentityResult result = await userManager.CreateAsync(user, userViewModel.Password); // passwordu şifreleyip kaydeder.
                 if (result.Succeeded)
                 {
@@ -128,6 +141,53 @@ namespace UlasBlog.WebUI.Controllers
                 }
             }
             return View(password);
+        }
+        public IActionResult EditProfile(UserViewModel userView)
+        {            
+            AppUser user = userManager.FindByIdAsync(userView.Id).Result;
+            if (user != null)
+            {
+                user.UserName = userView.UserName;
+                user.Name = userView.Name;
+                user.Surname = userView.Surname;
+                user.Email = userView.Email;
+                var result = userManager.UpdateAsync(user).Result;
+                if (result.Succeeded)
+                {
+                    return Ok(user);
+                }
+                else
+                {
+                    string message = string.Join("; ", ModelState.Values
+                        .SelectMany(x => x.Errors)
+                        .Select(x => x.ErrorMessage)
+                        );
+                    return BadRequest(message);
+                }
+            }
+            return BadRequest("Kullanıcı Bulunamadı");
+        }
+        public IActionResult DeleteUser(string Id)
+        {
+            AppUser user = userManager.FindByIdAsync(Id).Result;
+            if (user !=null)
+            {
+                IdentityResult result = userManager.DeleteAsync(user).Result;
+                if (result.Succeeded)
+                {                    
+                    return Ok(user.Id);
+                }
+                else
+                {
+                    AddModelError(result);
+                    string message = string.Join("; ", ModelState.Values
+                        .SelectMany(x => x.Errors)
+                        .Select(x => x.ErrorMessage)
+                        );
+                    return BadRequest(message);
+                }
+            }
+            return BadRequest("Kullanıcı Bulunamadı");
         }
         public IActionResult Logout()
         {

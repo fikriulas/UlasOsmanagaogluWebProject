@@ -8,6 +8,7 @@ namespace UlasBlog.WebUI.Models
 {
     public class UserViewModel
     {
+        public string Id { get; set; }
         [Required(ErrorMessage ="Kullanıcı Adı Alanı Gereklidir")]
         [Display(Name ="Kullanıcı Adı")]
         [StringLength(35, ErrorMessage = "Kullanıcı Adı 35 Karakterden Uzun Olamaz.")]
