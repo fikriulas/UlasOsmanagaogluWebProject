@@ -24,8 +24,19 @@ namespace UlasBlog.WebUI.Controllers
 
         public IActionResult Index() // kullanıcılar listelenir
         {
+
+            var roles = new List<SelectListItem>();
+            foreach (var item in roleManager.Roles)
+            {
+                roles.Add(new SelectListItem
+                {
+                    Text = item.Name,
+                    Value = item.Name
+                });
+            }
+            ViewBag.Roles = roles;
             var users = userManager.Users;
-            ViewBag.SuccessSave = TempData["AddUser"] ?? null; // Edit post methodundan geliyor.
+            ViewBag.alertMessage = TempData["alertMessage"] ?? null; // Edit post methodundan geliyor.
             return View(users);
         }
         public IActionResult Add()
@@ -43,12 +54,11 @@ namespace UlasBlog.WebUI.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Add(UserViewModel userViewModel)
+        public async Task<IActionResult> Add(UserViewModel userViewModel, string[] Roles)
         {
-            List<string> dizi = new List<string>();
             if (ModelState.IsValid)
             {
-                AppUser user = new AppUser();
+                AppUser user = new AppUser();                
                 user.UserName = userViewModel.UserName;
                 user.Email = userViewModel.Email;
                 user.Name = userViewModel.Name;
@@ -56,17 +66,107 @@ namespace UlasBlog.WebUI.Controllers
                 IdentityResult result = await userManager.CreateAsync(user, userViewModel.Password); // passwordu şifreleyip kaydeder.
                 if (result.Succeeded)
                 {
-                    TempData["AddUser"] = "Kullanıcı Eklendi";
+                    AppUser CurrentUser = await userManager.FindByNameAsync(user.UserName);
+                    foreach (var item in Roles)
+                    {
+                        IdentityResult AddRoleResult = await userManager.AddToRoleAsync(CurrentUser, item);
+                        if (AddRoleResult.Succeeded != true)
+                        {
+                            string message = AlertMessageByModalError(AddRoleResult);
+                            ViewBag.Roles = AllRoles();
+                            return BadRequest(AlertMessageForToastr(message));
+                        }
+                    }
+                    return Ok(user);
+                }
+                else
+                {
+                    string message = AlertMessageByModalError(result);
+                    return BadRequest(message);
+                }
+            }
+            return BadRequest("Kontrol Edip Tekrar Deneyiniz");
+        }
+        public IActionResult Edit(string Id)
+        {
+            AppUser user = userManager.FindByIdAsync(Id).Result;
+            if (user != null)
+            {
+                ViewBag.currentRoles = CurrentRoles(user);
+                ViewBag.userRoles = AllRoles();
+                UserEditViewModel userView = new UserEditViewModel();
+                userView.Name = user.Name;
+                userView.Surname = user.Surname;
+                userView.Email = user.Email;
+                userView.UserName = user.UserName;
+                userView.Id = user.Id;
+                return View(userView);
+            }
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(UserEditViewModel userView, string[] roles)
+        {
+            AppUser user = await userManager.FindByIdAsync(userView.Id);
+            if (ModelState.IsValid)
+            {                
+                string[] userRoles = CurrentRoles(user).ToArray();
+                if (userRoles.Length != 0)
+                {
+                    foreach (var item in userRoles)
+                    {
+                        var roleName = FindRoleName(item);
+                        IdentityResult removeResult = await userManager.RemoveFromRoleAsync(user, roleName);
+                        if (removeResult.Succeeded != true)
+                        {                            
+                            string message = AlertMessageByModalError(removeResult);
+                            ViewBag.alertMessage = AlertMessageForToastr(message);
+                            ViewBag.currentRoles = CurrentRoles(user);
+                            ViewBag.userRoles = AllRoles();
+                            return View(userView);
+                        }
+                    }
+                }
+                foreach (var item in roles)
+                {
+                    var roleName = FindRoleName(item); // basecontrollerdan id ile rol adı bulur.
+                    IdentityResult AddRoleResult = await userManager.AddToRoleAsync(user, roleName);
+                    if (AddRoleResult.Succeeded != true)
+                    {
+                        string message = AlertMessageByModalError(AddRoleResult);
+                        ViewBag.alertMessage = AlertMessageForToastr(message);
+                        ViewBag.currentRoles = CurrentRoles(user);
+                        ViewBag.userRoles = AllRoles();
+                        return View(userView);
+                    }
+                }
+                user.UserName = userView.UserName;
+                user.Email = userView.Email;
+                user.Name = userView.Name;
+                user.Surname = userView.Surname;
+                IdentityResult result = await userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    await userManager.UpdateSecurityStampAsync(user); // security stamp değişti. // 30 dakika sonra otomatik çıkış yaptıracak.
+                    await signInManager.SignOutAsync(); // çıkış yapılır
+                    await signInManager.SignInAsync(user, true); // giriş yapılır, cookie güncellenir.
+                    TempData["alertMessage"] = "Güncelleme İşlemi Başarılı";
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    AddModelError(result);
-                    return View(userViewModel);
+                    string message = AlertMessageByModalError(result);
+                    ViewBag.alertMessage = AlertMessageForToastr(message);
+                    ViewBag.currentRoles = CurrentRoles(user); //basecontrollerda
+                    ViewBag.userRoles = AllRoles();
+                    return View(userView);
                 }
             }
-            return View(userViewModel);
-        }
+            ViewBag.currentRoles = CurrentRoles(user); //basecontrollerda
+            ViewBag.userRoles = AllRoles();
+            return View(userView);
+        }       
+        
         public IActionResult Profile()
         {
             AppUser user = CurrentUser;
@@ -143,7 +243,7 @@ namespace UlasBlog.WebUI.Controllers
             return View(password);
         }
         public IActionResult EditProfile(UserViewModel userView)
-        {            
+        {
             AppUser user = userManager.FindByIdAsync(userView.Id).Result;
             if (user != null)
             {
@@ -170,11 +270,11 @@ namespace UlasBlog.WebUI.Controllers
         public IActionResult DeleteUser(string Id)
         {
             AppUser user = userManager.FindByIdAsync(Id).Result;
-            if (user !=null)
+            if (user != null)
             {
                 IdentityResult result = userManager.DeleteAsync(user).Result;
                 if (result.Succeeded)
-                {                    
+                {
                     return Ok(user.Id);
                 }
                 else

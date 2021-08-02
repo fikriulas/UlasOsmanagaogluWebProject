@@ -2,11 +2,11 @@
     //var name = $(this).data('role-name');
     var id = $(this).data('profile-id');
     //var name = $(this).data('profile-name');
-    var name = $('#' + id).find('#name').html(); 
-    var surname = $('#' + id).find('#surname').html(); 
-    var username = $('#' + id).find('#username').html(); 
-    var email = $('#' + id).find('#email').html(); 
-    
+    var name = $('#' + id).find('#name').html();
+    var surname = $('#' + id).find('#surname').html();
+    var username = $('#' + id).find('#username').html();
+    var email = $('#' + id).find('#email').html();
+
     $(".modal-body #Name").val(name);
     $(".modal-body #Surname").val(surname);
     $(".modal-body #Email").val(email);
@@ -28,12 +28,12 @@ $("#editProfileForm").submit(function (event) {
         complete: function () {
             $("#ajax-loading").hide();
         },
-        success: function (user) {           
- 
-            $('#' + user.id).find('#name').text(user.name); 
-            $('#' + user.id).find('#surname').text(user.surname); 
-            $('#' + user.id).find('#username').text(user.userName); 
-            $('#' + user.id).find('#email').text(user.email); 
+        success: function (user) {
+
+            $('#' + user.id).find('#name').text(user.name);
+            $('#' + user.id).find('#surname').text(user.surname);
+            $('#' + user.id).find('#username').text(user.userName);
+            $('#' + user.id).find('#email').text(user.email);
             $("#editProfileModel").removeClass("in");
             $(".modal-backdrop").remove();
             $('body').removeClass('modal-open');
@@ -52,7 +52,6 @@ $("#editProfileForm").submit(function (event) {
 });
 
 function Delete(url) {
-    console.log("Delete içinde");
     event.preventDefault(); // prevent form submit
     var form = event.target.form; // storing the form
     var token = $('input[name="__RequestVerificationToken"]', form).val();
@@ -77,15 +76,11 @@ function Delete(url) {
                     $("#ajax-loading").hide();
                 },
                 success: function (Id) {
-                    console.log("success içinde");
-                    console.log(Id);
                     var m = document.getElementById(Id);
                     m.style.display = "none";
                     toastr.success("Kullanıcı Başarıyla Silindi");
                 },
                 error: function (errorMessage) {
-                    console.log("error içinde");
-
                     toastr.error(errorMessage.responseText);
                 }
             });
@@ -94,7 +89,74 @@ function Delete(url) {
 }
 
 $(document).ready(function () {
-    $('.js-example-basic-multiple').select2({
+    $('.js-AddUser-basic-multiple').select2({
         placeholder: ' Select any Roles'
     });
 });
+$(document).ready(function () {
+    $('.js-examplet-basic-multiple').select2({
+        placeholder: ' Select any Roles'
+    });
+});
+
+$("#AddUserForm").submit(function (event) {
+    console.log("javascript devrede");
+    event.preventDefault();
+    var form = $(this);
+    var formData = new FormData(this);
+    $.ajax({
+        url: form.attr("action"),
+        type: 'POST',
+        data: formData,
+        beforeSend: function () {
+            $("#ajax-loading").show();
+        },
+        complete: function () {
+            $("#ajax-loading").hide();
+        },
+        success: function (user) {
+            console.log("succes girildi");
+            var trclass = "";
+            var bosluk = " ";
+            var count = $("#Users > tr").length;
+            if (count % 2 == 0)
+                trclass = "odd";
+            else
+                trclass = "even";
+
+            var verii = '<tr id="' + user.id + '" class="' + trclass + '">' +
+                '<td id="username" style="width:20%" class="dtr-control sorting_1" tabindex="0">' + user.userName + '</td>' +
+                '<td id="name" style="width:20%">' + user.name + '</td>' +
+                '<td id="surname" style="width:20%">' + user.surname + '</td>' +
+                '<td>'+user.email+'</td>' +
+                '<td style="width:30%;text-align:center">' +
+                '<a type="button" title="Düzenle" class="btn btn-warning btn-sm" href="/User/Edit/' + user.id + '"><i class="fas fa-pencil-alt"></i> Edit</a>' +
+                '<a style="margin-left:3.5px;" onclick=Delete("/User/DeleteUser/' + user.id + '") title="Sil" class="btn btn-danger btn-sm">' +
+                '<i class="fas fa-trash"> Delete</i>' +
+                '</a></td></tr>';      
+
+
+
+            $("#Users").append(verii);
+            $("#AddUserModal").removeClass("in");
+            $(".modal-backdrop").remove();
+            $('body').removeClass('modal-open');
+            $('body').css('padding-right', '');
+            $("#AddUserModal").hide();
+            $("#ajax-loading").hide();
+            toastr.success("İşlem Başarılı");
+        },
+        error: function (ErrorMessage) {
+            console.log(ErrorMessage)
+            if (ErrorMessage.responseText != "") {             
+
+                toastr.error(ErrorMessage.responseText);
+            }
+
+        },
+        cache: false,
+        contentType: false,
+        processData: false
+    });
+});
+
