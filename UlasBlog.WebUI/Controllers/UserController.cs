@@ -21,7 +21,7 @@ namespace UlasBlog.WebUI.Controllers
         {
 
         }
-
+        [Authorize(Roles = "admin")]
         public IActionResult Index() // kullanıcılar listelenir
         {
 
@@ -39,6 +39,7 @@ namespace UlasBlog.WebUI.Controllers
             ViewBag.alertMessage = TempData["alertMessage"] ?? null; // Edit post methodundan geliyor.
             return View(users);
         }
+        [Authorize(Roles = "admin")]
         public IActionResult Add()
         {
             var roles = new List<SelectListItem>();
@@ -53,6 +54,7 @@ namespace UlasBlog.WebUI.Controllers
             ViewBag.Roles = roles;
             return View();
         }
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> Add(UserViewModel userViewModel, string[] Roles)
         {
@@ -87,6 +89,7 @@ namespace UlasBlog.WebUI.Controllers
             }
             return BadRequest("Kontrol Edip Tekrar Deneyiniz");
         }
+        [Authorize(Roles = "admin")]
         public IActionResult Edit(string Id)
         {
             AppUser user = userManager.FindByIdAsync(Id).Result;
@@ -104,6 +107,7 @@ namespace UlasBlog.WebUI.Controllers
             }
             return RedirectToAction("Index");
         }
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> Edit(UserEditViewModel userView, string[] roles)
         {
@@ -148,8 +152,8 @@ namespace UlasBlog.WebUI.Controllers
                 if (result.Succeeded)
                 {
                     await userManager.UpdateSecurityStampAsync(user); // security stamp değişti. // 30 dakika sonra otomatik çıkış yaptıracak.
-                    await signInManager.SignOutAsync(); // çıkış yapılır
-                    await signInManager.SignInAsync(user, true); // giriş yapılır, cookie güncellenir.
+                    //await signInManager.SignOutAsync(); // çıkış yapılır                    
+                    //await signInManager.SignInAsync(user, true); // giriş yapılır, cookie güncellenir.
                     TempData["alertMessage"] = "Güncelleme İşlemi Başarılı";
                     return RedirectToAction("Index");
                 }
@@ -165,14 +169,15 @@ namespace UlasBlog.WebUI.Controllers
             ViewBag.currentRoles = CurrentRoles(user); //basecontrollerda
             ViewBag.userRoles = AllRoles();
             return View(userView);
-        }       
-        
+        }
+        [Authorize(Roles = "admin,editör")]
         public IActionResult Profile()
         {
             AppUser user = CurrentUser;
             UserViewModel userView = user.Adapt<UserViewModel>();
             return View(userView);
         }
+        [Authorize(Roles = "admin,editör")]
         [HttpPost]
         public async Task<IActionResult> Profile(UserViewModel userViewModel)
         {
@@ -205,11 +210,13 @@ namespace UlasBlog.WebUI.Controllers
             }
             return View(userViewModel);
         }
+        [Authorize(Roles = "admin,editör")]
         public IActionResult PasswordChange()
         {
             return View();
         }
         [HttpPost]
+        [Authorize(Roles = "admin,editör")]
         public IActionResult PasswordChange(PasswordChange password)
         {
             if (ModelState.IsValid)
@@ -242,6 +249,7 @@ namespace UlasBlog.WebUI.Controllers
             }
             return View(password);
         }
+        [Authorize(Roles = "admin,editör")]
         public IActionResult EditProfile(UserViewModel userView)
         {
             AppUser user = userManager.FindByIdAsync(userView.Id).Result;
@@ -289,16 +297,19 @@ namespace UlasBlog.WebUI.Controllers
             }
             return BadRequest("Kullanıcı Bulunamadı");
         }
+        [Authorize(Roles = "admin,editör")]
         public IActionResult Logout()
         {
             signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
+        [Authorize(Roles = "admin")]
         public IActionResult Roles()
         {
             var roles = roleManager.Roles;
             return View(roles);
         }
+        [Authorize(Roles = "admin")]
         public IActionResult CreateRole(RoleViewModel roleView)
         {
             if (ModelState.IsValid)
@@ -323,6 +334,7 @@ namespace UlasBlog.WebUI.Controllers
             }
             return BadRequest("Kontrol Edip Tekrar Deneyin");
         }
+        [Authorize(Roles = "admin")]
         public IActionResult EditRole(RoleViewModel roleView)
         {
             if (ModelState.IsValid)
@@ -346,6 +358,7 @@ namespace UlasBlog.WebUI.Controllers
             }
             return BadRequest("Kontrol Edip Tekrar Deneyin");
         }
+        [Authorize(Roles = "admin")]
         public IActionResult DeleteRole(string Id)
         {
             AppRole role = roleManager.FindByIdAsync(Id).Result;

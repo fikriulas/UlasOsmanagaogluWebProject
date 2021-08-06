@@ -10,7 +10,7 @@ using UlasBlog.WebUI.Models;
 
 namespace UlasBlog.WebUI.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="admin")]    
     public class CategoryController : Controller
     {
         private IUnitOfWork uow;

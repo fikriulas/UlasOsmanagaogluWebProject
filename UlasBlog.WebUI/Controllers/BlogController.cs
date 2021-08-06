@@ -19,7 +19,7 @@ using UlasBlog.WebUI.Models;
 
 namespace UlasBlog.WebUI.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "admin,editör")]
     public class BlogController : Controller
     {
         private readonly IHostingEnvironment _hostingEnvironment;

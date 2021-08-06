@@ -10,8 +10,8 @@ using MimeKit;
 using Microsoft.AspNetCore.Authorization;
 
 namespace UlasBlog.WebUI.Controllers
-{    
-    [Authorize]
+{
+    [Authorize(Roles = "admin,editör")]
     public class AdminController : Controller
     {
         private IUnitOfWork uow;
@@ -24,6 +24,7 @@ namespace UlasBlog.WebUI.Controllers
         {
             return View();
         }
+        [Authorize(Roles = "admin")]
         public IActionResult Contact()
         {
             try
@@ -38,6 +39,7 @@ namespace UlasBlog.WebUI.Controllers
             }            
         }
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public IActionResult ReplyMessage(Contact contact, string reply)
         {
             if (reply == null)
@@ -74,6 +76,7 @@ namespace UlasBlog.WebUI.Controllers
             }
             return Ok();            
         }
+        [Authorize(Roles = "admin")]
         public IActionResult ContactDelete(int id)
         {
             var contact = uow.Contacts.Get(id);
@@ -97,6 +100,7 @@ namespace UlasBlog.WebUI.Controllers
             }
             
         }
+        [Authorize(Roles = "admin")]
         public IActionResult Settings()
         {
             try
@@ -114,6 +118,7 @@ namespace UlasBlog.WebUI.Controllers
                 return View("_404NotFound");
             }            
         }
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public IActionResult Settings(Settings settings)
         {
