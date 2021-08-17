@@ -189,7 +189,7 @@ namespace UlasBlog.WebUI.Controllers
                 {
                     if (await userManager.IsLockedOutAsync(user)) // kullanıcı lock olmuş mu bunun kontrolünü yapar.
                     {                        
-                        ViewBag.BlogAlert = AlertMessageForToastr("Hesabınız Bir Süreliğine Devre Dışı Bırakılmıştır");
+                        ViewBag.LoginAlert = AlertMessageForToastr("Hesabınız Bir Süreliğine Devre Dışı Bırakılmıştır");
                         return View(login);
                     }
                     await signInManager.SignOutAsync(); // login işleminden önce sistemde siteyle ilgili bir cookie olma durumuna karşın logout yapılır.
@@ -210,16 +210,16 @@ namespace UlasBlog.WebUI.Controllers
                         if (failAccess == 3)
                         {
                             await userManager.SetLockoutEndDateAsync(user, new System.DateTimeOffset(DateTime.Now.AddMinutes(20))); // kullanıcı başarısız giriş yaparsa, 20 dakika hesabı kitler.                            
-                            ViewBag.BlogAlert = AlertMessageForToastr("Hesabınız Başarısız Girişlerden Dolayı 20 Dakika Kitlenmiştir");
+                            ViewBag.LoginAlert = AlertMessageForToastr("Hesabınız Başarısız Girişlerden Dolayı 20 Dakika Kitlenmiştir");
                             return View(login);
                         }
-                        ViewBag.BlogAlert = AlertMessageForToastr("Hatalı E-Mail Yada Şifre Girdiniz");
+                        ViewBag.LoginAlert = AlertMessageForToastr("Hatalı E-Mail Yada Şifre Girdiniz");
                     }
                 }
                 else
                 {
                     
-                    ViewBag.BlogAlert = AlertMessageForToastr("Hatalı E-Mail Yada Şifre Girdiniz");                    
+                    ViewBag.LoginAlert = AlertMessageForToastr("Hatalı E-Mail Yada Şifre Girdiniz");                    
                 }
             }
             return View(login);
@@ -258,11 +258,12 @@ namespace UlasBlog.WebUI.Controllers
                 client.Send(message);
                 client.Disconnect(true);
                 client.Dispose();
-                ViewBag.PasswordReset = "Şifre Değiştirildi";
+                //ViewBag.PasswordReset = "Şifre Değiştirildi";
+                ViewBag.ForgotPasswordAlert = AlertMessageForToastr("Şifre Sıfırlama Maili Başarıyla Gönderildi","success");
             }
             else
             {
-                ModelState.AddModelError("", "Kullanıcı Bulunamadı");
+                ViewBag.ForgotPasswordAlert = AlertMessageForToastr("Kullanıcı Bulunamadı");
             }
             return View(forgotPasswordView);
         }

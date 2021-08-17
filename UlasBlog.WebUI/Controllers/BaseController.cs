@@ -67,13 +67,23 @@ namespace UlasBlog.WebUI.Controllers
                                                         );
             return message;
         }
-        public string AlertMessageForToastr(string alertMessage)
+        public string AlertMessageForToastr(string alertMessage,string? status = null)
         {
             var returnText = "";
-            string[] words = alertMessage.Split(';');            
-            foreach (var word in words)
+            string[] words = alertMessage.Split(';'); 
+            if(status != null)
             {
-                returnText += "toastr.error('" + word + "');";
+                foreach (var word in words)
+                {
+                    returnText += "toastr.success('" + word + "');";
+                }
+            }
+            else
+            {
+                foreach (var word in words)
+                {
+                    returnText += "toastr.error('" + word + "');";
+                }
             }
             return returnText;
         }

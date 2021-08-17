@@ -104,10 +104,10 @@
     <!-- AdminLTE App -->
     <script src="/Admin/AdminLTE/dist/js/adminlte.min.js"></script>
     <script src="/Admin/AdminLTE/plugins/toastr/toastr.min.js"></script>
-    @if (ViewData["BlogAlert"] != null)
+    @if (ViewData["LoginAlert"] != null)
     {
         <script>
-            @Html.Raw(ViewData["BlogAlert"])
+            @Html.Raw(ViewData["LoginAlert"])
         </script>
     }
 </body>
