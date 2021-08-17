@@ -33,7 +33,9 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="HtmlContent"></label>
-                        <input type="text" class="form-control" asp-for="HtmlContent" placeholder="Enter Content">
+                        <textarea asp-for="HtmlContent">
+
+                        </textarea>
                         @Html.ValidationMessageFor(model => model.HtmlContent, "", new { @class = "text-danger" })
                     </div>
                     <div class="form-group">
@@ -53,7 +55,7 @@
                             <input type="checkbox" class="custom-control-input" asp-for="IsSlider">
                             <label class="custom-control-label" for="IsSlider">Slider</label>
                         </div>
-                    </div>                    
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <label id="ajax-loading" style="float:left;display:none">

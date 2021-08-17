@@ -24,9 +24,13 @@ $(document).on("click", ".open-EditCommentDialog", function () {
 });
 
 $("#addBlog").submit(function (event) {
+    document.getElementById("HtmlContent").value = tinymce.activeEditor.getContent();  
     event.preventDefault();
     var form = $(this);
     var formData = new FormData(this);
+    formData.append('HtmlContent', 'deger');
+    console.log("Form Data: ");
+    console.log(formData);
     $.ajax({
         url: form.attr("action"),
         type: 'POST',
@@ -169,5 +173,69 @@ $("#deleteComment").submit(function (event) {
         processData: false
     });
 });
+
+function HtmlSave() {
+    console.log("html save");
+    event.preventDefault();
+    var form = $(this);
+    var formData = new FormData(this);
+    $.ajax({
+        url: form.attr("action"),
+        type: 'POST',
+        data: formData,
+        beforeSend: function () {
+            $("#ajax-loading").show();
+        },
+        complete: function () {
+            $("#ajax-loading").hide();
+        },
+        success: function (blog) {
+            const date = new Date();
+            const formattedDate = date.toLocaleDateString('en-GB', {
+                day: '2-digit', month: 'short', year: 'numeric'
+            }).replace(/ /g, ' ');
+            var trclass = "";
+            var bosluk = " ";
+            var count = $("#Blogs > tr").length;
+            if (count % 2 == 0)
+                trclass = "odd";
+            else
+                trclass = "even";
+            var veri = '<tr id="' + blog.id + '" class="' + trclass + '">' +
+                '<td style="width:40%"> ' + blog.title + '</td>' +
+                '<td style="width:20%"> ' + blog.authorId + '</td>' +
+                '<td style="width:20%"> ' + formattedDate + '</td> ' +
+                '<td style="width:30%;text-align:center">' +
+                '<a class="btn btn-info btn-sm" type="button" title="Düzenle" class="btn btn-warning btn-sm" href="/Blog/Edit/' + blog.id + '"><i class="fas fa-pencil-alt"></i>Edit</a>' +
+                '<a style="margin-left:3.5px;" onclick=Delete("/Blog/Delete/' + blog.id + '") title="Sil" class="btn btn-danger btn-sm">' +
+                '<i class="fas fa-trash"> Delete</i>' +
+                '</a></td></tr>';
+            $("#Blogs").append(veri);
+            $("#addBlogModal").removeClass("in");
+            $(".modal-backdrop").remove();
+            $('body').removeClass('modal-open');
+            $('body').css('padding-right', '');
+            $("#addBlogModal").hide();
+            $("#ajax-loading").hide();
+            toastr.success("İşlem Başarılı");
+        },
+        error: function (ErrorMessage) {
+            console.log(ErrorMessage)
+            if (ErrorMessage.responseText != "") {
+                console.log(ErrorMessage.responseText)
+                jQuery.noConflict();
+                $('#addBlogModal').modal('hide');
+                $("#ajax-loading").hide();
+                toastr.error("İşlem Başarısız, Yönetici ile iletişime geçin.");
+            }
+            else {
+                console.log("Else girildi.")
+            }
+        },
+        cache: false,
+        contentType: false,
+        processData: false
+    });
+}
 
 

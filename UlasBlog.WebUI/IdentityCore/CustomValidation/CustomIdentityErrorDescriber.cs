@@ -14,7 +14,7 @@ namespace UlasBlog.WebUI.IdentityCore.CustomValidation
             return new IdentityError()
             {
                 Code = "InvalidUserName",
-                Description = $"{userName} Geçersizdir."
+                Description = $"{userName} Geçersizdir Yada Kullanılmaktadır.."
             };
         }        
         public override IdentityError DuplicateEmail(string email)

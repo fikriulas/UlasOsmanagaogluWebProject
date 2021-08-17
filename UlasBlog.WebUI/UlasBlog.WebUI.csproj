@@ -20,12 +20,12 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="TinyMCE" Version="5.8.2" />
     <PackageReference Include="X.PagedList.Mvc.Core" Version="8.1.0" />
 	  
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\Admin\plugins\" />
     <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 

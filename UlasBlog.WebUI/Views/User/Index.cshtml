@@ -47,24 +47,24 @@
                             <tbody id="Users">
                                 @foreach (var user in Model)
                                 {
-                                <tr id="@user.Id">
-                                    <td id="username" style="width:20%">@user.UserName</td>
-                                    <td id="name" style="width:20%">@user.Name @user.Surname</td>
-                                    <td id="email" style="width:20%">@user.Email</td>
-                                    <td id="role" user-roles="@user.Id" style="width:20%"></td>
-                                    <td style="width:20%;text-align:center">
-                                        <a type="button" title="Düzenle" asp-controller="User" asp-action="Edit" asp-route-Id="@user.Id" class="btn btn-warning btn-sm">
-                                            <i class="fas fa-pencil-alt">
-                                            </i>
-                                            Edit
-                                        </a>
-                                        <a onclick=Delete("/User/DeleteUser/@user.Id") title="Sil" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash">
-                                            </i>
-                                            Delete
-                                        </a>
-                                    </td>
-                                </tr>
+                                    <tr id="@user.Id">
+                                        <td id="username" style="width:20%">@user.UserName</td>
+                                        <td id="name" style="width:20%">@user.Name @user.Surname</td>
+                                        <td id="email" style="width:20%">@user.Email</td>
+                                        <td id="role" user-roles="@user.Id" style="width:20%"></td>
+                                        <td style="width:20%;text-align:center">
+                                            <a type="button" title="Düzenle" asp-controller="User" asp-action="Edit" asp-route-Id="@user.Id" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-pencil-alt">
+                                                </i>
+                                                Edit
+                                            </a>
+                                            <a onclick=Delete("/User/DeleteUser/@user.Id") title="Sil" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash">
+                                                </i>
+                                                Delete
+                                            </a>
+                                        </td>
+                                    </tr>
 
                                 }
                             </tbody>
@@ -118,10 +118,10 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="~/Admin/js/Users.js"></script>
 
-    @if (ViewData["alertMessage"] != null)
+    @if (ViewData["UserAlert"] != null)
     {
-        <script>            
-            toastr.success('@ViewData["alertMessage"]');
+        <script>
+    @Html.Raw(ViewData["UserAlert"]);
         </script>
     }
 }

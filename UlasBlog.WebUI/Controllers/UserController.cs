@@ -36,7 +36,7 @@ namespace UlasBlog.WebUI.Controllers
             }
             ViewBag.Roles = roles;
             var users = userManager.Users;
-            ViewBag.alertMessage = TempData["alertMessage"] ?? null; // Edit post methodundan geliyor.
+            ViewBag.UserAlert = TempData["UserAlert"] ?? null; // Edit post methodundan geliyor.
             return View(users);
         }
         [Authorize(Roles = "admin")]
@@ -151,10 +151,8 @@ namespace UlasBlog.WebUI.Controllers
                 IdentityResult result = await userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
-                    await userManager.UpdateSecurityStampAsync(user); // security stamp değişti. // 30 dakika sonra otomatik çıkış yaptıracak.
-                    //await signInManager.SignOutAsync(); // çıkış yapılır                    
-                    //await signInManager.SignInAsync(user, true); // giriş yapılır, cookie güncellenir.
-                    TempData["alertMessage"] = "Güncelleme İşlemi Başarılı";
+                    await userManager.UpdateSecurityStampAsync(user);
+                    TempData["UserAlert"] = "toastr.success('Güncelleme İşlemi Başarılı');";
                     return RedirectToAction("Index");
                 }
                 else
@@ -188,10 +186,12 @@ namespace UlasBlog.WebUI.Controllers
                 if (passwordCheck)
                 {
                     user.UserName = userViewModel.UserName;
+                    user.Name = userViewModel.Name;
+                    user.Surname = userViewModel.Surname;
                     user.Email = userViewModel.Email;
                     IdentityResult result = await userManager.UpdateAsync(user);
                     if (result.Succeeded)
-                    {
+                    {                                     
                         await userManager.UpdateSecurityStampAsync(user); // security stamp değişti. // 30 dakika sonra otomatik çıkış yaptıracak.
                         await signInManager.SignOutAsync(); // çıkış yapılır
                         await signInManager.SignInAsync(user, true); // giriş yapılır, cookie güncellenir.
@@ -206,8 +206,10 @@ namespace UlasBlog.WebUI.Controllers
                 else
                 {
                     ViewBag.AlertMessage = "Şifrenizi Yanlış Girdiniz";
+                    return View(userViewModel);
                 }
             }
+            ViewBag.AlertMessage = "Kontrol Edip Tekrar Deneyin";
             return View(userViewModel);
         }
         [Authorize(Roles = "admin,editör")]

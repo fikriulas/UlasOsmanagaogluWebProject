@@ -44,7 +44,7 @@ namespace UlasBlog.WebUI.Controllers
                     //AuthorId = userManager.FindByNameAsync(i.AuthorId).Result.Name
                     AuthorId = i.AuthorId
                 });
-            
+
             var Categories = new List<SelectListItem>();
             foreach (var item in uow.Categories.GetAll())
             {
@@ -54,20 +54,20 @@ namespace UlasBlog.WebUI.Controllers
                     Value = item.Id.ToString()
                 });
             }
-            ViewBag.SuccessSave = TempData["SuccessSave"] ?? null; // Edit post methodundan geliyor.
+            ViewBag.BlogAlert = TempData["BlogAlert"] ?? null; // Edit post methodundan geliyor.
             ViewBag.Categories = Categories;
             return View(blogs);
         }
         [HttpPost]
         public async Task<IActionResult> Add(Blog blog, string[] categories, IFormFile ImageUrl)
         {
-            if(blog.Title != null)
+            if (blog.Title != null)
                 blog.SlugUrl = SeoUrl.AdresDuzenle(blog.Title);
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var user = userManager.FindByNameAsync(User.Identity.Name).Result;                    
+                    var user = userManager.FindByNameAsync(User.Identity.Name).Result;
                     var path = "";
                     if (ImageUrl != null)
                     {
@@ -152,20 +152,71 @@ namespace UlasBlog.WebUI.Controllers
 
             }
             foreach (var category in blog.Categories)
-            { 
-                catId.Add(category.Id.ToString());                
+            {
+                catId.Add(category.Id.ToString());
             }
-            ViewBag.Categories = Categories;            
+            ViewBag.Categories = Categories;
             ViewBag.catId = catId.ToArray();
             return View(blog);
-            
+
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(Blog blog, string[] categories, IFormFile ImageUrl)
+        public async Task<IActionResult> Edit(BlogEdit blog, string[] categories, IFormFile ImageUrl)
         {
-            if(blog.Title !=null)
+            if (blog.Title != null)
                 blog.SlugUrl = SeoUrl.AdresDuzenle(blog.Title);
-            if (ModelState.IsValid)
+            ////
+            var entity = new BlogEdit();
+            entity = uow.Blogs.GetAll()
+             .Include(i => i.Comments)
+             .Include(i => i.BlogCategories)
+             .ThenInclude(i => i.Category)
+            .Where(i => i.Id == blog.Id)
+            .Select(i => new BlogEdit()
+            {
+                Id = i.Id,
+                Title = i.Title,
+                Description = i.Description,
+                AuthorId = i.AuthorId,
+                ImageUrl = i.ImageUrl,
+                IsHome = i.IsHome,
+                IsAppproved = i.IsAppproved,
+                IsSlider = i.IsSlider,
+                HtmlContent = i.HtmlContent,
+                Categories = i.BlogCategories.Select(b => new Category()
+                {
+                    Id = b.Category.Id,
+                    Name = b.Category.Name,
+                }).ToList(),
+                Comments = i.Comments.Select(c => new Comment()
+                {
+                    Name = c.Name,
+                    Email = c.Email,
+                    dateAdded = c.dateAdded,
+                    Message = c.Message,
+                    Id = c.Id
+                }).ToList(),
+            }).FirstOrDefault();
+            var Categories = new List<SelectListItem>();
+            List<string> catId = new List<string> { };
+
+            foreach (var item in uow.Categories.GetAll())
+            {
+                Categories.Add(new SelectListItem
+                {
+                    Text = item.Name,
+                    Value = item.Id.ToString()
+                });
+
+            }
+            foreach (var category in entity.Categories)
+            {
+                catId.Add(category.Id.ToString());
+            }
+            ViewBag.Categories = Categories;
+            ViewBag.catId = catId.ToArray();
+            ////
+            if (false)
             {
                 try
                 {
@@ -180,48 +231,51 @@ namespace UlasBlog.WebUI.Controllers
                             await ImageUrl.CopyToAsync(stream);
                             blog.ImageUrl = ImageUrl.FileName;
                         }
-                    }                    
-                    var entity = new Blog();                    
-                    entity = uow.Blogs.GetAll()
+                    }
+                    var blogEdit = new Blog();
+                    blogEdit = uow.Blogs.GetAll()
                      .Include(i => i.BlogCategories)
                      .ThenInclude(i => i.Category)
                      .FirstOrDefault(i => i.Id == blog.Id);
                     if (categories.Length != 0)
                     {
-                        entity.BlogCategories.Clear();
+                        blogEdit.BlogCategories.Clear();
                         for (int i = 0; i < categories.Length; i++)
                         {
-                            entity.BlogCategories.Add(new BlogCategory()
+                            blogEdit.BlogCategories.Add(new BlogCategory()
                             {
                                 BlogId = blog.Id,
                                 CategoryId = Convert.ToInt32(categories[i]),
                             });
                         }
                     }
-                    entity.Title = blog.Title;
-                    entity.Description = blog.Description;
-                    entity.HtmlContent = blog.HtmlContent;
-                    entity.IsAppproved = blog.IsAppproved;
-                    entity.IsHome = blog.IsHome;
-                    entity.IsSlider = blog.IsSlider;
-                    if(blog.ImageUrl != null)    
-                        entity.ImageUrl = blog.ImageUrl;            
-                    uow.Blogs.Edit(entity);
+                    blogEdit.Title = blog.Title;
+                    blogEdit.Description = blog.Description;
+                    blogEdit.HtmlContent = blog.HtmlContent;
+                    blogEdit.IsAppproved = blog.IsAppproved;
+                    blogEdit.IsHome = blog.IsHome;
+                    blogEdit.IsSlider = blog.IsSlider;
+                    if (blog.ImageUrl != null)
+                        blogEdit.ImageUrl = blog.ImageUrl;
+                    uow.Blogs.Edit(blogEdit);
                     uow.SaveChanges();
-                    TempData["SuccessSave"] = "Blog Successfully Changed.";
+                    TempData["BlogAlert"] = "toastr.success('Güncelleme İşlemi Başarılı');";
+                    //ViewBag.alertMessage = "Değer Bulanamadı";
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
                 {
                     var error = ex.Message;
+                    ViewBag.alertMessage = error;
                     //log tutulacak.
                     return View(blog);
                 }
             }
             else
             {
-                return View(blog);
-            }            
+                ViewBag.alertMessage = "toastr.error('Kontrol Edip Tekrar Deneyin');";
+                return View(entity);
+            }
         }
         public IActionResult Delete(int id)
         {
@@ -253,7 +307,7 @@ namespace UlasBlog.WebUI.Controllers
             if (Deletedcomment != null)
             {
                 try
-                {                    
+                {
                     uow.Comments.Delete(Deletedcomment);
                     uow.SaveChanges();
                     return Ok(comment.Id);
@@ -265,7 +319,7 @@ namespace UlasBlog.WebUI.Controllers
                     return BadRequest("Ekleme başarısız, Bir Sorunla Karşılaşıldı. Yöneticiyle İletişime Geçin");
                 }
             }
-            return BadRequest("İşlem Başarısız, Silmek İstediğiniz Blog Bulunamadı");
+            return BadRequest("İşlem Başarısız, Silmek İstediğiniz Yorum Bulunamadı");
         }
 
         private bool DeleteImage(string url)
@@ -284,9 +338,28 @@ namespace UlasBlog.WebUI.Controllers
             return true;
         }
 
+        public IActionResult SaveHtmlContent(string content, int Id)
+        {
+
+            try
+            {
+                var blog = uow.Blogs.Get(Id);
+                blog.HtmlContent = content;
+                uow.Blogs.Edit(blog);
+                uow.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                var error = ex.Message;
+                //log tutulacak.
+                return BadRequest(error);
+            }
+            return Ok("Başarıyla kaydedildi");
+        }
     }
 
 }
+
 
 
 

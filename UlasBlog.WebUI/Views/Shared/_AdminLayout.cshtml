@@ -35,8 +35,11 @@
     <link href="~/Admin/css/CustomCSS.css" rel="stylesheet" />
     <!-- Toastr -->
     <link rel="stylesheet" href="/Admin/AdminLTE/plugins/toastr/toastr.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/froala-editor@3.1.0/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
     <style>
-
+        .cke_dialog {
+            z-index: 10055 !important;
+        }
     </style>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -226,185 +229,12 @@
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-book"></i>
+                            <a asp-controller="User" asp-action="Roles" class="nav-link">
+                                <i class="nav-icon fas fa-user-tag"></i>
                                 <p>
                                     Roller
-                                    <i class="fas fa-angle-left right"></i>
                                 </p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="pages/examples/invoice.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Invoice</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/examples/profile.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Profile</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/examples/e-commerce.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>E-commerce</p>
-                                    </a>
-                                </li>                               
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon far fa-plus-square"></i>
-                                <p>
-                                    Extras
-                                    <i class="fas fa-angle-left right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>
-                                            Login & Register v1
-                                            <i class="fas fa-angle-left right"></i>
-                                        </p>
-                                    </a>
-                                    <ul class="nav nav-treeview">
-                                        <li class="nav-item">
-                                            <a href="pages/examples/login.html" class="nav-link">
-                                                <i class="far fa-circle nav-icon"></i>
-                                                <p>Login v1</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="pages/examples/register.html" class="nav-link">
-                                                <i class="far fa-circle nav-icon"></i>
-                                                <p>Register v1</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="pages/examples/forgot-password.html" class="nav-link">
-                                                <i class="far fa-circle nav-icon"></i>
-                                                <p>Forgot Password v1</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="pages/examples/recover-password.html" class="nav-link">
-                                                <i class="far fa-circle nav-icon"></i>
-                                                <p>Recover Password v1</p>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>
-                                            Login & Register v2
-                                            <i class="fas fa-angle-left right"></i>
-                                        </p>
-                                    </a>
-                                    <ul class="nav nav-treeview">
-                                        <li class="nav-item">
-                                            <a href="pages/examples/login-v2.html" class="nav-link">
-                                                <i class="far fa-circle nav-icon"></i>
-                                                <p>Login v2</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="pages/examples/register-v2.html" class="nav-link">
-                                                <i class="far fa-circle nav-icon"></i>
-                                                <p>Register v2</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="pages/examples/forgot-password-v2.html" class="nav-link">
-                                                <i class="far fa-circle nav-icon"></i>
-                                                <p>Forgot Password v2</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="pages/examples/recover-password-v2.html" class="nav-link">
-                                                <i class="far fa-circle nav-icon"></i>
-                                                <p>Recover Password v2</p>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/examples/lockscreen.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Lockscreen</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/examples/legacy-user-menu.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Legacy User Menu</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/examples/language-menu.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Language Menu</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/examples/404.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Error 404</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/examples/500.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Error 500</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/examples/pace.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Pace</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/examples/blank.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Blank Page</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="starter.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Starter Page</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-search"></i>
-                                <p>
-                                    Search
-                                    <i class="fas fa-angle-left right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="pages/search/simple.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Simple Search</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/search/enhanced.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Enhanced</p>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
                     </ul>
                 </nav>
@@ -486,9 +316,10 @@
     @if (ViewData["SuccessSave"] != null)
     {
 <script>
-    toastr.success("İşlem Başarılı");
+    @Html.Raw(ViewData["SuccessSave"]);
 </script>
 }
+
 
     @RenderSection("Category", false)
     @RenderSection("Blog", false)

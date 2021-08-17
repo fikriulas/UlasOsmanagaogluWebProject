@@ -32,6 +32,7 @@ namespace UlasBlog.WebUI.Models
         public bool IsHome { get; set; }
         public bool IsSlider { get; set; }
         public List<Category> Categories { get; set; }
+        public List<BlogCategory> BlogCategories { get; set; }
         public List<Comment> Comments { get; set; }
         public Comment Comment { get; set; }
     }    
