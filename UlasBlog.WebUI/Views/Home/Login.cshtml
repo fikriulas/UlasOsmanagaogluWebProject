@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="/Admin/AdminLTE/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="/Admin/AdminLTE/dist/css/adminlte.min.css">
+    <!-- Toastr -->
+    <link rel="stylesheet" href="/Admin/AdminLTE/plugins/toastr/toastr.min.css">
 </head>
 <body class="hold-transition login-page">
     <div class="login-box">
@@ -35,6 +37,9 @@
                 <div class="text-danger text-center" asp-validation-summary="ModelOnly">
 
                 </div>
+
+
+
                 <form id="LoginForm" asp-controller="Home" asp-action="Login" method="post" enctype="multipart/form-data">
                     <div class="input-group mb-3">
                         <input asp-for="Email" class="form-control" placeholder="Email">
@@ -93,11 +98,18 @@
     <!-- jQuery -->
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
-    <script src="/Admin/AdminLTE/lugins/jquery/jquery.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/jquery/jquery.min.js"></script>
     <!-- Bootstrap 4 -->
     <script src="/Admin/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
     <script src="/Admin/AdminLTE/dist/js/adminlte.min.js"></script>
+    <script src="/Admin/AdminLTE/plugins/toastr/toastr.min.js"></script>
+    @if (ViewData["BlogAlert"] != null)
+    {
+        <script>
+            @Html.Raw(ViewData["BlogAlert"])
+        </script>
+    }
 </body>
 </html>
 

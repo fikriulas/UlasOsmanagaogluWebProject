@@ -17,13 +17,14 @@ using X.PagedList;
 
 namespace UlasBlog.WebUI.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private IUnitOfWork uow;
         private SignInManager<AppUser> signInManager;
         private UserManager<AppUser> userManager;
         private RoleManager<AppRole> roleManager;
         public HomeController(IUnitOfWork _uow, SignInManager<AppUser> _signInManager, UserManager<AppUser> _userManager, RoleManager<AppRole> _roleManager)
+            : base(_userManager, _signInManager, _roleManager)
         {
             uow = _uow;
             signInManager = _signInManager;
@@ -187,8 +188,8 @@ namespace UlasBlog.WebUI.Controllers
                 if (user != null)
                 {
                     if (await userManager.IsLockedOutAsync(user)) // kullanıcı lock olmuş mu bunun kontrolünü yapar.
-                    {
-                        ModelState.AddModelError("", "Hesabınız Bir Süreliğine Devre Dışı Bırakılmıştır");
+                    {                        
+                        ViewBag.BlogAlert = AlertMessageForToastr("Hesabınız Bir Süreliğine Devre Dışı Bırakılmıştır");
                         return View(login);
                     }
                     await signInManager.SignOutAsync(); // login işleminden önce sistemde siteyle ilgili bir cookie olma durumuna karşın logout yapılır.
@@ -208,15 +209,17 @@ namespace UlasBlog.WebUI.Controllers
                         int failAccess = await userManager.GetAccessFailedCountAsync(user); // başarısız giriş sayısını tutar.
                         if (failAccess == 3)
                         {
-                            await userManager.SetLockoutEndDateAsync(user, new System.DateTimeOffset(DateTime.Now.AddMinutes(20))); // kullanıcı başarısız giriş yaparsa, 20 dakika hesabı kitler.
-                            ModelState.AddModelError("", "Hesabınız Başarısız Girişlerden Dolayı 20 Dakika Kitlenmiştir");
+                            await userManager.SetLockoutEndDateAsync(user, new System.DateTimeOffset(DateTime.Now.AddMinutes(20))); // kullanıcı başarısız giriş yaparsa, 20 dakika hesabı kitler.                            
+                            ViewBag.BlogAlert = AlertMessageForToastr("Hesabınız Başarısız Girişlerden Dolayı 20 Dakika Kitlenmiştir");
+                            return View(login);
                         }
-                        ModelState.AddModelError("", "Hatalı E-Mail Yada Şifre Giriniz");
+                        ViewBag.BlogAlert = AlertMessageForToastr("Hatalı E-Mail Yada Şifre Girdiniz");
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Hatalı E-Mail Yada Şifre Girdiniz");
+                    
+                    ViewBag.BlogAlert = AlertMessageForToastr("Hatalı E-Mail Yada Şifre Girdiniz");                    
                 }
             }
             return View(login);
