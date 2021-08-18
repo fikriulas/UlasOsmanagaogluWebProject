@@ -14,6 +14,9 @@ using UlasBlog.Entity;
 using UlasBlog.WebUI.IdentityCore;
 using UlasBlog.WebUI.Models;
 using X.PagedList;
+using System.Net.Http;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace UlasBlog.WebUI.Controllers
 {
@@ -104,8 +107,19 @@ namespace UlasBlog.WebUI.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddComment(Comment comment)
+        public async Task<IActionResult> AddComment(Comment comment)
         {
+            var captchaImage = HttpContext.Request.Form["g-recaptcha-response"];
+            if (string.IsNullOrEmpty(captchaImage))
+            {
+                return BadRequest("Captcha Doğrulayıp Tekrar Deneyin");
+            }
+            var verified = await CheckCaptcha();
+            if (!verified)
+            {                
+                return BadRequest("Captcha Doğrulaması Hatalı, Tekrar Deneyin");
+
+            }
             if (ModelState.IsValid)
             {
                 comment.dateAdded = DateTime.Now;
@@ -182,13 +196,25 @@ namespace UlasBlog.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel login)
         {
+            var captchaImage = HttpContext.Request.Form["g-recaptcha-response"];
+            if (string.IsNullOrEmpty(captchaImage))
+            {
+                ViewBag.LoginAlert = AlertMessageForToastr("Captcha Doğrulayıp Tekrar Deneyin");
+                return View(login);
+            }
+            var verified = await CheckCaptcha();
+            if (!verified)
+            {
+                ViewBag.LoginAlert = AlertMessageForToastr("Captcha Doğrulaması Hatalı, Tekrar Deneyin");
+                return View(login);
+            }
             if (ModelState.IsValid)
             {
                 AppUser user = await userManager.FindByEmailAsync(login.Email); // gelen email ile kullanıcı var mı kontrol edilir.
                 if (user != null)
                 {
                     if (await userManager.IsLockedOutAsync(user)) // kullanıcı lock olmuş mu bunun kontrolünü yapar.
-                    {                        
+                    {
                         ViewBag.LoginAlert = AlertMessageForToastr("Hesabınız Bir Süreliğine Devre Dışı Bırakılmıştır");
                         return View(login);
                     }
@@ -218,11 +244,27 @@ namespace UlasBlog.WebUI.Controllers
                 }
                 else
                 {
-                    
-                    ViewBag.LoginAlert = AlertMessageForToastr("Hatalı E-Mail Yada Şifre Girdiniz");                    
+
+                    ViewBag.LoginAlert = AlertMessageForToastr("Hatalı E-Mail Yada Şifre Girdiniz");
                 }
             }
             return View(login);
+        }
+        private async Task<bool> CheckCaptcha()
+        {
+            var postData = new List<KeyValuePair<string, string>>()
+            {
+                new KeyValuePair<string, string>("secret", "6Lf2tAwcAAAAADrL9yqoLehzhUu1eyZ6d4fsYiM4"),
+                new KeyValuePair<string, string>("remoteip", HttpContext.Connection.RemoteIpAddress.ToString()),
+                new KeyValuePair<string, string>("response", HttpContext.Request.Form["g-recaptcha-response"])
+            };
+
+            var client = new HttpClient();
+            var response = await client.PostAsync("https://www.google.com/recaptcha/api/siteverify", new FormUrlEncodedContent(postData));
+
+            var o = (JObject)JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync());
+
+            return (bool)o["success"];
         }
         public IActionResult ForgotPassword()
         {
@@ -259,7 +301,7 @@ namespace UlasBlog.WebUI.Controllers
                 client.Disconnect(true);
                 client.Dispose();
                 //ViewBag.PasswordReset = "Şifre Değiştirildi";
-                ViewBag.ForgotPasswordAlert = AlertMessageForToastr("Şifre Sıfırlama Maili Başarıyla Gönderildi","success");
+                ViewBag.ForgotPasswordAlert = AlertMessageForToastr("Şifre Sıfırlama Maili Başarıyla Gönderildi", "success");
             }
             else
             {
