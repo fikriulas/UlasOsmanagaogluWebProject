@@ -14,6 +14,7 @@ namespace UlasBlog.Data.Concrete.EntityFramework
         }
 
         private ICategoryRepository _categories;
+        private IIplistRepository _iplists;
         private IBlogRepository _blogs;
         private ICommentRepository _comments;
         private IContactRepository _contacts;
@@ -25,6 +26,13 @@ namespace UlasBlog.Data.Concrete.EntityFramework
             get
             {
                 return _categories ?? (_categories = new EfCategoryRepository(dbContext));
+            }
+        }
+        public IIplistRepository Iplist
+        {
+            get
+            {
+                return _iplists ?? (_iplists = new EfIplistRepository(dbContext));
             }
         }
 
@@ -67,6 +75,7 @@ namespace UlasBlog.Data.Concrete.EntityFramework
                 return _settings ?? (_settings = new EfSettingsRepository(dbContext));
             }
         }
+
 
         public int SaveChanges()
         {

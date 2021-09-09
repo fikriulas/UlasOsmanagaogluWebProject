@@ -216,7 +216,7 @@ namespace UlasBlog.WebUI.Controllers
             ViewBag.Categories = Categories;
             ViewBag.catId = catId.ToArray();
             ////
-            if (false)
+            if (ModelState.IsValid)
             {
                 try
                 {

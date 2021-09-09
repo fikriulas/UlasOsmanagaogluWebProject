@@ -12,6 +12,7 @@ namespace UlasBlog.Data.Abstract
         ISettingsRepository Settings { get; }
         IContactRepository Contacts { get; }
         IBlogCategoryRepository BlogCategory { get; }
+        IIplistRepository Iplist { get; }
         int SaveChanges();
     }
 }

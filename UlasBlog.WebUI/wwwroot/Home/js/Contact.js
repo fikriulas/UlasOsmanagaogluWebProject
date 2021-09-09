@@ -32,8 +32,8 @@ $("#replyMessage").submit(function (event) {
             $('body').removeClass('modal-open');
             $('body').css('padding-right', '');
             $("#editContactModal").hide();
-            $("#ajax-loading").hide();            
-            console.log("toastr harici");
+            $("#ajax-loading").hide();      
+            $('.note-editable').empty()
             toastr.success("Mesaj iletildi.");
         },
         error: function (errorMessage) {
@@ -70,10 +70,10 @@ function Delete(url) {
                 complete: function () {
                     $("#ajax-loading").hide();
                 },
-                success: function (Id) {
-                    console.log()
+                success: function (Id) {                    
                     var m = document.getElementById(Id);
-                    m.style.display = "none";
+                    m.style.display = "none";                    
+
                     toastr.success("İşlem Başarılı");
                 },
                 error: function (errorMessage) {

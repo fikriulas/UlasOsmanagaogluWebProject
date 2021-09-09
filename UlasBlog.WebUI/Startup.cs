@@ -16,6 +16,7 @@ using UlasBlog.Data.Abstract;
 using UlasBlog.Data.Concrete.EntityFramework;
 using UlasBlog.WebUI.IdentityCore;
 using UlasBlog.WebUI.IdentityCore.CustomValidation;
+using UlasBlog.WebUI.Middleware;
 
 namespace UlasBlog.WebUI
 {
@@ -90,7 +91,7 @@ namespace UlasBlog.WebUI
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            app.UseMiddleware<IPControlMiddleware>();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             //Identity için middware eklenir.

@@ -17,7 +17,7 @@ jQuery.migrateVersion = "3.0.0";
 	var log = window.console && window.console.log &&
 			function() { window.console.log.apply( window.console, arguments ); },
 		rbadVersions = /^[12]\./;
-
+	
 	if ( !log ) {
 		return;
 	}

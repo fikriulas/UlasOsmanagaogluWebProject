@@ -17,18 +17,21 @@ using X.PagedList;
 using System.Net.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.Configuration;
 
 namespace UlasBlog.WebUI.Controllers
 {
     public class HomeController : BaseController
     {
+        IConfiguration _configuration;
         private IUnitOfWork uow;
         private SignInManager<AppUser> signInManager;
         private UserManager<AppUser> userManager;
         private RoleManager<AppRole> roleManager;
-        public HomeController(IUnitOfWork _uow, SignInManager<AppUser> _signInManager, UserManager<AppUser> _userManager, RoleManager<AppRole> _roleManager)
+        public HomeController(IUnitOfWork _uow, SignInManager<AppUser> _signInManager, UserManager<AppUser> _userManager, RoleManager<AppRole> _roleManager,IConfiguration configuration)
             : base(_userManager, _signInManager, _roleManager)
         {
+            _configuration = configuration;
             uow = _uow;
             signInManager = _signInManager;
             userManager = _userManager;
@@ -37,6 +40,8 @@ namespace UlasBlog.WebUI.Controllers
         [Route("/{page?}")]
         public IActionResult Index(int page = 1)
         {
+            var ips = _configuration.GetSection("WhiteList").AsEnumerable().ToList();
+
             var blogs = uow.Blogs.GetAll()
                 .Where(i => i.IsAppproved)
                 .Where(i => i.IsHome)
@@ -344,6 +349,10 @@ namespace UlasBlog.WebUI.Controllers
             }
 
             return View(model);
+        }
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
 
 
