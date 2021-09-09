@@ -143,6 +143,30 @@ namespace UlasBlog.WebUI.Controllers
         {
             return View();
         }
+        public IActionResult IpList()
+        {
+            var ips = uow.Iplist.GetAll();
+            return View(ips);
+        }
+        public IActionResult AddIpList(Iplist iplist)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    iplist.Date = DateTime.Now;
+                    //uow.Iplist.Add(iplist);
+                    //uow.SaveChanges();
+                    return Ok(iplist);
+                }
+                catch (Exception ex)
+                {
+                    var error = ex.Message;
+                    return BadRequest(error);
+                }
+            }
+            return BadRequest();
+        }
 
 
     }
