@@ -167,6 +167,25 @@ namespace UlasBlog.WebUI.Controllers
             }
             return BadRequest();
         }
+        public IActionResult DeleteIpList(int Id)
+        {
+            try
+            {
+                var ip = uow.Iplist.Get(Id);
+                if (ip != null)
+                {
+                    uow.Iplist.Delete(ip);
+                    uow.SaveChanges();
+                    return Ok(Id);
+                }
+                return BadRequest("Ip listesi listede buluanamadı");
+            }
+            catch (Exception ex)
+            {
+                var error = ex.Message;
+                return BadRequest(error.ToString());
+            }
+        }
 
 
     }

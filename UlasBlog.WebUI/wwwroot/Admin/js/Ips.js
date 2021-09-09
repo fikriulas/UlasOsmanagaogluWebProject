@@ -1,5 +1,4 @@
 ﻿
-
 $("#AddBlackListIp").submit(function (event) {
     console.log("javascript devrede");
     event.preventDefault();
@@ -41,7 +40,7 @@ $("#AddBlackListIp").submit(function (event) {
                 '<td id="block" style="width:20%">False</td>' +
                 '<td style="width:20%;text-align:center">' +
                 '<a type="button" title="Düzenle" class="btn btn-warning btn-sm" href="/User/Edit/4"><i class="fas fa-pencil-alt"></i>Edit</a>' +
-                '<a style="margin-left:3.5px;" onclick=Delete("/User/DeleteIpList/' + ip.ip + '") title="Sil" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i>Delete</a></td></tr>';
+                '<a style="margin-left:3.5px;" onclick=Delete("/Admin/DeleteIpList/' + ip.ip + '") title="Sil" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i>Delete</a></td></tr>';
 
 
             $("#ips").append(verii);
@@ -66,4 +65,41 @@ $("#AddBlackListIp").submit(function (event) {
         processData: false
     });
 });
+
+function Delete(url) {
+    event.preventDefault(); // prevent form submit
+    var form = event.target.form; // storing the form
+    var token = $('input[name="__RequestVerificationToken"]', form).val();
+    var data = { Id: $("#Id").val() };
+    var dataWithToken = $.extend(data, { '__RequestVerificationToken': token });
+    swal({
+        title: "Are you sure you want to Delete?",
+        text: "You will not be able to restore the data!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }).then((willDelete) => {
+        if (willDelete) {
+            $.ajax({
+                url: url,
+                type: "Delete",
+                data: $(this).serialize(),
+                beforeSend: function () {
+                    $("#ajax-loading").show();
+                },
+                complete: function () {
+                    $("#ajax-loading").hide();
+                },
+                success: function (Id) {
+                    var m = document.getElementById(Id);
+                    m.style.display = "none";
+                    toastr.success("Ip Adresi Listeden Kaldırıldı");
+                },
+                error: function (errorMessage) {
+                    toastr.error(errorMessage.responseText);
+                }
+            });
+        }
+    });
+}
 
