@@ -33,9 +33,10 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="HtmlContent"></label>
-                        <textarea asp-for="HtmlContent">
 
-                        </textarea>
+                        <textarea asp-for="HtmlContent" rows="10" cols="80">
+                        This is my textarea to be replaced with CKEditor 4.
+                    </textarea>
                         @Html.ValidationMessageFor(model => model.HtmlContent, "", new { @class = "text-danger" })
                     </div>
                     <div class="form-group">

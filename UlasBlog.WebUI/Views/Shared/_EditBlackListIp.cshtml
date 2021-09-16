@@ -1,0 +1,37 @@
+﻿@model Iplist
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+<!-- Modal -->
+
+<div class="modal fade" id="EditBlackListIpModal" tabindex="-1" role="dialog" aria-labelledby="EditBlackListIpModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Kara Listeye Ip Ekle</h5>
+            </div>
+            <form id="EditBlackListIp" asp-controller="Admin" asp-action="EditIpList" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label asp-for="Ip"></label>
+                        <input type="text" class="form-control" asp-for="Ip">
+                        <input type="hidden" class="form-control" asp-for="Id">
+                        @Html.ValidationMessageFor(model => model.Ip, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Note"></label>
+                        <input type="text" class="form-control" asp-for="Note">
+                        @Html.ValidationMessageFor(model => model.Note, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <label id="ajax-loading" style="float:left;display:none">
+                        <img height="50px" src="~/Admin/img/loading.gif" />
+                    </label>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-success">Gönder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

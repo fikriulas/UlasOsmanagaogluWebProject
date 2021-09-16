@@ -8,6 +8,7 @@ using UlasBlog.Entity;
 using MailKit.Net.Smtp;
 using MimeKit;
 using Microsoft.AspNetCore.Authorization;
+using UlasBlog.WebUI.Models;
 
 namespace UlasBlog.WebUI.Controllers
 {
@@ -22,7 +23,18 @@ namespace UlasBlog.WebUI.Controllers
         [Route("/Admin")]
         public IActionResult Index()
         {
-            return View();
+            int totalComment = uow.Comments.GetAll().Count();
+            int totalBlog = uow.Blogs.GetAll().Count();
+            int totalMessage = uow.Contacts.GetAll()
+                .Where(i => i.IsRead == false)
+                .Count();
+            var dashboard = new Dashboard()
+            {
+                TotalComment = totalComment,
+                TotalBlog = totalBlog,
+                TotalMessage = totalMessage,
+            };
+            return View(dashboard);
         }
         [Authorize(Roles = "admin")]
         public IActionResult Contact()
@@ -155,8 +167,9 @@ namespace UlasBlog.WebUI.Controllers
                 try
                 {
                     iplist.Date = DateTime.Now;
-                    //uow.Iplist.Add(iplist);
-                    //uow.SaveChanges();
+                    iplist.Block = true;
+                    uow.Iplist.Add(iplist);
+                    uow.SaveChanges();
                     return Ok(iplist);
                 }
                 catch (Exception ex)
@@ -186,6 +199,54 @@ namespace UlasBlog.WebUI.Controllers
                 return BadRequest(error.ToString());
             }
         }
+        public IActionResult EditIpList(Iplist iplist)
+        {
+            if (ModelState.IsValid)
+            {
+                var ips = uow.Iplist.Get(iplist.Id);
+                ips.Ip = iplist.Ip;
+                ips.Note = iplist.Note;
+                try
+                {
+                    uow.Iplist.Edit(ips);
+                    uow.SaveChanges();
+                    return Ok(ips);
+                }
+                catch (Exception ex)
+                {
+                    var error = ex.Message;
+                    return BadRequest(error.ToString());
+                }
+            }
+            return BadRequest("Hata");
+        }
+        public IActionResult IpListChangeStatus(int Id)
+        {
+            var ips = uow.Iplist.Get(Id);
+            if (ips != null)
+            {
+                if (ips.Block)
+                    ips.Block = false;
+                else
+                    ips.Block = true;
+                try
+                {
+                    uow.Iplist.Edit(ips);
+                    uow.SaveChanges();
+                    return Ok(ips);
+                }
+                catch (Exception ex)
+                {
+                    var error = ex.Message;
+                    return BadRequest(error.ToString());                    
+                }
+            }
+            return BadRequest("Bir hata Oluştu");          
+            
+            
+        }
+
+
 
 
     }

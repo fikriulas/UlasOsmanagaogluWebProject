@@ -1,4 +1,12 @@
-﻿
+﻿$(document).on("click", ".open-EditBlackListIpModal", function () {
+    var id = $(this).data('iplist-id');    
+    var ip = $('#' + id).find('#ip').html();    
+    var note = $(this).data('iplist-note');    
+    $(".modal-body #Ip").val(ip);
+    $(".modal-body #Id").val(id); 
+    $(".modal-body #Note").val(note);    
+});
+
 $("#AddBlackListIp").submit(function (event) {
     console.log("javascript devrede");
     event.preventDefault();
@@ -14,8 +22,7 @@ $("#AddBlackListIp").submit(function (event) {
         complete: function () {
             $("#ajax-loading").hide();
         },
-        success: function (ip) {
-            console.log("succes girildi");
+        success: function (ip) {           
             var trclass = "";
             var bosluk = " ";
             var count = $("#ips > tr").length;
@@ -23,25 +30,14 @@ $("#AddBlackListIp").submit(function (event) {
                 trclass = "odd";
             else
                 trclass = "even";
-
-            /*var verii = '<tr id="' + user.id + '" class="' + trclass + '">' +
-                '<td id="username" style="width:20%" class="dtr-control sorting_1" tabindex="0">' + user.userName + '</td>' +
-                '<td id="name" style="width:20%">' + user.name + '</td>' +
-                '<td id="surname" style="width:20%">' + user.surname + '</td>' +
-                '<td>'+user.email+'</td>' +
-                '<td style="width:30%;text-align:center">' +
-                '<a type="button" title="Düzenle" class="btn btn-warning btn-sm" href="/User/Edit/' + user.id + '"><i class="fas fa-pencil-alt"></i> Edit</a>' +
-                '<a style="margin-left:3.5px;" onclick=Delete("/User/DeleteUser/' + user.id + '") title="Sil" class="btn btn-danger btn-sm">' +
-                '<i class="fas fa-trash"> Delete</i>' +
-                '</a></td></tr>';      */
             var verii = '<tr id="' + ip.id + '" class="' + trclass + '">' +
                 '<td id="ip" style="width:20%" class="dtr-control sorting_1" tabindex="0">' + ip.ip + '</td>' +
                 '<td id="note" style="width:20%"></td>' +
-                '<td id="block" style="width:20%">False</td>' +
+                '<td id="block" style="width:20%"><a id="status.' + ip.id + '" onclick=ChangeStatu("/Admin/IpListChangeStatus/' + ip.id + '") title="Sil" class="btn btn-danger btn-sm ' + ip.ip +'">Engellendi</a></td>' +
                 '<td style="width:20%;text-align:center">' +
-                '<a type="button" title="Düzenle" class="btn btn-warning btn-sm" href="/User/Edit/4"><i class="fas fa-pencil-alt"></i>Edit</a>' +
-                '<a style="margin-left:3.5px;" onclick=Delete("/Admin/DeleteIpList/' + ip.ip + '") title="Sil" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i>Delete</a></td></tr>';
-
+                '<a type="button" title="Düzenle" class="btn btn-warning btn-sm open-EditBlackListIpModal" data-iplist-id="' + ip.id + '" data-iplist-ip="' + ip.ip + '" data-iplist-note="' + ip.note + '" data-iplist-block="'+ip.block+'" data-toggle="modal" data-target="#EditBlackListIpModal"><i class="fas fa-pencil-alt"></i>Edit </a>' +
+                '<a style="margin-left:3.5px;" onclick=Delete("/Admin/DeleteIpList/' + ip.id + '") title="Sil" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i>Delete</a></td></tr>';
+                
 
             $("#ips").append(verii);
             $("#AddBlackListIpModal").removeClass("in");
@@ -103,3 +99,67 @@ function Delete(url) {
     });
 }
 
+$("#EditBlackListIp").submit(function (event) {    
+    event.preventDefault();
+    var form = $(this);
+    var formData = new FormData(this);
+    $.ajax({
+        url: form.attr("action"),
+        type: 'POST',
+        data: formData,
+        beforeSend: function () {
+            $("#ajax-loading").show();
+        },
+        complete: function () {
+            $("#ajax-loading").hide();
+        },
+        success: function (item) {
+            $('#' + item.id).find('#ip').text(item.ip);
+            $('#' + item.id).find('#note').text(item.note);            
+            $("#EditBlackListIpModal").removeClass("in");
+            $(".modal-backdrop").remove();
+            $('body').removeClass('modal-open');
+            $('body').css('padding-right', '');
+            $("#EditBlackListIpModal").hide();
+            $("#ajax-loading").hide();
+            toastr.success("İşlem Başarılı");
+        },
+        error: function (ErrorMessage) {
+            toastr.error(ErrorMessage.responseText);
+        },
+        cache: false,
+        contentType: false,
+        processData: false
+    });
+});
+
+function ChangeStatu(url) {
+    event.preventDefault();    
+    $.ajax({
+        url: url,
+        type: "Post",
+        data: $(this).serialize(),
+        beforeSend: function () {
+            $("#ajax-loading").show();
+        },
+        complete: function () {
+            $("#ajax-loading").hide();
+        },
+        success: function (item) {
+            //var el = document.getElementsByClassName("btn.btn-danger.btn-sm.13");
+            var el = document.getElementById("status." + item.id);
+            if (item.block) {
+                el.textContent = "Engellendi";
+                el.className = "btn btn-danger btn-sm "+item.id;
+            }
+            else {
+                el.textContent = "İzin Verildi";
+                el.className = "btn btn-success btn-sm " + item.id;
+            }            
+            toastr.success("Ip adresinin durumu değiştirilmiştir.");
+        },
+        error: function (errorMessage) {
+            toastr.error(errorMessage.responseText);
+        }
+    });
+}

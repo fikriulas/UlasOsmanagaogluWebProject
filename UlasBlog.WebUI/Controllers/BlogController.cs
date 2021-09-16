@@ -35,6 +35,7 @@ namespace UlasBlog.WebUI.Controllers
         [Route("/Admin/Blog/")]
         public IActionResult Index()
         {
+
             var blogs = uow.Blogs.GetAll()
                 .Select(i => new BlogDetail()
                 {
