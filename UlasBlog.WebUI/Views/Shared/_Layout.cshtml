@@ -24,11 +24,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-9 social">
-                            <a href="#"><span class="fa fa-twitter"></span></a>
-                            <a href="#"><span class="fa fa-twitter"></span></a>
-                            <a href="#"><span class="fa fa-facebook"></span></a>
-                            <a href="#"><span class="fa fa-instagram"></span></a>
-                            <a href="#"><span class="fa fa-youtube-play"></span></a>
+                            @await Component.InvokeAsync("HeaderSocialMedia");
                         </div>
                         <div class="col-3 search-top">
                             <!-- <a href="#"><span class="fa fa-search"></span></a> -->
@@ -112,12 +108,7 @@
                                 <div class="mb-5">
                                     <h3>Sosyal Medya</h3>
                                     <ul class="list-unstyled footer-social">
-                                        <li><a href="#"><span class="fa fa-twitter"></span> Twitter</a></li>
-                                        <li><a href="#"><span class="fa fa-facebook"></span> Facebook</a></li>
-                                        <li><a href="#"><span class="fa fa-instagram"></span> Instagram</a></li>
-                                        <li><a href="#"><span class="fa fa-vimeo"></span> Vimeo</a></li>
-                                        <li><a href="#"><span class="fa fa-youtube-play"></span> Youtube</a></li>
-                                        <li><a href="#"><span class="fa fa-snapchat"></span> Snapshot</a></li>
+                                        @await Component.InvokeAsync("FooterSocialMedia")
                                     </ul>
                                 </div>
                             </div>
