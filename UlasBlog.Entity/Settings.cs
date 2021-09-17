@@ -36,5 +36,21 @@ namespace UlasBlog.Entity
         [DataType(DataType.Password)]
         [StringLength(35, ErrorMessage = "Mail Şifresi Alanı 35 Karakterden Uzun Olamaz.")]
         public string MailPassword { get; set; }
+        public bool Slider { get; set; }
+        public bool Comment { get; set; }
+        public bool maintenance { get; set; }
+        [Display(Name = "Facebook")]
+        public string Facebook { get; set; }
+        [Display(Name = "Github")]
+        public string Github { get; set; }
+        [Display(Name = "Instagram")]
+        public string Instagram { get; set; }
+        [Display(Name = "Linkedin")]
+        public string Linkedin { get; set; }
+        [Display(Name = "Youtube")]
+        public string Youtube { get; set; }
+        [Display(Name = "Twitter")]
+        public string Twitter { get; set; }
+
     }
 }

@@ -26,54 +26,116 @@
                 <div class="card card-gray-dark">
                     <div class="card-header">
                         <h3 class="card-title">
-                            Ayarları Düzenleyin
+
+                            <a class="btn btn-secondary mr-2" id="SiteSettingsButton" data-toggle="collapse" href="#SiteSettings" role="button" aria-expanded="false" aria-controls="SiteSettings">
+                                Site Ayarları
+                            </a>
+                            <a class="btn btn-secondary mr-2" id="EmailSettingsButton" data-toggle="collapse" href="#EmailSetting" role="button" aria-expanded="false" aria-controls="EmailSetting">
+                                E-Mail Ayarları
+                            </a>
+                            <a class="btn btn-secondary mr-2" id="SocialMediaButton" data-toggle="collapse" href="#SocialMediaSettings" role="button" aria-expanded="false" aria-controls="SocialMediaSettings">
+                                Sosyal Medya
+                            </a>
                         </h3>
                     </div>
                     <!-- /.card-header -->
                     <form id="settingForm" asp-controller="Admin" asp-action="Settings" method="post" enctype="multipart/form-data">
+
                         <div class="card-body">
-                            <div class="form-group">
-                                <label asp-for="SiteName"></label>
-                                <input type="hidden" asp-for="Id" value="@Model.Id" />
-                                <input type="text" class="form-control" asp-for="SiteName" placeholder="Enter Blog Name">
-                                @Html.ValidationMessageFor(model => model.SiteName, "", new { @class = "text-danger" })
+                            <div class="collapse in show" id="SiteSettings">
+                                <div class="form-group">
+                                    <label asp-for="SiteName"></label>
+                                    <input type="hidden" asp-for="Id" value="@Model.Id" />
+                                    <input type="text" class="form-control" asp-for="SiteName">
+                                    @Html.ValidationMessageFor(model => model.SiteName, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="SiteDescription"></label>
+                                    <input type="text" class="form-control" asp-for="SiteDescription">
+                                    @Html.ValidationMessageFor(model => model.SiteDescription, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input" asp-for="Slider">
+                                        <label class="custom-control-label" for="Slider">Slider Aktif</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input" asp-for="maintenance">
+                                        <label class="custom-control-label" for="maintenance">Bakım Modu</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input" asp-for="Comment">
+                                        <label class="custom-control-label" for="Comment">Yorumlar Aktif</label>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label asp-for="SiteDescription"></label>
-                                <input type="text" class="form-control" asp-for="SiteDescription" placeholder="Enter Blog Name">
-                                @Html.ValidationMessageFor(model => model.SiteDescription, "", new { @class = "text-danger" })
+                            <div class="collapse" id="EmailSetting">
+                                <div class="form-group">
+                                    <label asp-for="SmtpAddress"></label>
+                                    <input type="text" class="form-control" asp-for="SmtpAddress">
+                                    @Html.ValidationMessageFor(model => model.SmtpAddress, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Port"></label>
+                                    <input type="text" class="form-control" asp-for="Port">
+                                    @Html.ValidationMessageFor(model => model.Port, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="MailUserName"></label>
+                                    <input type="text" class="form-control" asp-for="MailUserName">
+                                    @Html.ValidationMessageFor(model => model.MailUserName, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="MailPassword"></label>
+                                    <input type="text" class="form-control" asp-for="MailPassword">
+                                    @Html.ValidationMessageFor(model => model.MailPassword, "", new { @class = "text-danger" })
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label asp-for="SiteName"></label>
-                                <input type="text" class="form-control" asp-for="SiteName" placeholder="Enter Blog Name">
-                                @Html.ValidationMessageFor(model => model.SiteName, "", new { @class = "text-danger" })
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="SmtpAddress"></label>
-                                <input type="text" class="form-control" asp-for="SmtpAddress" placeholder="Enter Blog Name">
-                                @Html.ValidationMessageFor(model => model.SmtpAddress, "", new { @class = "text-danger" })
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="Port"></label>
-                                <input type="text" class="form-control" asp-for="Port" placeholder="Enter Blog Name">
-                                @Html.ValidationMessageFor(model => model.Port, "", new { @class = "text-danger" })
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="MailUserName"></label>
-                                <input type="text" class="form-control" asp-for="MailUserName" placeholder="Enter Blog Name">
-                                @Html.ValidationMessageFor(model => model.MailUserName, "", new { @class = "text-danger" })
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="MailPassword"></label>
-                                <input type="text" class="form-control" asp-for="MailPassword" placeholder="Enter Blog Name">
-                                @Html.ValidationMessageFor(model => model.MailPassword, "", new { @class = "text-danger" })
+                            <div class="collapse" id="SocialMediaSettings">
+                                <div class="form-group">
+                                    <label asp-for="Github"></label>
+                                    <input type="text" class="form-control" asp-for="Github">
+                                    @Html.ValidationMessageFor(model => model.Github, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Linkedin"></label>
+                                    <input type="text" class="form-control" asp-for="Linkedin">
+                                    @Html.ValidationMessageFor(model => model.Linkedin, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Instagram"></label>
+                                    <input type="text" class="form-control" asp-for="Instagram">
+                                    @Html.ValidationMessageFor(model => model.Instagram, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Twitter"></label>
+                                    <input type="text" class="form-control" asp-for="Twitter">
+                                    @Html.ValidationMessageFor(model => model.Twitter, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Facebook"></label>
+                                    <input type="text" class="form-control" asp-for="Facebook">
+                                    @Html.ValidationMessageFor(model => model.Facebook, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Youtube"></label>
+                                    <input type="text" class="form-control" asp-for="Youtube">
+                                    @Html.ValidationMessageFor(model => model.Youtube, "", new { @class = "text-danger" })
+                                </div>
                             </div>
                         </div>
                         <div class="card-footer">
                             <button type="submit" class="btn btn-success">Güncelle</button>
                         </div>
                         <!-- /.card-body -->
+
+
                     </form>
+
                 </div>
                 <!-- /.card -->
             </div>
@@ -87,4 +149,18 @@
     <script src="~/Admin/js/Settings.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        $('#EmailSettingsButton').click(function () {
+            document.getElementById("SiteSettings").className = "collapse";
+            document.getElementById("SocialMediaSettings").className = "collapse";
+        });
+        $('#SiteSettingsButton').click(function () {
+            document.getElementById("EmailSetting").className = "collapse";
+            document.getElementById("SocialMediaSettings").className = "collapse";
+        });
+        $('#SocialMediaButton').click(function () {
+            document.getElementById("EmailSetting").className = "collapse";
+            document.getElementById("SiteSettings").className = "collapse";
+        });
+    </script>
 }
