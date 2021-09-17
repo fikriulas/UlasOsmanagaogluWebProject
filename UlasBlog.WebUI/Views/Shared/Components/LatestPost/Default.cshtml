@@ -8,7 +8,7 @@
         @foreach (var blog in Model)
         {
             <li>
-                <a href="">
+                <a asp-controller="Home" asp-action="Blog" asp-route-SlugUrl="@blog.SlugUrl">
                     <img src="/Home/Blog/Img/@(blog.ImageUrl == null ? "no-image.png" : blog.ImageUrl)" alt="Image placeholder" class="mr-4" style="width:90px;height:60px;">
                     <div class="text">
                         <h4>@blog.Title</h4>

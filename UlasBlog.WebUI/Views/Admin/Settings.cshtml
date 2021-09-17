@@ -55,6 +55,12 @@
                                     @Html.ValidationMessageFor(model => model.SiteDescription, "", new { @class = "text-danger" })
                                 </div>
                                 <div class="form-group">
+                                    <label asp-for="FooterText"></label>
+                                    <input type="text" class="form-control" asp-for="FooterText" />
+                                    @Html.ValidationMessageFor(model => model.SiteDescription, "", new { @class = "text-danger" })
+
+                                </div>
+                                <div class="form-group">
                                     <div class="custom-control custom-switch">
                                         <input type="checkbox" class="custom-control-input" asp-for="Slider">
                                         <label class="custom-control-label" for="Slider">Slider Aktif</label>
@@ -163,4 +169,5 @@
             document.getElementById("SiteSettings").className = "collapse";
         });
     </script>
+
 }

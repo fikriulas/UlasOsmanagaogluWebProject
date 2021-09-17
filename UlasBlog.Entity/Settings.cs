@@ -51,6 +51,9 @@ namespace UlasBlog.Entity
         public string Youtube { get; set; }
         [Display(Name = "Twitter")]
         public string Twitter { get; set; }
+        [Display(Name = "Altbilgi")]
+        [StringLength(140, ErrorMessage = "140 Karakterden Uzun Olamaz.")]
+        public string FooterText { get; set; }
 
     }
 }
