@@ -3,6 +3,7 @@
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
+
 <section class="site-section pt-5 pb-5">
     <div class="container">
         <div class="row">
@@ -10,6 +11,10 @@
                 <div class="owl-carousel owl-theme home-slider">
                     @foreach (var blog in Model)
                     {
+                        if (blog.SliderSettings == false)
+                        {
+                            break;
+                        }
                         <div>
                             <a asp-controller="Home" asp-action="Blog" asp-route-SlugUrl="@blog.SlugUrl" class="a-block d-flex align-items-center height-lg" style="background-image: url('/Home/Blog/Img/@blog.ImageUrl'); ">
                                 <div class="text half-to-full">
