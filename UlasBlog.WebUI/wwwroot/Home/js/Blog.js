@@ -24,7 +24,7 @@
 
             var veri = '<li id="'+comment.id+'" class="comment">' +
                 '<div class="vcard">' +
-                '<img src="/Home/images/person_1.jpg" alt="Image placeholder"></div>' +
+                '<img src="/Home/images/ProfilPhoto01.jpg" alt="Image placeholder"></div>' +
                 '<div class="comment-body">' +
                 '<h3>' + comment.name + '</h3>' +
                 '<div class="meta">' + today + '</div>' +

@@ -32,10 +32,6 @@
                         </div>
                         <div class="col-3 search-top">
                             <!-- <a href="#"><span class="fa fa-search"></span></a> -->
-                            <form action="#" class="search-top-form">
-                                <span class="icon fa fa-search"></span>
-                                <input type="text" id="s" placeholder="Type keyword to search...">
-                            </form>
                         </div>
                     </div>
                 </div>
@@ -45,16 +41,10 @@
                     <div class="collapse navbar-collapse" id="navbarMenu">
                         <ul class="navbar-nav mx-auto">
                             <li class="nav-item">
-                                <a class="nav-link active" asp-controller="Home" asp-action="Index">Home</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Business</a>
+                                <a class="nav-link active" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
                             </li>
                             <!--Category-->
                             @await Component.InvokeAsync("CategoryMenu")
-                            <li class="nav-item">
-                                <a class="nav-link" href="about.html">About</a>
-                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Home" asp-action="Contact">İletişim</a>
                             </li>
@@ -109,13 +99,10 @@
                         <div class="row">
                             <div class="col-md-7">
                                 <div class="mb-5">
-                                    <h3>Quick Links</h3>
+                                    <h3>Hızlı Linkler</h3>
                                     <ul class="list-unstyled">
-                                        <li><a href="#">About Us</a></li>
-                                        <li><a href="#">Travel</a></li>
-                                        <li><a href="#">Adventure</a></li>
-                                        <li><a href="#">Courses</a></li>
-                                        <li><a href="#">Categories</a></li>
+                                        <li><a asp-controller="Home" asp-action="Index">Ana Sayfa</a></li>
+                                        <li><a asp-controller="Home" asp-action="Contact">İletişim</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -123,7 +110,7 @@
                             <div class="col-md-4">
 
                                 <div class="mb-5">
-                                    <h3>Social</h3>
+                                    <h3>Sosyal Medya</h3>
                                     <ul class="list-unstyled footer-social">
                                         <li><a href="#"><span class="fa fa-twitter"></span> Twitter</a></li>
                                         <li><a href="#"><span class="fa fa-facebook"></span> Facebook</a></li>

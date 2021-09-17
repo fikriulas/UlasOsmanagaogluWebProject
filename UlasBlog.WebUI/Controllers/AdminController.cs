@@ -28,6 +28,9 @@ namespace UlasBlog.WebUI.Controllers
             int totalMessage = uow.Contacts.GetAll()
                 .Where(i => i.IsRead == false)
                 .Count();
+            int totalBlockedIp = uow.Iplist.GetAll()
+                .Where(i => i.Block)
+                .Count();
             var dashboard = new Dashboard()
             {
                 TotalComment = totalComment,

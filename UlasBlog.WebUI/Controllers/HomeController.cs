@@ -18,6 +18,8 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace UlasBlog.WebUI.Controllers
 {
@@ -39,9 +41,7 @@ namespace UlasBlog.WebUI.Controllers
         }
         [Route("/{page?}")]
         public IActionResult Index(int page = 1)
-        {
-            var ips = _configuration.GetSection("WhiteList").AsEnumerable().ToList();
-
+        {          
             var blogs = uow.Blogs.GetAll()
                 .Where(i => i.IsAppproved)
                 .Where(i => i.IsHome)
@@ -113,7 +113,7 @@ namespace UlasBlog.WebUI.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddComment(Comment comment)
-        {
+        {            
             var captchaImage = HttpContext.Request.Form["g-recaptcha-response"];
             if (string.IsNullOrEmpty(captchaImage))
             {
@@ -123,10 +123,11 @@ namespace UlasBlog.WebUI.Controllers
             if (!verified)
             {                
                 return BadRequest("Captcha Doğrulaması Hatalı, Tekrar Deneyin");
-
             }
             if (ModelState.IsValid)
             {
+                string uzakIPadresi = Request.HttpContext.Connection.RemoteIpAddress.ToString();
+                comment.IpAddress = uzakIPadresi;
                 comment.dateAdded = DateTime.Now;
                 uow.Comments.Add(comment);
                 uow.SaveChanges();
@@ -175,6 +176,8 @@ namespace UlasBlog.WebUI.Controllers
             {
                 try
                 {
+                    string uzakIPadresi = Request.HttpContext.Connection.RemoteIpAddress.ToString();
+                    contact.IpAddress = uzakIPadresi;
                     contact.dateAdded = DateTime.Now;
                     uow.Contacts.Add(contact);
                     uow.SaveChanges();

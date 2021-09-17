@@ -22,6 +22,7 @@ namespace UlasBlog.Entity
         public string Message { get; set; }
         [Display(Name = "Tarih")]
         public DateTime dateAdded { get; set; }
+        public string IpAddress { get; set; }
         public int BlogId { get; set; }
         public Blog Blog { get; set; }
     }
