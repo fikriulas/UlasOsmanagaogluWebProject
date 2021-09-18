@@ -2,31 +2,31 @@
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@if (Model.Twitter != "")
+@if (Model.Twitter != "" && Model.Twitter != null)
 {
     <a href="@Model.Twitter" target="popup"><span class="fa fa-twitter"></span></a>
 }
-@if (Model.Facebook != "")
+@if (Model.Facebook != "" && Model.Facebook != null)
 {
     <a href="@Model.Facebook" target="popup"><span class="fa fa-facebook"></span></a>
 
 }
-@if (Model.Instagram != "")
+@if (Model.Instagram != "" && Model.Instagram != null)
 {
     <a href="@Model.Instagram" target="popup"><span class="fa fa-instagram"></span></a>
 
 }
-@if (Model.Youtube != "")
+@if (Model.Youtube != "" && Model.Youtube != null)
 {
     <a href="@Model.Youtube" target="popup"><span class="fa fa-youtube-play"></span></a>
 
 }
-@if (Model.Github != "")
+@if (Model.Github != "" && Model.Github != null)
 {
     <a href="@Model.Github" target="popup"><span class="fa fa-github"></span></a>
 
 }
-@if (Model.Linkedin != "")
+@if (Model.Linkedin != "" && Model.Linkedin != null)
 {
     <a href="@Model.Linkedin" target="popup"><span class="fa fa-linkedin"></span></a>
 }

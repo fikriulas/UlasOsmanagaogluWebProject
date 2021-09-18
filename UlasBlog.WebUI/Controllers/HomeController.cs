@@ -55,7 +55,7 @@ namespace UlasBlog.WebUI.Controllers
                     AuthorId = i.AuthorId,
                     DateAdded = i.DateAdded,
                     totalComment = i.Comments.Count
-                }).AsQueryable().ToPagedList(page, 5);
+                }).AsQueryable().ToPagedList(page, 10);
             if (blogs != null)
             {
                 return View(blogs);
@@ -161,7 +161,7 @@ namespace UlasBlog.WebUI.Controllers
                 });
 
             var yeni = blogs
-                .Where(i => i.Categories.Any(b => b.SlugUrl == SlugUrl)).AsQueryable().ToPagedList(page, 1);
+                .Where(i => i.Categories.Any(b => b.SlugUrl == SlugUrl)).AsQueryable().ToPagedList(page, 10);
 
             return View(yeni);
         }
