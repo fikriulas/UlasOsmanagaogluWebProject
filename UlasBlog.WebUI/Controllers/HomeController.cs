@@ -30,7 +30,7 @@ namespace UlasBlog.WebUI.Controllers
         private SignInManager<AppUser> signInManager;
         private UserManager<AppUser> userManager;
         private RoleManager<AppRole> roleManager;
-        public HomeController(IUnitOfWork _uow, SignInManager<AppUser> _signInManager, UserManager<AppUser> _userManager, RoleManager<AppRole> _roleManager,IConfiguration configuration)
+        public HomeController(IUnitOfWork _uow, SignInManager<AppUser> _signInManager, UserManager<AppUser> _userManager, RoleManager<AppRole> _roleManager, IConfiguration configuration)
             : base(_userManager, _signInManager, _roleManager)
         {
             _configuration = configuration;
@@ -38,10 +38,11 @@ namespace UlasBlog.WebUI.Controllers
             signInManager = _signInManager;
             userManager = _userManager;
             roleManager = _roleManager;
+
         }
         [Route("/{page?}")]
         public IActionResult Index(int page = 1)
-        {          
+        {
             var blogs = uow.Blogs.GetAll()
                 .Where(i => i.IsAppproved)
                 .Where(i => i.IsHome)
@@ -113,7 +114,7 @@ namespace UlasBlog.WebUI.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddComment(Comment comment)
-        {            
+        {
             var captchaImage = HttpContext.Request.Form["g-recaptcha-response"];
             if (string.IsNullOrEmpty(captchaImage))
             {
@@ -121,7 +122,7 @@ namespace UlasBlog.WebUI.Controllers
             }
             var verified = await CheckCaptcha();
             if (!verified)
-            {                
+            {
                 return BadRequest("Captcha Doğrulaması Hatalı, Tekrar Deneyin");
             }
             if (ModelState.IsValid)
