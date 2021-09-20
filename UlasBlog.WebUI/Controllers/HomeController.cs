@@ -55,7 +55,8 @@ namespace UlasBlog.WebUI.Controllers
                     ImageUrl = i.ImageUrl,
                     AuthorId = i.AuthorId,
                     DateAdded = i.DateAdded,
-                    totalComment = i.Comments.Count
+                    totalComment = i.Comments.Count,
+                    ViewCount = i.ViewCount
                 }).AsQueryable().ToPagedList(page, 10);
             if (blogs != null)
             {
@@ -153,6 +154,7 @@ namespace UlasBlog.WebUI.Controllers
                     SlugUrl = i.SlugUrl,
                     Vote = i.Vote,
                     ImageUrl = i.ImageUrl,
+                    ViewCount = i.ViewCount,
                     Comments = i.Comments.Select(b => new Comment()
                     {
                         Id = b.Id

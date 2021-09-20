@@ -13,15 +13,17 @@
             <img src="/Home/Blog/Img/@(blog.ImageUrl == null ? "no-image.png" : blog.ImageUrl)" alt="Image placeholder" style="width:100%;height:233px;">
             <div class="blog-content-body">
                 <div class="post-meta">
-                    <span class="author mr-2">
-                        <img src="/Home/images/person_1.jpg" alt="Colorlib">
+                    <span class="author mr-1">
+                        &bullet;
+                        <!--<img src="/Home/images/person_1.jpg" alt="Colorlib">-->
                         @{
                             var userName = userManager.FindByIdAsync(blog.AuthorId).Result.Name;
                         }
                         @userName
                     </span>&bullet;
-                    <span class="mr-2">@blog.DateAdded.ToString("dd MMM yyyy")</span> &bullet;
-                    <span class="ml-2"><span class="fa fa-comments"></span> @blog.totalComment</span>
+                    <span class="mr-1">@blog.DateAdded.ToString("dd MMM yyyy")</span> &bullet;
+                    <span title="Toplam Yorum" class="ml-1"><span title="Toplam Yorum" class="fa fa-comments"></span> @blog.totalComment</span>
+                    <span title="Okunma Sayısı"><span title="Okunma Sayısı" class="fa fa-calculator"></span> @blog.ViewCount</span>
                 </div>
                 <h2>@blog.Title</h2>
             </div>
