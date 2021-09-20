@@ -3,13 +3,12 @@
 @inject UserManager<AppUser> userManager
 @model IPagedList<BlogDetail>
 @{
-    ViewData["Title"] = "Blogs";
+    ViewData["Title"] = "Kategoriler";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @foreach (var blog in Model)
-{
-
+{    
     <div class="col-md-6" style="margin-top:35px;">
         <a asp-controller="Home" asp-action="Blog" asp-route-SlugUrl="@blog.SlugUrl" class="blog-entry element-animate" data-animate-effect="fadeIn">
             <img src="/Home/Blog/Img/@(blog.ImageUrl == null ? "no-image.png" : blog.ImageUrl)" alt="Image placeholder" style="width:100%;height:233px">
