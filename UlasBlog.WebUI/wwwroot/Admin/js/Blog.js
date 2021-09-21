@@ -29,8 +29,6 @@ $("#addBlog").submit(function (event) {
     var form = $(this);
     var formData = new FormData(this);
     formData.append('HtmlContent', 'deger');
-    console.log("Form Data: ");
-    console.log(formData);
     $.ajax({
         url: form.attr("action"),
         type: 'POST',
@@ -71,17 +69,14 @@ $("#addBlog").submit(function (event) {
             $("#ajax-loading").hide();
             toastr.success("İşlem Başarılı");            
         },
-        error: function (ErrorMessage) {
-            console.log(ErrorMessage)
-            if (ErrorMessage.responseText != "") {
-                console.log(ErrorMessage.responseText)
+        error: function (ErrorMessage) {            
+            if (ErrorMessage.responseText != "") {                
                 jQuery.noConflict();
                 $('#addBlogModal').modal('hide');
                 $("#ajax-loading").hide();
                 toastr.error("İşlem Başarısız, Yönetici ile iletişime geçin.");
             }
-            else {
-                console.log("Else girildi.")
+            else {                
             }
         },
         cache: false,
@@ -156,16 +151,13 @@ $("#deleteComment").submit(function (event) {
             toastr.success("İşlem Başarılı");
         },
         error: function (ErrorMessage) {
-            console.log(ErrorMessage)
             if (ErrorMessage.responseText != "") {
-                console.log(ErrorMessage.responseText)
                 jQuery.noConflict();
                 $('#editCommentModal').modal('hide');
                 $("#ajax-loading").hide();
                 toastr.error("İşlem Başarısız, Yönetici ile iletişime geçin.");
             }
             else {
-                console.log("Else girildi.")
             }
         },
         cache: false,
@@ -175,7 +167,6 @@ $("#deleteComment").submit(function (event) {
 });
 
 function HtmlSave() {
-    console.log("html save");
     event.preventDefault();
     var form = $(this);
     var formData = new FormData(this);
@@ -220,16 +211,13 @@ function HtmlSave() {
             toastr.success("İşlem Başarılı");
         },
         error: function (ErrorMessage) {
-            console.log(ErrorMessage)
             if (ErrorMessage.responseText != "") {
-                console.log(ErrorMessage.responseText)
                 jQuery.noConflict();
                 $('#addBlogModal').modal('hide');
                 $("#ajax-loading").hide();
                 toastr.error("İşlem Başarısız, Yönetici ile iletişime geçin.");
             }
             else {
-                console.log("Else girildi.")
             }
         },
         cache: false,

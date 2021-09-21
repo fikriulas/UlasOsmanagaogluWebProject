@@ -29,7 +29,6 @@ $("#editProfileForm").submit(function (event) {
             $("#ajax-loading").hide();
         },
         success: function (user) {
-
             $('#' + user.id).find('#name').text(user.name);
             $('#' + user.id).find('#surname').text(user.surname);
             $('#' + user.id).find('#username').text(user.userName);
@@ -99,8 +98,7 @@ $(document).ready(function () {
     });
 });
 
-$("#AddUserForm").submit(function (event) {
-    console.log("javascript devrede");
+$("#AddUserForm").submit(function (event) {    
     event.preventDefault();
     var form = $(this);
     var formData = new FormData(this);
@@ -115,7 +113,6 @@ $("#AddUserForm").submit(function (event) {
             $("#ajax-loading").hide();
         },
         success: function (user) {
-            console.log("succes girildi");
             var trclass = "";
             var bosluk = " ";
             var count = $("#Users > tr").length;
@@ -147,8 +144,7 @@ $("#AddUserForm").submit(function (event) {
             toastr.success("İşlem Başarılı");
         },
         error: function (ErrorMessage) {
-            console.log(ErrorMessage)
-            if (ErrorMessage.responseText != "") {             
+            if (ErrorMessage.responseText != "") {       
 
                 toastr.error(ErrorMessage.responseText);
             }

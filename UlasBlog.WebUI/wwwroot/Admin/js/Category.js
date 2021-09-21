@@ -17,7 +17,6 @@ $(document).on("click", ".open-EditCategoryDialog", function () {
 });
 
 $("#addCategoryf").submit(function (event) {
-    console.log("Script'e girdi.")
     event.preventDefault();
     var form = $(this);
     var token = $('input[name="__RequestVerificationToken"]', form).val();
@@ -60,7 +59,6 @@ $("#addCategoryf").submit(function (event) {
 });
 
 function Delete(url) {
-    console.log("giriş yapıldu");
     event.preventDefault(); // prevent form submit
     var form = event.target.form; // storing the form
     var token = $('input[name="__RequestVerificationToken"]', form).val();

@@ -8,7 +8,6 @@
 });
 
 $("#AddBlackListIp").submit(function (event) {
-    console.log("javascript devrede");
     event.preventDefault();
     var form = $(this);
     var formData = new FormData(this);   
@@ -49,7 +48,6 @@ $("#AddBlackListIp").submit(function (event) {
             toastr.success("İşlem Başarılı");
         },
         error: function (ErrorMessage) {
-            console.log(ErrorMessage)
             if (ErrorMessage.responseText != "") {             
 
                 toastr.error(ErrorMessage.responseText);

@@ -27,7 +27,6 @@ $("#addRole").submit(function (event) {
             $("#ajax-loading").hide();
         },
         success: function (role) {
-            console.log("başarılıya girdi");
             var trclass = "";
             var bosluk = " ";
             var count = $("#Roles > tr").length;
@@ -116,7 +115,6 @@ $("#editRoleForm").submit(function (event) {
             $("#ajax-loading").hide();
         },
         success: function (role) {
-            console.log("başarılıya girdi");
             var trclass = "";
             var bosluk = " ";
             var count = $("#Roles > tr").length;
