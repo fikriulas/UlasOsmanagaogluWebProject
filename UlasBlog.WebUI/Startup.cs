@@ -17,14 +17,19 @@ using UlasBlog.Data.Concrete.EntityFramework;
 using UlasBlog.WebUI.IdentityCore;
 using UlasBlog.WebUI.IdentityCore.CustomValidation;
 using UlasBlog.WebUI.Middleware;
+using Microsoft.Extensions.Logging;
+using UlasBlog.WebUI.Logs;
 
 namespace UlasBlog.WebUI
 {
     public partial class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment { get; set; }
+        // public Startup(Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment) => _hostingEnvironment = hostingEnvironment;
+        public Startup(IConfiguration configuration, Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment)
         {
             Configuration = configuration;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public IConfiguration Configuration { get; }
@@ -78,8 +83,9 @@ namespace UlasBlog.WebUI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddProvider(new LoggerProvider(_hostingEnvironment));
 
             if (env.IsDevelopment())
             {

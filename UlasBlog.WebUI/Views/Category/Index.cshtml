@@ -84,10 +84,11 @@
     </div>
     <!-- /.container-fluid -->
 </section>
+
 @if (ViewData["EditCategory"] != null)
 {
     <script>
-        notie.alert({ type: 'success', text: "@ViewData["EditCategory"]" })
+    @Html.Raw(ViewData["EditCategory"]);
     </script>
 }
 @section Category {

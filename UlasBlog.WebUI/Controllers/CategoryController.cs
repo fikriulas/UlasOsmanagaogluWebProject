@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,17 +11,20 @@ using UlasBlog.WebUI.Models;
 
 namespace UlasBlog.WebUI.Controllers
 {
-    [Authorize(Roles ="admin")]    
+    [Authorize(Roles = "admin")]
     public class CategoryController : Controller
     {
+        private readonly ILogger<CategoryController> logger;
         private IUnitOfWork uow;
-        public CategoryController(IUnitOfWork _uow)
+        public CategoryController(IUnitOfWork _uow, ILogger<CategoryController> _logger)
         {
             uow = _uow;
+            logger = _logger;
         }
         [Route("/Admin/Category")]
         public IActionResult Index()
         {
+
             var categories = uow.Categories.GetAll();
             ViewBag.SuccessSave = TempData["EditCategory"] ?? null; // Edit post methodundan geliyor.
             return View(categories);
@@ -34,6 +38,7 @@ namespace UlasBlog.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Add(Category category)
         {
+
             if (ModelState.IsValid)
             {
                 try
@@ -45,26 +50,32 @@ namespace UlasBlog.WebUI.Controllers
                 }
                 catch (Exception ex)
                 {
-                    var error = ex.Message;
-                    //log tutulacak.
-                    return BadRequest(error);
+                    logger.LogError(2, ex, "Controller Name: Category, Action: Add, CategoryName:{category.Name}",category.Name);
+                    return BadRequest(ex.Message);
                 }
 
             }
+            logger.LogError(1,"ModelState Invalid,Controller Name: Category, Action: Add, CategoryName:{category.Name}", category.Name);
             return BadRequest();
-            //return RedirectToAction("Index", category);
-            //return View(category);
         }
         public IActionResult Delete(int Id)
         {
-            var category = uow.Categories.Get(Id);
-            if (category != null)
+            try
             {
+                var category = uow.Categories.Get(Id);
                 uow.Categories.Delete(category);
                 uow.SaveChanges();
                 return Ok(Id);
+
             }
-            return BadRequest();
+            catch (Exception ex)
+            {
+                logger.LogError(2, ex, "İlgili kategori bulunamadı.(Silinmek istenen kategori Id: {Id}), Controller Name: Cateogry, Action: Delete", Id);
+                return BadRequest();                
+            }
+
+
+            
         }
         public IActionResult Edit(Category category)
         {
@@ -74,15 +85,18 @@ namespace UlasBlog.WebUI.Controllers
                 {
                     uow.Categories.Edit(category);
                     uow.SaveChanges();
-                    TempData["EditCategory"] = "Güncelleme Başarılı";
+                    TempData["EditCategory"] = "toastr.success('İşlem Başarılı');";
                 }
                 catch (Exception ex)
                 {
                     var error = ex.Message;
-                    TempData["EditCategory"] = "Güncelleme Başarısız, Yönetici İle İletişime Geçin";
+                    //TempData["EditCategory"] = "Güncelleme Başarısız, Yönetici İle İletişime Geçin";
+                    TempData["EditCategory"] = "toastr.error('İşlem Başarısız');";
+                    logger.LogError(2, ex, "Controller Name: Category, Action: Edit, CategoryName:{category.Id}, CategoryId: {category.Name}", category.Name, category.Id);
                     return RedirectToAction("Index");
-                }                              
+                }
             }
+            logger.LogError(1, "ModelState Invalid,Controller Name: Category, Action: Edit, CategoryName:{category.Name}, CategoryId: {category.Id}", category.Name, category.Id);
             return RedirectToAction("Index");
         }
     }

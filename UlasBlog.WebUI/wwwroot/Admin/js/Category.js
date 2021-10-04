@@ -48,12 +48,20 @@ $("#addCategoryf").submit(function (event) {
             $('body').removeClass('modal-open');
             $('body').css('padding-right', '');
             $("#addCategoryModal").hide();
-            $("#ajax-loading").hide();
-            $("#ajax-loading").hide();
+            $("#ajax-loading").hide();           
             toastr.success("İşlem Başarılı");            
         },
-        error: function () {
-            toastr.danger("İşlem Başarısız");    
+        error: function (error) {
+            if (error.responseText != "") {
+                $("#addCategoryModal").removeClass("in");
+                $(".modal-backdrop").remove();
+                $('body').removeClass('modal-open');
+                $('body').css('padding-right', '');
+                $("#addCategoryModal").hide();
+                $("#ajax-loading").hide(); 
+            }
+            console.log(error.responseText);
+            toastr.error("İşlem Başarısız");    
         }
     });
 });
@@ -87,8 +95,8 @@ function Delete(url) {
                     m.style.display = "none";
                     toastr.success("İşlem Başarılı");                                
                 },
-                error: function () {
-                    toastr.danger("İşlem Başarısız");            
+                error: function () {                    
+                    toastr.error("İşlem Başarısız");            
                 }
             });
         }
