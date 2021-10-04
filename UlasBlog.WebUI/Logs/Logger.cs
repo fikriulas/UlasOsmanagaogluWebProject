@@ -29,14 +29,15 @@ namespace UlasBlog.WebUI.Logs
             {
                 using (var fileStream = File.Open($"{_hostingEnvironment.ContentRootPath}/log.txt", FileMode.Append, FileAccess.Write, FileShare.Write))
                 {
-                    var logMessage = $"Log Level : {logLevel.ToString()} | Event ID : {eventId.Id} | Exception : {(exception == null ? "Null":exception.Message)} | Formatter : {formatter(state, exception)} {Environment.NewLine}";
+                    DateTime dateTime = DateTime.Now;
+                    var logMessage = $"-- Date: {dateTime.Date} |Log Level : {logLevel.ToString()} | Event ID : {eventId.Id} | Exception : {(exception == null ? "Null" : exception.Message)} | Formatter : {formatter(state, exception)} {Environment.NewLine}";
                     byte[] logMessageByteArray = Encoding.UTF8.GetBytes(logMessage);
                     await fileStream.WriteAsync(logMessageByteArray);
                     fileStream.Close();
                     fileStream.Dispose();
                 }
             }
-            
+
         }
     }
 }

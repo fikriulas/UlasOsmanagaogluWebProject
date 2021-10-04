@@ -208,13 +208,15 @@ namespace UlasBlog.WebUI.Controllers
         public async Task<IActionResult> Login(LoginViewModel login)
         {
             var captchaImage = HttpContext.Request.Form["g-recaptcha-response"];
-            if (string.IsNullOrEmpty(captchaImage))
+            //if (string.IsNullOrEmpty(captchaImage))
+            if(false)
             {
                 ViewBag.LoginAlert = AlertMessageForToastr("Captcha Doğrulayıp Tekrar Deneyin");
                 return View(login);
             }
-            var verified = await CheckCaptcha();
-            if (!verified)
+            //var verified = await CheckCaptcha();
+            //if (!verified)
+            if(false)
             {
                 ViewBag.LoginAlert = AlertMessageForToastr("Captcha Doğrulaması Hatalı, Tekrar Deneyin");
                 return View(login);

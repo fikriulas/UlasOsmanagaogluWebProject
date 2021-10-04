@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,12 +23,14 @@ namespace UlasBlog.WebUI.Controllers
     [Authorize(Roles = "admin,editör")]
     public class BlogController : Controller
     {
+        private readonly ILogger<BlogController> logger;
         private readonly IHostingEnvironment _hostingEnvironment;
         private IUnitOfWork uow;
         private UserManager<AppUser> userManager;
-        public BlogController(IUnitOfWork _uow, IHostingEnvironment hostingEnvironment, UserManager<AppUser> _userManager)
+        public BlogController(IUnitOfWork _uow, IHostingEnvironment hostingEnvironment, UserManager<AppUser> _userManager, ILogger<BlogController> _logger)
         {
             uow = _uow;
+            logger = _logger;
             _hostingEnvironment = hostingEnvironment;
             userManager = _userManager;
         }
@@ -35,8 +38,9 @@ namespace UlasBlog.WebUI.Controllers
         [Route("/Admin/Blog/")]
         public IActionResult Index()
         {
-
-            var blogs = uow.Blogs.GetAll()
+            try
+            {
+                var blogs = uow.Blogs.GetAll()
                 .Select(i => new BlogDetail()
                 {
                     Id = i.Id,
@@ -46,18 +50,25 @@ namespace UlasBlog.WebUI.Controllers
                     AuthorId = i.AuthorId
                 });
 
-            var Categories = new List<SelectListItem>();
-            foreach (var item in uow.Categories.GetAll())
-            {
-                Categories.Add(new SelectListItem
+                var Categories = new List<SelectListItem>();
+                foreach (var item in uow.Categories.GetAll())
                 {
-                    Text = item.Name,
-                    Value = item.Id.ToString()
-                });
+                    Categories.Add(new SelectListItem
+                    {
+                        Text = item.Name,
+                        Value = item.Id.ToString()
+                    });
+                }
+                ViewBag.BlogAlert = TempData["BlogAlert"] ?? null; // Edit post methodundan geliyor.
+                ViewBag.Categories = Categories;
+                return View(blogs);
             }
-            ViewBag.BlogAlert = TempData["BlogAlert"] ?? null; // Edit post methodundan geliyor.
-            ViewBag.Categories = Categories;
-            return View(blogs);
+            catch (Exception ex)
+            {                
+                logger.LogError(2, ex, "Controller Name: BlogController, Action: Index");
+                return View("_404NotFound");
+            }
+            
         }
         [HttpPost]
         public async Task<IActionResult> Add(Blog blog, string[] categories, IFormFile ImageUrl)
@@ -99,18 +110,20 @@ namespace UlasBlog.WebUI.Controllers
                     return Ok(blog);
                 }
                 catch (Exception ex)
-                {
-                    var error = ex.Message;
-                    //log tutulacak.
-                    return BadRequest(error);
+                {                    
+                    logger.LogError(2, ex, "Controller Name: BlogController, Action: Add, Blog Title: {blog.Title}", blog.Title);
+                    return BadRequest(ex.Message);
                 }
             }
+            logger.LogError(1, "ModelState Invalid,Controller Name: BlogController, Action: Add, Blog Title: {blog.Title}", blog.Title);
             return BadRequest();
         }
         [HttpGet]
         public IActionResult Edit(int Id)
         {
-            var blog = uow.Blogs.GetAll()
+            try
+            {
+                var blog = uow.Blogs.GetAll()
                 .Include(i => i.Comments)
                 .Include(i => i.BlogCategories)
                 .ThenInclude(i => i.Category)
@@ -140,25 +153,33 @@ namespace UlasBlog.WebUI.Controllers
                         Id = c.Id
                     }).ToList(),
                 }).FirstOrDefault();
-            var Categories = new List<SelectListItem>();
-            List<string> catId = new List<string> { };
+                var Categories = new List<SelectListItem>();
+                List<string> catId = new List<string> { };
 
-            foreach (var item in uow.Categories.GetAll())
-            {
-                Categories.Add(new SelectListItem
+                foreach (var item in uow.Categories.GetAll())
                 {
-                    Text = item.Name,
-                    Value = item.Id.ToString()
-                });
+                    Categories.Add(new SelectListItem
+                    {
+                        Text = item.Name,
+                        Value = item.Id.ToString()
+                    });
 
+                }
+                foreach (var category in blog.Categories)
+                {
+                    catId.Add(category.Id.ToString());
+                }
+                ViewBag.Categories = Categories;
+                ViewBag.catId = catId.ToArray();
+                return View(blog);
             }
-            foreach (var category in blog.Categories)
+            catch (Exception ex)
             {
-                catId.Add(category.Id.ToString());
+                logger.LogError(2, ex, "Controller Name: BlogController, Action: Get Edit, Blog Id: {Id}", Id);
+                TempData["BlogAlert"] = "toastr.error('Bir Sorun Oluştu');" + "toastr.error('Yönetici İle İletişime Geçin');";
+                return RedirectToAction("Index");
             }
-            ViewBag.Categories = Categories;
-            ViewBag.catId = catId.ToArray();
-            return View(blog);
+            
 
         }
         [HttpPost]
@@ -296,7 +317,7 @@ namespace UlasBlog.WebUI.Controllers
                 catch (Exception ex)
                 {
                     var error = ex.Message;
-                    //log tutulacak.
+                    logger.LogError(2, ex, "Controller Name: Blog, Action: Delete, Blog Id: {id}", id);
                     return BadRequest("Ekleme başarısız, Bir Sorunla Karşılaşıldı. Yöneticiyle İletişime Geçin");
                 }
             }
@@ -333,7 +354,7 @@ namespace UlasBlog.WebUI.Controllers
             catch (Exception ex)
             {
                 var error = ex.Message;
-                //log tutulacak.
+                
                 return false;
             }
             return true;
