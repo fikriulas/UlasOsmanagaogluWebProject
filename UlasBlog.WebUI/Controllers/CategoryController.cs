@@ -24,10 +24,17 @@ namespace UlasBlog.WebUI.Controllers
         [Route("/Admin/Category")]
         public IActionResult Index()
         {
-
-            var categories = uow.Categories.GetAll();
-            ViewBag.SuccessSave = TempData["EditCategory"] ?? null; // Edit post methodundan geliyor.
-            return View(categories);
+            try
+            {
+                var categories = uow.Categories.GetAll();
+                ViewBag.SuccessSave = TempData["EditCategory"] ?? null; // Edit post methodundan geliyor.
+                return View(categories);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(2, ex, "Controller Name: Category, Action: Index");
+                return View("_404NotFound");
+            }            
         }
         [HttpGet]
         public IActionResult Add()
