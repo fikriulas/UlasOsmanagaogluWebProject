@@ -185,58 +185,69 @@ namespace UlasBlog.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(BlogEdit blog, string[] categories, IFormFile ImageUrl)
         {
-            if (blog.Title != null)
-                blog.SlugUrl = SeoUrl.AdresDuzenle(blog.Title);
-            ////
-            var entity = new BlogEdit();
-            entity = uow.Blogs.GetAll()
-             .Include(i => i.Comments)
-             .Include(i => i.BlogCategories)
-             .ThenInclude(i => i.Category)
-            .Where(i => i.Id == blog.Id)
-            .Select(i => new BlogEdit()
+            try
             {
-                Id = i.Id,
-                Title = i.Title,
-                Description = i.Description,
-                AuthorId = i.AuthorId,
-                ImageUrl = i.ImageUrl,
-                IsHome = i.IsHome,
-                IsAppproved = i.IsAppproved,
-                IsSlider = i.IsSlider,
-                HtmlContent = i.HtmlContent,
-                Categories = i.BlogCategories.Select(b => new Category()
+                if (blog.Title != null)
+                    blog.SlugUrl = SeoUrl.AdresDuzenle(blog.Title);
+                ////
+                var entity = new BlogEdit();
+                entity = uow.Blogs.GetAll()
+                 .Include(i => i.Comments)
+                 .Include(i => i.BlogCategories)
+                 .ThenInclude(i => i.Category)
+                .Where(i => i.Id == blog.Id)
+                .Select(i => new BlogEdit()
                 {
-                    Id = b.Category.Id,
-                    Name = b.Category.Name,
-                }).ToList(),
-                Comments = i.Comments.Select(c => new Comment()
-                {
-                    Name = c.Name,
-                    Email = c.Email,
-                    dateAdded = c.dateAdded,
-                    Message = c.Message,
-                    Id = c.Id
-                }).ToList(),
-            }).FirstOrDefault();
-            var Categories = new List<SelectListItem>();
-            List<string> catId = new List<string> { };
+                    Id = i.Id,
+                    Title = i.Title,
+                    Description = i.Description,
+                    AuthorId = i.AuthorId,
+                    ImageUrl = i.ImageUrl,
+                    IsHome = i.IsHome,
+                    IsAppproved = i.IsAppproved,
+                    IsSlider = i.IsSlider,
+                    HtmlContent = i.HtmlContent,
+                    Categories = i.BlogCategories.Select(b => new Category()
+                    {
+                        Id = b.Category.Id,
+                        Name = b.Category.Name,
+                    }).ToList(),
+                    Comments = i.Comments.Select(c => new Comment()
+                    {
+                        Name = c.Name,
+                        Email = c.Email,
+                        dateAdded = c.dateAdded,
+                        Message = c.Message,
+                        Id = c.Id
+                    }).ToList(),
+                }).FirstOrDefault();
+                var Categories = new List<SelectListItem>();
+                List<string> catId = new List<string> { };
 
-            foreach (var item in uow.Categories.GetAll())
-            {
-                Categories.Add(new SelectListItem
+                foreach (var item in uow.Categories.GetAll())
                 {
-                    Text = item.Name,
-                    Value = item.Id.ToString()
-                });
+                    Categories.Add(new SelectListItem
+                    {
+                        Text = item.Name,
+                        Value = item.Id.ToString()
+                    });
 
+                }
+                foreach (var category in entity.Categories)
+                {
+                    catId.Add(category.Id.ToString());
+                }
+                ViewBag.Categories = Categories;
+                ViewBag.catId = catId.ToArray();
             }
-            foreach (var category in entity.Categories)
+            catch (Exception ex)
             {
-                catId.Add(category.Id.ToString());
+                var error = ex.Message;
+                ViewBag.alertMessage = error;
+                logger.LogError(2, ex, "Controller Name: BlogController, Action: Edit, Blog Title: {blog.Title}", blog.Title);
+                return View(blog);
             }
-            ViewBag.Categories = Categories;
-            ViewBag.catId = catId.ToArray();
+            
             ////
             if (ModelState.IsValid)
             {
@@ -337,7 +348,7 @@ namespace UlasBlog.WebUI.Controllers
                 catch (Exception ex)
                 {
                     var error = ex.Message;
-                    //log tutulacak.
+                    logger.LogError(2, ex, "Controller Name: Blog, Action: CommentDelete, Blog Id: {id}", comment.BlogId);
                     return BadRequest("Ekleme başarısız, Bir Sorunla Karşılaşıldı. Yöneticiyle İletişime Geçin");
                 }
             }
@@ -354,7 +365,7 @@ namespace UlasBlog.WebUI.Controllers
             catch (Exception ex)
             {
                 var error = ex.Message;
-                
+                logger.LogError(2, ex, "Controller Name: Blog, Action: DeleteImage");
                 return false;
             }
             return true;
@@ -373,7 +384,7 @@ namespace UlasBlog.WebUI.Controllers
             catch (Exception ex)
             {
                 var error = ex.Message;
-                //log tutulacak.
+                logger.LogError(2, ex, "Controller Name: Blog, Action: SaveHtmlContent, Blog Id: {id}", Id);
                 return BadRequest(error);
             }
             return Ok("Başarıyla kaydedildi");
