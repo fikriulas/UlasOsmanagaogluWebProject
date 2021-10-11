@@ -26,15 +26,17 @@ namespace UlasBlog.WebUI.Controllers
     public class HomeController : BaseController
     {
         IConfiguration _configuration;
+        private readonly ILogger<CategoryController> logger;
         private IUnitOfWork uow;
         private SignInManager<AppUser> signInManager;
         private UserManager<AppUser> userManager;
         private RoleManager<AppRole> roleManager;
-        public HomeController(IUnitOfWork _uow, SignInManager<AppUser> _signInManager, UserManager<AppUser> _userManager, RoleManager<AppRole> _roleManager, IConfiguration configuration)
+        public HomeController(IUnitOfWork _uow, SignInManager<AppUser> _signInManager, UserManager<AppUser> _userManager, RoleManager<AppRole> _roleManager, IConfiguration configuration, ILogger<CategoryController> _logger)
             : base(_userManager, _signInManager, _roleManager)
         {
             _configuration = configuration;
             uow = _uow;
+            logger = _logger;
             signInManager = _signInManager;
             userManager = _userManager;
             roleManager = _roleManager;
@@ -43,7 +45,9 @@ namespace UlasBlog.WebUI.Controllers
         [Route("/{page?}")]
         public IActionResult Index(int page = 1)
         {
-            var blogs = uow.Blogs.GetAll()
+            try
+            {
+                var blogs = uow.Blogs.GetAll()
                 .Where(i => i.IsAppproved)
                 .Where(i => i.IsHome)
                 .Include(i => i.Comments)
@@ -58,16 +62,25 @@ namespace UlasBlog.WebUI.Controllers
                     totalComment = i.Comments.Count,
                     ViewCount = i.ViewCount
                 }).AsQueryable().ToPagedList(page, 10);
-            if (blogs != null)
-            {
-                return View(blogs);
+                if (blogs != null)
+                {
+                    return View(blogs);
+                }
+                return View(); // error page;            
             }
-            return View(); // error page;            
+            catch (Exception ex)
+            {
+                logger.LogError(2, ex, "Controller Name: Home, Action: Index");
+                return View("_404NotFound");
+            }
+            
         }
         [Route("Blog/{SlugUrl}")]
         public IActionResult Blog(string SlugUrl)
         {
-            var blog = uow.Blogs.GetAll()
+            try
+            {
+                var blog = uow.Blogs.GetAll()
                 .Include(i => i.Comments)
                 .Include(i => i.BlogCategories)
                 .ThenInclude(i => i.Category)
@@ -96,51 +109,69 @@ namespace UlasBlog.WebUI.Controllers
                     totalComment = i.Comments.Count(),
                     Categories = i.BlogCategories.Select(c => c.Category).ToList()
                 }).FirstOrDefault();
-            if (blog != null)
-            {
-                var blogview = uow.Blogs.GetAll()
-               .Where(i => i.SlugUrl == SlugUrl)
-               .FirstOrDefault();
+                if (blog != null)
+                {
+                    var blogview = uow.Blogs.GetAll()
+                   .Where(i => i.SlugUrl == SlugUrl)
+                   .FirstOrDefault();
 
-                blogview.ViewCount += 1;
-                uow.Blogs.Edit(blogview);
-                uow.SaveChanges();
-                return View(blog);
+                    blogview.ViewCount += 1;
+                    uow.Blogs.Edit(blogview);
+                    uow.SaveChanges();
+                    return View(blog);
+                }
+                else
+                {
+                    return View("_404NotFound");
+                }
             }
-            else
+            catch (Exception ex)
             {
+                logger.LogError(2, ex, "Controller Name: Home, Action: Blog");
                 return View("_404NotFound");
             }
+            
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddComment(Comment comment)
         {
-            var captchaImage = HttpContext.Request.Form["g-recaptcha-response"];
-            if (string.IsNullOrEmpty(captchaImage))
+            try
             {
-                return BadRequest("Captcha Doğrulayıp Tekrar Deneyin");
+                var captchaImage = HttpContext.Request.Form["g-recaptcha-response"];
+                if (string.IsNullOrEmpty(captchaImage))
+                {
+                    return BadRequest("Captcha Doğrulayıp Tekrar Deneyin");
+                }
+                var verified = await CheckCaptcha();
+                if (!verified)
+                {
+                    return BadRequest("Captcha Doğrulaması Hatalı, Tekrar Deneyin");
+                }
+                if (ModelState.IsValid)
+                {
+                    string uzakIPadresi = Request.HttpContext.Connection.RemoteIpAddress.ToString();
+                    comment.IpAddress = uzakIPadresi;
+                    comment.dateAdded = DateTime.Now;
+                    uow.Comments.Add(comment);
+                    uow.SaveChanges();
+                    return Ok(comment); // success çalıştır.                
+                }
+                logger.LogError(1, "ModelState Invalid,Controller Name: Home, Action: AddComment");
+                return BadRequest();
             }
-            var verified = await CheckCaptcha();
-            if (!verified)
+            catch (Exception ex)
             {
-                return BadRequest("Captcha Doğrulaması Hatalı, Tekrar Deneyin");
-            }
-            if (ModelState.IsValid)
-            {
-                string uzakIPadresi = Request.HttpContext.Connection.RemoteIpAddress.ToString();
-                comment.IpAddress = uzakIPadresi;
-                comment.dateAdded = DateTime.Now;
-                uow.Comments.Add(comment);
-                uow.SaveChanges();
-                return Ok(comment); // success çalıştır.                
-            }
-            return BadRequest();
+                logger.LogError(2, ex, "Controller Name: Home, Action: AddComment");
+                return BadRequest();
+            }            
         }
         [Route("/{SlugUrl}/{page}")]
         public IActionResult Blogs(string SlugUrl, int Id, int page = 1)
         {
-            var blogs = uow.Blogs.GetAll()
+            try
+            {
+                var blogs = uow.Blogs.GetAll()
                 .Include(i => i.BlogCategories)
                 .ThenInclude(i => i.Category)
                 .Where(i => i.IsAppproved)
@@ -163,10 +194,16 @@ namespace UlasBlog.WebUI.Controllers
                     Categories = i.BlogCategories.Select(c => c.Category).ToList()
                 });
 
-            var yeni = blogs
-                .Where(i => i.Categories.Any(b => b.SlugUrl == SlugUrl)).AsQueryable().ToPagedList(page, 10);
+                var yeni = blogs
+                    .Where(i => i.Categories.Any(b => b.SlugUrl == SlugUrl)).AsQueryable().ToPagedList(page, 10);
 
-            return View(yeni);
+                return View(yeni);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(2, ex, "Controller Name: Home, Action: Blogs, Blog Id: {Id}, SlugUrl: {SlugUrl}",Id,SlugUrl);
+                return View("_404NotFound");
+            }            
         }
         public IActionResult Contact()
         {
@@ -189,12 +226,13 @@ namespace UlasBlog.WebUI.Controllers
                 catch (Exception ex)
                 {
                     var error = ex.Message;
-                    //log tutulacak.
+                    logger.LogError(2, ex, "Controller Name: Home, Action: Contact");
                     return BadRequest("Bir Hata Oluştu.");
                 }
 
             }
             var validError = "Kontrol edip, tekrar deneyin";
+            logger.LogError(1, "ModelState Invalid,Controller Name: Home, Action: ContactPost");
             return BadRequest(validError);
 
         }
