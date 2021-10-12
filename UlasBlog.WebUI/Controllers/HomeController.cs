@@ -327,32 +327,41 @@ namespace UlasBlog.WebUI.Controllers
             AppUser user = userManager.FindByEmailAsync(forgotPasswordView.Email).Result; // kullanıcı var mı kontrol edilir.
             if (user != null)
             {
-                string passwordResetToken = userManager.GeneratePasswordResetTokenAsync(user).Result;
-                string passwordLink = Url.Action("ResetPasswordConfirm", "Home", new
+                try
                 {
-                    userId = user.Id,
-                    token = passwordResetToken,
-                }, HttpContext.Request.Scheme);
-                //www.localhost.com/Home/ResetPasswordConfirm?userId?kfgj98708=kdfjglkfjdkjhklfjhlkfjghl
-                var settings = uow.Settings.Get(5);
-                MimeMessage message = new MimeMessage();
-                MailboxAddress from = new MailboxAddress(settings.MailUserName, settings.MailUserName);
-                message.From.Add(from);
-                MailboxAddress to = new MailboxAddress(user.UserName, user.Email);
-                message.To.Add(to);
-                message.Subject = "Şifremi Unuttum";
-                BodyBuilder bodyBuilder = new BodyBuilder();
-                bodyBuilder.HtmlBody = "<h2> Şifrenizi Sıfırlamak için aşağıdaki linke tıklayınız </h2><hr/>";
-                bodyBuilder.HtmlBody += $"<p><a href='{passwordLink}'> Şifre Yenilemek İçin Tıklayınız </a></p>";
-                message.Body = bodyBuilder.ToMessageBody();
-                SmtpClient client = new SmtpClient();
-                client.Connect(settings.SmtpAddress, int.Parse(settings.Port), true);
-                client.Authenticate(settings.MailUserName, settings.MailPassword);
-                client.Send(message);
-                client.Disconnect(true);
-                client.Dispose();
-                //ViewBag.PasswordReset = "Şifre Değiştirildi";
-                ViewBag.ForgotPasswordAlert = AlertMessageForToastr("Şifre Sıfırlama Maili Başarıyla Gönderildi", "success");
+                    string passwordResetToken = userManager.GeneratePasswordResetTokenAsync(user).Result;
+                    string passwordLink = Url.Action("ResetPasswordConfirm", "Home", new
+                    {
+                        userId = user.Id,
+                        token = passwordResetToken,
+                    }, HttpContext.Request.Scheme);
+                    //www.localhost.com/Home/ResetPasswordConfirm?userId?kfgj98708=kdfjglkfjdkjhklfjhlkfjghl
+                    var settings = uow.Settings.Get(5);
+                    MimeMessage message = new MimeMessage();
+                    MailboxAddress from = new MailboxAddress(settings.MailUserName, settings.MailUserName);
+                    message.From.Add(from);
+                    MailboxAddress to = new MailboxAddress(user.UserName, user.Email);
+                    message.To.Add(to);
+                    message.Subject = "Şifremi Unuttum";
+                    BodyBuilder bodyBuilder = new BodyBuilder();
+                    bodyBuilder.HtmlBody = "<h2> Şifrenizi Sıfırlamak için aşağıdaki linke tıklayınız </h2><hr/>";
+                    bodyBuilder.HtmlBody += $"<p><a href='{passwordLink}'> Şifre Yenilemek İçin Tıklayınız </a></p>";
+                    message.Body = bodyBuilder.ToMessageBody();
+                    SmtpClient client = new SmtpClient();
+                    client.Connect(settings.SmtpAddress, int.Parse(settings.Port), true);
+                    client.Authenticate(settings.MailUserName, settings.MailPassword);
+                    client.Send(message);
+                    client.Disconnect(true);
+                    client.Dispose();
+                    //ViewBag.PasswordReset = "Şifre Değiştirildi";
+                    ViewBag.ForgotPasswordAlert = AlertMessageForToastr("Şifre Sıfırlama Maili Başarıyla Gönderildi", "success");
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(2, ex, "Controller Name: Home, Action: ForgotPassword");
+                    ViewBag.ForgotPasswordAlert = AlertMessageForToastr("Bir Hatayla Karşılaşıldı", "error");
+                    return View(forgotPasswordView);
+                }                
             }
             else
             {
@@ -374,26 +383,34 @@ namespace UlasBlog.WebUI.Controllers
             AppUser user = await userManager.FindByIdAsync(userId);
             if (user != null)
             {
-                IdentityResult result = await userManager.ResetPasswordAsync(user, token, model.NewPassword);
-                if (result.Succeeded)
+                try
                 {
-                    await userManager.UpdateSecurityStampAsync(user); // securitystamp güncellendiğinde kullanıcı yeniden login olur. Böylece userin eski şifreyle olan oturumu sonlandırılmış olur.      
-                    TempData["PasswordReset"] = "Şifre Değiştirildi";
-                    return RedirectToAction("Login");
-                }
-                else
-                {
-                    foreach (var item in result.Errors)
+                    IdentityResult result = await userManager.ResetPasswordAsync(user, token, model.NewPassword);
+                    if (result.Succeeded)
                     {
-                        ModelState.AddModelError("", item.Description);
+                        await userManager.UpdateSecurityStampAsync(user); // securitystamp güncellendiğinde kullanıcı yeniden login olur. Böylece userin eski şifreyle olan oturumu sonlandırılmış olur.      
+                        TempData["PasswordReset"] = "Şifre Değiştirildi";
+                        return RedirectToAction("Login");
+                    }
+                    else
+                    {
+                        foreach (var item in result.Errors)
+                        {
+                            ModelState.AddModelError("", item.Description);
+                        }
                     }
                 }
+                catch (Exception ex)
+                {
+                    logger.LogError(2, ex, "Controller Name: Home, Action: ResetPasswordConfirm");
+                    ModelState.AddModelError("", "Bir hatayla karşılaşıldı.");
+                    return View(model);
+                }                
             }
             else
             {
                 ModelState.AddModelError("", "Böyle Bir Kullanıcı Bulunamamıştır");
             }
-
             return View(model);
         }
         public IActionResult AccessDenied()
