@@ -111,6 +111,11 @@ namespace UlasBlog.WebUI.Controllers
                 }).FirstOrDefault();
                 if (blog != null)
                 {
+                    var commentStatus = uow.Settings.GetAll()
+                        .Where(i => i.Id == 5)
+                        .FirstOrDefault();
+                    string CommentOfStatus = commentStatus.Comment.ToString();
+                    TempData["commentStatus"] = CommentOfStatus;                    
                     var blogview = uow.Blogs.GetAll()
                    .Where(i => i.SlugUrl == SlugUrl)
                    .FirstOrDefault();
