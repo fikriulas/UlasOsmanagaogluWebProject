@@ -36,6 +36,9 @@
                             <a class="btn btn-secondary mr-2" id="SocialMediaButton" data-toggle="collapse" href="#SocialMediaSettings" role="button" aria-expanded="false" aria-controls="SocialMediaSettings">
                                 Sosyal Medya
                             </a>
+                            <a class="btn btn-secondary mr-2" id="LogFileButton" data-toggle="collapse" href="#LogFile" role="button" aria-expanded="false" aria-controls="LogFileButton">
+                                Log Dosyası
+                            </a>
                         </h3>
                     </div>
                     <!-- /.card-header -->
@@ -133,6 +136,44 @@
                                     @Html.ValidationMessageFor(model => model.Youtube, "", new { @class = "text-danger" })
                                 </div>
                             </div>
+                            <div id="LogFile" class="collapse">
+                                <table class="table table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <th width="20%">Log Dosyası Adı</th>
+                                            <td width="80%">Logfile.txt</td>
+                                        </tr>
+                                        <tr>
+                                            <th width="20%">Log Dosyası Boyutu</th>
+                                            <td width="80%">15MB</td>
+                                        </tr>
+                                        <tr>
+                                            <th width="20%">Log Dosyası Formatı</th>
+                                            <td width="80%">.txt</td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                                <div class="ml-2">
+                                    <form>
+                                        <div class="form-row align-items-center">
+                                            <div class="col-auto">
+                                                <label class="sr-only" for="inlineFormInputGroup">Username</label>
+                                                <div class="input-group mb-2">
+                                                    <div class="input-group-prepend">
+                                                        <div class="input-group-text">Delete Log</div>
+                                                    </div>
+                                                    <input type="text" class="form-control" id="deleteLogFile" placeholder="Silmek İçin Evet Yazınız">
+                                                </div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <button type="submit" class="btn btn-danger mb-2">Sil</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            
                         </div>
                         <div class="card-footer">
                             <button type="submit" class="btn btn-success">Güncelle</button>
@@ -159,12 +200,20 @@
         $('#EmailSettingsButton').click(function () {
             document.getElementById("SiteSettings").className = "collapse";
             document.getElementById("SocialMediaSettings").className = "collapse";
+            document.getElementById("LogFile").className = "collapse";
         });
         $('#SiteSettingsButton').click(function () {
             document.getElementById("EmailSetting").className = "collapse";
             document.getElementById("SocialMediaSettings").className = "collapse";
+            document.getElementById("LogFile").className = "collapse";
         });
         $('#SocialMediaButton').click(function () {
+            document.getElementById("EmailSetting").className = "collapse";
+            document.getElementById("SiteSettings").className = "collapse";
+            document.getElementById("LogFile").className = "collapse";
+        });
+        $('#LogFileButton').click(function () {
+            document.getElementById("SocialMediaSettings").className = "collapse";
             document.getElementById("EmailSetting").className = "collapse";
             document.getElementById("SiteSettings").className = "collapse";
         });
