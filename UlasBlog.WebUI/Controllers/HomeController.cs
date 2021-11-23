@@ -193,7 +193,6 @@ namespace UlasBlog.WebUI.Controllers
                     totalComment = i.Comments.Count(),
                     Categories = i.BlogCategories.Select(c => c.Category).ToList()
                 });
-
                 var yeni = blogs
                     .Where(i => i.Categories.Any(b => b.SlugUrl == SlugUrl)).AsQueryable().ToPagedList(page, 10);
 
@@ -416,6 +415,10 @@ namespace UlasBlog.WebUI.Controllers
         public IActionResult AccessDenied()
         {
             return View();
+        }
+        public IActionResult NotFound()
+        {
+            return View("_404NotFound");
         }
 
 
