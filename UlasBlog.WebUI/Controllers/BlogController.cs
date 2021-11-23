@@ -185,12 +185,13 @@ namespace UlasBlog.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(BlogEdit blog, string[] categories, IFormFile ImageUrl)
         {
+            var entity = new BlogEdit();
             try
             {
                 if (blog.Title != null)
                     blog.SlugUrl = SeoUrl.AdresDuzenle(blog.Title);
                 ////
-                var entity = new BlogEdit();
+                
                 entity = uow.Blogs.GetAll()
                  .Include(i => i.Comments)
                  .Include(i => i.BlogCategories)

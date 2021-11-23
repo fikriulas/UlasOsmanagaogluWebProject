@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,97 +16,137 @@ namespace UlasBlog.WebUI.Controllers
     [Authorize]
     public class UserController : BaseController
     {
-
-        public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, RoleManager<AppRole> roleManager)
+        private readonly ILogger<UserController> logger;
+        public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, RoleManager<AppRole> roleManager, ILogger<UserController> _logger)
             : base(userManager, signInManager, roleManager)
         {
-
+            logger = _logger;
         }
         [Authorize(Roles = "admin")]
         public IActionResult Index() // kullanıcılar listelenir
         {
-
-            var roles = new List<SelectListItem>();
-            foreach (var item in roleManager.Roles)
+            try
             {
-                roles.Add(new SelectListItem
+                var roles = new List<SelectListItem>();
+                foreach (var item in roleManager.Roles)
                 {
-                    Text = item.Name,
-                    Value = item.Name
-                });
+                    roles.Add(new SelectListItem
+                    {
+                        Text = item.Name,
+                        Value = item.Name
+                    });
+                }
+                ViewBag.Roles = roles;
+                var users = userManager.Users;
+                ViewBag.UserAlert = TempData["UserAlert"] ?? null; // Edit post methodundan geliyor.
+                return View(users);
             }
-            ViewBag.Roles = roles;
-            var users = userManager.Users;
-            ViewBag.UserAlert = TempData["UserAlert"] ?? null; // Edit post methodundan geliyor.
-            return View(users);
+            catch (Exception ex)
+            {
+                logger.LogError(2, ex, "Controller Name: UserController, Action: Index");
+                return View("_404NotFound");
+            }            
         }
+        /*
         [Authorize(Roles = "admin")]
         public IActionResult Add()
         {
-            var roles = new List<SelectListItem>();
-            foreach (var item in roleManager.Roles)
+            try
             {
-                roles.Add(new SelectListItem
+                var roles = new List<SelectListItem>();
+                foreach (var item in roleManager.Roles)
                 {
-                    Text = item.Name,
-                    Value = item.Name
-                });
+                    roles.Add(new SelectListItem
+                    {
+                        Text = item.Name,
+                        Value = item.Name
+                    });
+                }
+                throw new Exception();
+                ViewBag.Roles = roles;
+                
+                return View();
             }
-            ViewBag.Roles = roles;
-            return View();
+            catch (Exception ex)
+            {
+                logger.LogError(2, ex, "Controller Name: UserController, Action: Index");
+                return View();
+            }
+            
+            
         }
+        */
         [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> Add(UserViewModel userViewModel, string[] Roles)
         {
             if (ModelState.IsValid)
             {
-                AppUser user = new AppUser();                
-                user.UserName = userViewModel.UserName;
-                user.Email = userViewModel.Email;
-                user.Name = userViewModel.Name;
-                user.Surname = userViewModel.Surname;
-                IdentityResult result = await userManager.CreateAsync(user, userViewModel.Password); // passwordu şifreleyip kaydeder.
-                if (result.Succeeded)
+                try
                 {
-                    AppUser CurrentUser = await userManager.FindByNameAsync(user.UserName);
-                    foreach (var item in Roles)
+                    AppUser user = new AppUser();
+                    user.UserName = userViewModel.UserName;
+                    user.Email = userViewModel.Email;
+                    user.Name = userViewModel.Name;
+                    user.Surname = userViewModel.Surname;
+                    IdentityResult result = await userManager.CreateAsync(user, userViewModel.Password); // passwordu şifreleyip kaydeder.
+                    if (result.Succeeded)
                     {
-                        IdentityResult AddRoleResult = await userManager.AddToRoleAsync(CurrentUser, item);
-                        if (AddRoleResult.Succeeded != true)
+                        AppUser CurrentUser = await userManager.FindByNameAsync(user.UserName);
+                        foreach (var item in Roles)
                         {
-                            string message = AlertMessageByModalError(AddRoleResult);
-                            ViewBag.Roles = AllRoles();
-                            return BadRequest(AlertMessageForToastr(message));
+                            IdentityResult AddRoleResult = await userManager.AddToRoleAsync(CurrentUser, item);
+                            if (AddRoleResult.Succeeded != true)
+                            {
+                                string message = AlertMessageByModalError(AddRoleResult);
+                                ViewBag.Roles = AllRoles();
+                                return BadRequest(AlertMessageForToastr(message));
+                            }
                         }
+                        return Ok(user);
                     }
-                    return Ok(user);
+                    else
+                    {
+                        string message = AlertMessageByModalError(result);
+                        return BadRequest(message);
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    string message = AlertMessageByModalError(result);
-                    return BadRequest(message);
+                    logger.LogError(2, ex, "Controller Name: UserController, Action: AddPost");
+                    return BadRequest("Bir Sorunla Karşılaşıldı.");
                 }
+               
             }
             return BadRequest("Kontrol Edip Tekrar Deneyiniz");
+
         }
         [Authorize(Roles = "admin")]
         public IActionResult Edit(string Id)
         {
-            AppUser user = userManager.FindByIdAsync(Id).Result;
-            if (user != null)
+            try
             {
-                ViewBag.currentRoles = CurrentRoles(user);
-                ViewBag.userRoles = AllRoles();
-                UserEditViewModel userView = new UserEditViewModel();
-                userView.Name = user.Name;
-                userView.Surname = user.Surname;
-                userView.Email = user.Email;
-                userView.UserName = user.UserName;
-                userView.Id = user.Id;
-                return View(userView);
+                AppUser user = userManager.FindByIdAsync(Id).Result;
+                if (user != null)
+                {
+                    ViewBag.currentRoles = CurrentRoles(user);
+                    ViewBag.userRoles = AllRoles();
+                    UserEditViewModel userView = new UserEditViewModel();
+                    userView.Name = user.Name;
+                    userView.Surname = user.Surname;
+                    userView.Email = user.Email;
+                    userView.UserName = user.UserName;
+                    userView.Id = user.Id;
+                    return View(userView);
+                }
+                return RedirectToAction("Index");
             }
-            return RedirectToAction("Index");
+            catch (Exception ex)
+            {
+                logger.LogError(2, ex, "Controller Name: UserController, Action: EditGet");
+                return View("_404NotFound");
+            }
+            
         }
         [Authorize(Roles = "admin")]
         [HttpPost]
