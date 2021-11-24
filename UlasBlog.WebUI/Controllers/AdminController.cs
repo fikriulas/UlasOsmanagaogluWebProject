@@ -9,6 +9,7 @@ using MailKit.Net.Smtp;
 using MimeKit;
 using Microsoft.AspNetCore.Authorization;
 using UlasBlog.WebUI.Models;
+using System.IO;
 
 namespace UlasBlog.WebUI.Controllers
 {
@@ -122,7 +123,30 @@ namespace UlasBlog.WebUI.Controllers
             {
                 var settings = uow.Settings.Get(5);
                 if (settings != null)
+                {
+                    string logfilePath = @"log.txt";
+                    string logfileExt = Path.GetExtension(logfilePath);
+                    FileInfo FileSizeInfo = new FileInfo(logfilePath);
+                    string logFileSize = "";
+                    if (FileSizeInfo.Length/1024 <= 0)
+                    {
+                        logFileSize = FileSizeInfo.Length.ToString();
+                        logFileSize = logFileSize + " Byte";
+                    }
+                    else if ((FileSizeInfo.Length / 1024)/1024 <= 0 )
+                    {
+                        logFileSize = (FileSizeInfo.Length/1024).ToString();
+                        logFileSize = logFileSize + " KB";
+                    }
+                    else
+                    {
+                        logFileSize = ((FileSizeInfo.Length / 1024) / 1024).ToString();
+                        logFileSize = logFileSize + " MB";
+                    }
+                    string[] fileInfo = { "Log.txt", logfileExt, logFileSize };
+                    ViewBag.fileinfo = fileInfo;
                     return View(settings);
+                }                    
                 else
                     return View("_404NotFound");
 
@@ -135,12 +159,22 @@ namespace UlasBlog.WebUI.Controllers
         }
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public IActionResult Settings(Settings settings)
+        public IActionResult Settings(Settings settings,string fileDeleteInfo)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
+                    //delete log file
+                    if (fileDeleteInfo == "Evet")
+                    {
+                        System.IO.File.WriteAllText(@"log.txt", string.Empty);
+                    }
+                    else
+                    {
+                        var error = "Log Dosyasını Silmek İçin 'Evet' Yazınız";
+                        return BadRequest(error);
+                    }
                     settings.UpdateDate = DateTime.Now;
                     uow.Settings.Edit(settings);
                     uow.SaveChanges();
@@ -149,7 +183,7 @@ namespace UlasBlog.WebUI.Controllers
                 catch (Exception ex)
                 {
                     var error = ex.Message;
-                    return BadRequest(error);
+                    return BadRequest();
                 }
             }
             return BadRequest();

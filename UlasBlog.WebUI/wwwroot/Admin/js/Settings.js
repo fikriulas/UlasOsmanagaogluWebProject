@@ -2,6 +2,7 @@
     event.preventDefault();
     var form = $(this);
     var formData = new FormData(this);
+    formData.append('fileDeleteInfo', 'fileDeleteInfo');
     console.log(formData);
     $.ajax({
         url: form.attr("action"),
@@ -13,15 +14,20 @@
         complete: function () {
             $("#ajax-loading").hide();
         },
-        success: function (setting) {            
+        success: function (setting) {       
+            document.getElementById("fileDeleteInfo").value = " ";
+            document.getElementById('logFileSizeTd').innerHTML = "0 Byte";
+            console.log("girildi");
             toastr.success("İşlem Başarılı");            
         },
-        error: function (ErrorMessage) {            
-            if (ErrorMessage.responseText != "") {
+        error: function (ErrorMessage) {
+            console.log(ErrorMessage)
+            console.log(ErrorMessage.responseText)
+            if (ErrorMessage.responseText == "") {
                 toastr.error("İşlem Başarısız, Yönetici ile iletişime geçin.");
             }
-            else {                
-                toastr.error("Kontrol Edip Tekrar Deneyin");
+            else {
+                toastr.error(ErrorMessage.responseText);
             }
         },
         cache: false,
@@ -29,3 +35,4 @@
         processData: false
     });
 });
+

@@ -343,7 +343,7 @@ namespace UlasBlog.WebUI.Controllers
                 try
                 {
                     uow.Comments.Delete(Deletedcomment);
-                    uow.SaveChanges();
+                    uow.SaveChanges();                    
                     return Ok(comment.Id);
                 }
                 catch (Exception ex)

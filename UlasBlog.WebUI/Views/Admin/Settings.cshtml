@@ -137,25 +137,24 @@
                                 </div>
                             </div>
                             <div id="LogFile" class="collapse">
-                                <table class="table table-borderless">
+                                <table class="table table-borderless">                                   
                                     <tbody>
                                         <tr>
                                             <th width="20%">Log Dosyası Adı</th>
-                                            <td width="80%">Logfile.txt</td>
+                                            <td width="80%">@ViewBag.fileinfo[0]</td>
                                         </tr>
                                         <tr>
                                             <th width="20%">Log Dosyası Boyutu</th>
-                                            <td width="80%">15MB</td>
+                                            <td width="80%" id="logFileSizeTd">@ViewBag.fileinfo[2]</td>
                                         </tr>
                                         <tr>
                                             <th width="20%">Log Dosyası Formatı</th>
-                                            <td width="80%">.txt</td>
+                                            <td width="80%">@ViewBag.fileinfo[1]</td>
                                         </tr>
 
                                     </tbody>
                                 </table>
-                                <div class="ml-2">
-                                    <form>
+                                <div class="ml-2">                                    
                                         <div class="form-row align-items-center">
                                             <div class="col-auto">
                                                 <label class="sr-only" for="inlineFormInputGroup">Username</label>
@@ -163,26 +162,18 @@
                                                     <div class="input-group-prepend">
                                                         <div class="input-group-text">Delete Log</div>
                                                     </div>
-                                                    <input type="text" class="form-control" id="deleteLogFile" placeholder="Silmek İçin Evet Yazınız">
+                                                    <input type="text" class="form-control" id="fileDeleteInfo" name="fileDeleteInfo" placeholder="Silmek İçin Evet Yazınız">
                                                 </div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <button type="submit" class="btn btn-danger mb-2">Sil</button>
-                                            </div>
-                                        </div>
-                                    </form>
+                                            </div>                                            
+                                        </div>                                    
                                 </div>
-                            </div>
-                            
+                            </div>                            
                         </div>
                         <div class="card-footer">
                             <button type="submit" class="btn btn-success">Güncelle</button>
                         </div>
                         <!-- /.card-body -->
-
-
                     </form>
-
                 </div>
                 <!-- /.card -->
             </div>
