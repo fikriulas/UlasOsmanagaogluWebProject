@@ -66,7 +66,7 @@ namespace UlasBlog.WebUI.Controllers
                 {
                     return View(blogs);
                 }
-                return View(); // error page;            
+                return View("_404NotFound");
             }
             catch (Exception ex)
             {
@@ -171,11 +171,19 @@ namespace UlasBlog.WebUI.Controllers
                 return BadRequest();
             }            
         }
-        [Route("/{SlugUrl}/{page}")]
+        [Route("Category/{SlugUrl}/{page}")]
         public IActionResult Blogs(string SlugUrl, int Id, int page = 1)
         {
             try
             {
+                var categoryCheck = uow.Categories.GetAll()
+                        .Where(i => i.SlugUrl == SlugUrl)
+                        .Select(i => new Category()
+                        {
+                            SlugUrl = i.SlugUrl,
+                        }).ToList();
+                if (categoryCheck.Count == 0)
+                    return NotFound();
                 var blogs = uow.Blogs.GetAll()
                 .Include(i => i.BlogCategories)
                 .ThenInclude(i => i.Category)
@@ -198,15 +206,14 @@ namespace UlasBlog.WebUI.Controllers
                     totalComment = i.Comments.Count(),
                     Categories = i.BlogCategories.Select(c => c.Category).ToList()
                 });
-                var yeni = blogs
-                    .Where(i => i.Categories.Any(b => b.SlugUrl == SlugUrl)).AsQueryable().ToPagedList(page, 10);
-
-                return View(yeni);
+                var categoryOfBlogs = blogs
+                    .Where(i => i.Categories.Any(b => b.SlugUrl == SlugUrl)).AsQueryable().ToPagedList(page, 10);    
+                return View(categoryOfBlogs);
             }
             catch (Exception ex)
             {
                 logger.LogError(2, ex, "Controller Name: Home, Action: Blogs, Blog Id: {Id}, SlugUrl: {SlugUrl}",Id,SlugUrl);
-                return View("_404NotFound");
+                return NotFound();
             }            
         }
         public IActionResult Contact()
