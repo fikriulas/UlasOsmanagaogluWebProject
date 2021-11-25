@@ -188,6 +188,23 @@ namespace UlasBlog.WebUI.Controllers
             }
             return BadRequest();
         }
+        public IActionResult DownloadLogFile()
+        {
+            string logFilePath = @"/log.txt";
+            string logFileName = "log.txt";
+            try
+            {
+                byte[] fileBytes = System.IO.File.ReadAllBytes(logFilePath);
+                return File(fileBytes, "application/force-download", logFileName);
+            }
+            catch (Exception ex)
+            {                
+                return RedirectToAction("Settings");
+            }
+
+            
+            
+        }
         public IActionResult AccessDenied()
         {
             return View();
