@@ -10,6 +10,7 @@ using MimeKit;
 using Microsoft.AspNetCore.Authorization;
 using UlasBlog.WebUI.Models;
 using System.IO;
+using Microsoft.Extensions.Logging;
 
 namespace UlasBlog.WebUI.Controllers
 {
@@ -17,9 +18,11 @@ namespace UlasBlog.WebUI.Controllers
     public class AdminController : Controller
     {
         private IUnitOfWork uow;
-        public AdminController(IUnitOfWork _uow)
+        private readonly ILogger<AdminController> logger;
+        public AdminController(IUnitOfWork _uow, ILogger<AdminController> _logger)
         {
             uow = _uow;
+            logger = _logger;
         }
         [Route("/Admin")]
         public IActionResult Index()
@@ -145,6 +148,7 @@ namespace UlasBlog.WebUI.Controllers
                     }
                     string[] fileInfo = { "Log.txt", logfileExt, logFileSize };
                     ViewBag.fileinfo = fileInfo;
+                    ViewBag.SettingsAlert = TempData["SettingsAlert"] ?? null; // DownloadLogFile Methodundan geliyor.
                     return View(settings);
                 }                    
                 else
@@ -190,7 +194,7 @@ namespace UlasBlog.WebUI.Controllers
         }
         public IActionResult DownloadLogFile()
         {
-            string logFilePath = @"/log.txt";
+            string logFilePath = @"log.txt";
             string logFileName = "log.txt";
             try
             {
@@ -198,7 +202,9 @@ namespace UlasBlog.WebUI.Controllers
                 return File(fileBytes, "application/force-download", logFileName);
             }
             catch (Exception ex)
-            {                
+            {
+                logger.LogError(2, ex, "Controller Name: Admin, Action: DownloadLogFile");
+                TempData["SettingsAlert"] = "toastr.error('Bir Sorun Oluştu');" + "toastr.error('Yönetici İle İletişime Geçin');";
                 return RedirectToAction("Settings");
             }
 

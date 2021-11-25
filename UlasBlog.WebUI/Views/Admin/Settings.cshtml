@@ -137,7 +137,7 @@
                                 </div>
                             </div>
                             <div id="LogFile" class="collapse">
-                                <table class="table table-borderless">                                   
+                                <table class="table table-borderless">
                                     <tbody>
                                         <tr>
                                             <th width="20%">Log Dosyası Adı</th>
@@ -157,20 +157,20 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <div class="ml-2">                                    
-                                        <div class="form-row align-items-center">
-                                            <div class="col-auto">
-                                                <label class="sr-only" for="inlineFormInputGroup">Username</label>
-                                                <div class="input-group mb-2">
-                                                    <div class="input-group-prepend">
-                                                        <div class="input-group-text">Delete Log</div>
-                                                    </div>
-                                                    <input type="text" class="form-control" id="fileDeleteInfo" name="fileDeleteInfo" placeholder="Silmek İçin Evet Yazınız">
+                                <div class="ml-2">
+                                    <div class="form-row align-items-center">
+                                        <div class="col-auto">
+                                            <label class="sr-only" for="inlineFormInputGroup">Username</label>
+                                            <div class="input-group mb-2">
+                                                <div class="input-group-prepend">
+                                                    <div class="input-group-text">Delete Log</div>
                                                 </div>
-                                            </div>                                            
-                                        </div>                                    
+                                                <input type="text" class="form-control" id="fileDeleteInfo" name="fileDeleteInfo" placeholder="Silmek İçin Evet Yazınız">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>                            
+                            </div>
                         </div>
                         <div class="card-footer">
                             <button type="submit" class="btn btn-success">Güncelle</button>
@@ -186,6 +186,8 @@
     </div>
     <!-- /.container-fluid -->
 </section>
+
+
 @section settings{
     <script src="~/Admin/js/Settings.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.js"></script>
@@ -212,5 +214,11 @@
             document.getElementById("SiteSettings").className = "collapse";
         });
     </script>
+    @if (ViewData["SettingsAlert"] != null)
+    {
+        <script>
+    @Html.Raw(ViewData["SettingsAlert"]);
+        </script>
+    }
 
 }
