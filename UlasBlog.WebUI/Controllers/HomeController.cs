@@ -256,61 +256,66 @@ namespace UlasBlog.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel login)
         {
-            var captchaImage = HttpContext.Request.Form["g-recaptcha-response"];
-            //if (string.IsNullOrEmpty(captchaImage))
-            if(false)
+            try
             {
-                ViewBag.LoginAlert = AlertMessageForToastr("Captcha Doğrulayıp Tekrar Deneyin");
-                return View(login);
-            }
-            //var verified = await CheckCaptcha();
-            //if (!verified)
-            if(false)
-            {
-                ViewBag.LoginAlert = AlertMessageForToastr("Captcha Doğrulaması Hatalı, Tekrar Deneyin");
-                return View(login);
-            }
-            if (ModelState.IsValid)
-            {
-                AppUser user = await userManager.FindByEmailAsync(login.Email); // gelen email ile kullanıcı var mı kontrol edilir.
-                if (user != null)
+                var captchaImage = HttpContext.Request.Form["g-recaptcha-response"];
+                if (string.IsNullOrEmpty(captchaImage))
                 {
-                    if (await userManager.IsLockedOutAsync(user)) // kullanıcı lock olmuş mu bunun kontrolünü yapar.
+                    ViewBag.LoginAlert = AlertMessageForToastr("Captcha Doğrulayıp Tekrar Deneyin");
+                    return View(login);
+                }
+                var verified = await CheckCaptcha();
+                if (!verified)
+                {
+                    ViewBag.LoginAlert = AlertMessageForToastr("Captcha Doğrulaması Hatalı, Tekrar Deneyin");
+                    return View(login);
+                }
+                if (ModelState.IsValid)
+                {
+                    AppUser user = await userManager.FindByEmailAsync(login.Email); // gelen email ile kullanıcı var mı kontrol edilir.
+                    if (user != null)
                     {
-                        ViewBag.LoginAlert = AlertMessageForToastr("Hesabınız Bir Süreliğine Devre Dışı Bırakılmıştır");
-                        return View(login);
-                    }
-                    await signInManager.SignOutAsync(); // login işleminden önce sistemde siteyle ilgili bir cookie olma durumuna karşın logout yapılır.
-                    Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user, login.Password, login.RememberMe, false);
-                    if (result.Succeeded) // kullanıcı başarılı giriş yaparsa.
-                    {
-                        await userManager.ResetAccessFailedCountAsync(user); // kullanıcı başarılı login olursa, başarısız login sayısı sıfırlanır.
-                        if (TempData["returnUrl"] != null)
+                        if (await userManager.IsLockedOutAsync(user)) // kullanıcı lock olmuş mu bunun kontrolünü yapar.
                         {
-                            return Redirect(TempData["returnUrl"].ToString());
-                        }
-                        return RedirectToAction("Index", "Admin");
-                    }
-                    else // başarısız giriş yaparsa.
-                    {
-                        await userManager.AccessFailedAsync(user); // başarısız login sayısını bir attırır.
-                        int failAccess = await userManager.GetAccessFailedCountAsync(user); // başarısız giriş sayısını tutar.
-                        if (failAccess == 3)
-                        {
-                            await userManager.SetLockoutEndDateAsync(user, new System.DateTimeOffset(DateTime.Now.AddMinutes(20))); // kullanıcı başarısız giriş yaparsa, 20 dakika hesabı kitler.                            
-                            ViewBag.LoginAlert = AlertMessageForToastr("Hesabınız Başarısız Girişlerden Dolayı 20 Dakika Kitlenmiştir");
+                            ViewBag.LoginAlert = AlertMessageForToastr("Hesabınız Bir Süreliğine Devre Dışı Bırakılmıştır");
                             return View(login);
                         }
+                        await signInManager.SignOutAsync(); // login işleminden önce sistemde siteyle ilgili bir cookie olma durumuna karşın logout yapılır.
+                        Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user, login.Password, login.RememberMe, false);
+                        if (result.Succeeded) // kullanıcı başarılı giriş yaparsa.
+                        {
+                            await userManager.ResetAccessFailedCountAsync(user); // kullanıcı başarılı login olursa, başarısız login sayısı sıfırlanır.
+                            if (TempData["returnUrl"] != null)
+                            {
+                                return Redirect(TempData["returnUrl"].ToString());
+                            }
+                            return RedirectToAction("Index", "Admin");
+                        }
+                        else // başarısız giriş yaparsa.
+                        {
+                            await userManager.AccessFailedAsync(user); // başarısız login sayısını bir attırır.
+                            int failAccess = await userManager.GetAccessFailedCountAsync(user); // başarısız giriş sayısını tutar.
+                            if (failAccess == 3)
+                            {
+                                await userManager.SetLockoutEndDateAsync(user, new System.DateTimeOffset(DateTime.Now.AddMinutes(20))); // kullanıcı başarısız giriş yaparsa, 20 dakika hesabı kitler.                            
+                                ViewBag.LoginAlert = AlertMessageForToastr("Hesabınız Başarısız Girişlerden Dolayı 20 Dakika Kitlenmiştir");
+                                return View(login);
+                            }
+                            ViewBag.LoginAlert = AlertMessageForToastr("Hatalı E-Mail Yada Şifre Girdiniz");
+                        }
+                    }
+                    else
+                    {
                         ViewBag.LoginAlert = AlertMessageForToastr("Hatalı E-Mail Yada Şifre Girdiniz");
                     }
                 }
-                else
-                {
-
-                    ViewBag.LoginAlert = AlertMessageForToastr("Hatalı E-Mail Yada Şifre Girdiniz");
-                }
+                return View(login);
             }
-            return View(login);
+            catch (Exception ex)
+            {
+                logger.LogError(2, ex, "Controller Name: Home, Action: Login");
+                return NotFound();
+            }            
         }
         private async Task<bool> CheckCaptcha()
         {
