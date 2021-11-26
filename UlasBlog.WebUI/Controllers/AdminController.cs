@@ -27,35 +27,43 @@ namespace UlasBlog.WebUI.Controllers
         [Route("/Admin")]
         public IActionResult Index()
         {
-            int totalComment = uow.Comments.GetAll().Count();
-            int totalBlog = uow.Blogs.GetAll().Count();
-            int totalMessage = uow.Contacts.GetAll()
-                .Where(i => i.IsRead == false)
-                .Count();
-            int totalBlockedIp = uow.Iplist.GetAll()
-                .Where(i => i.Block)
-                .Count();
-            var dashboard = new Dashboard()
+            try
             {
-                TotalComment = totalComment,
-                TotalBlog = totalBlog,
-                TotalMessage = totalMessage,
-            };
-            return View(dashboard);
+                int totalComment = uow.Comments.GetAll().Count();
+                int totalBlog = uow.Blogs.GetAll().Count();
+                int totalMessage = uow.Contacts.GetAll()
+                    .Where(i => i.IsRead == false)
+                    .Count();
+                int totalBlockedIp = uow.Iplist.GetAll()
+                    .Where(i => i.Block)
+                    .Count();
+                var dashboard = new Dashboard()
+                {
+                    TotalComment = totalComment,
+                    TotalBlog = totalBlog,
+                    TotalMessage = totalMessage,
+                };
+                return View(dashboard);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(2, ex, "Controller Name: AdminController, Action: Index");
+                return NotFound();
+            }
         }
         [Authorize(Roles = "admin")]
         public IActionResult Contact()
         {
             try
-            {                
+            {
                 var contact = uow.Contacts.GetAll();
                 return View(contact);
             }
             catch (Exception ex)
             {
-                var error = ex.Message;
-                return View("_404NotFound");
-            }            
+                logger.LogError(2, ex, "Controller Name: AdminController, Action: Contact");
+                return NotFound();
+            }
         }
         [HttpPost]
         [Authorize(Roles = "admin")]
@@ -70,10 +78,10 @@ namespace UlasBlog.WebUI.Controllers
                 MailboxAddress from = new MailboxAddress(settings.MailUserName, settings.MailUserName);
                 message.From.Add(from);
 
-                MailboxAddress to = new MailboxAddress(contact.Name,contact.Email);
+                MailboxAddress to = new MailboxAddress(contact.Name, contact.Email);
                 message.To.Add(to);
 
-                message.Subject = contact.dateAdded.ToString("MM/dd/yyyy MM:ss") + " Tarihli Mesajınız Hakkında" ;
+                message.Subject = contact.dateAdded.ToString("MM/dd/yyyy MM:ss") + " Tarihli Mesajınız Hakkında";
                 BodyBuilder bodyBuilder = new BodyBuilder();
                 bodyBuilder.HtmlBody = reply.ToString();
                 message.Body = bodyBuilder.ToMessageBody();
@@ -86,20 +94,19 @@ namespace UlasBlog.WebUI.Controllers
                 contact.IsRead = true;
                 uow.Contacts.Edit(contact);
                 uow.SaveChanges();
-                
+                return Ok();
             }
             catch (Exception ex)
             {
-                var error = ex.Message;
+                logger.LogError(2, ex, "Controller Name: AdminController, Action: ReplyMessage");
                 return BadRequest();
             }
-            return Ok();            
         }
         [Authorize(Roles = "admin")]
         public IActionResult ContactDelete(int id)
         {
             var contact = uow.Contacts.Get(id);
-            if(contact !=null)
+            if (contact != null)
             {
                 try
                 {
@@ -109,15 +116,15 @@ namespace UlasBlog.WebUI.Controllers
                 }
                 catch (Exception ex)
                 {
-                    var error = ex.Message;
-                    return BadRequest("İşlem Başarısız, Yöneticiye başvurun.");
+                    logger.LogError(2, ex, "Controller Name: AdminController, Action: ContactDelete");
+                    return BadRequest("İşlem Başarısız, Yöneticiye ulaşın.");
                 }
             }
             else
             {
+                logger.LogError(1, "Controller Name: AdminController, Action: ContactDelete --> ilgili contact verisi bulunamadı. ContactId: {id}", id);
                 return BadRequest("İlgili obje bulunamadı.");
             }
-            
         }
         [Authorize(Roles = "admin")]
         public IActionResult Settings()
@@ -131,14 +138,14 @@ namespace UlasBlog.WebUI.Controllers
                     string logfileExt = Path.GetExtension(logfilePath);
                     FileInfo FileSizeInfo = new FileInfo(logfilePath);
                     string logFileSize = "";
-                    if (FileSizeInfo.Length/1024 <= 0)
+                    if (FileSizeInfo.Length / 1024 <= 0)
                     {
                         logFileSize = FileSizeInfo.Length.ToString();
                         logFileSize = logFileSize + " Byte";
                     }
-                    else if ((FileSizeInfo.Length / 1024)/1024 <= 0 )
+                    else if ((FileSizeInfo.Length / 1024) / 1024 <= 0)
                     {
-                        logFileSize = (FileSizeInfo.Length/1024).ToString();
+                        logFileSize = (FileSizeInfo.Length / 1024).ToString();
                         logFileSize = logFileSize + " KB";
                     }
                     else
@@ -150,20 +157,22 @@ namespace UlasBlog.WebUI.Controllers
                     ViewBag.fileinfo = fileInfo;
                     ViewBag.SettingsAlert = TempData["SettingsAlert"] ?? null; // DownloadLogFile Methodundan geliyor.
                     return View(settings);
-                }                    
+                }
                 else
-                    return View("_404NotFound");
-
+                {
+                    logger.LogError(1, "Controller Name: AdminController, Action: Settings --> ilgili settings verisi bulunamadı.");
+                    return NotFound();
+                }
             }
             catch (Exception ex)
             {
-                var error = ex.Message;
-                return View("_404NotFound");
-            }            
+                logger.LogError(2, ex, "Controller Name: AdminController, Action: Settings");
+                return NotFound();
+            }
         }
         [Authorize(Roles = "admin")]
         [HttpPost]
-        public IActionResult Settings(Settings settings,string fileDeleteInfo)
+        public IActionResult Settings(Settings settings, string fileDeleteInfo)
         {
             if (ModelState.IsValid)
             {
@@ -182,16 +191,18 @@ namespace UlasBlog.WebUI.Controllers
                     settings.UpdateDate = DateTime.Now;
                     uow.Settings.Edit(settings);
                     uow.SaveChanges();
-                    return Ok(); 
+                    return Ok();
                 }
                 catch (Exception ex)
                 {
-                    var error = ex.Message;
+                    logger.LogError(2, ex, "Controller Name: AdminController, Action: Settings");
                     return BadRequest();
                 }
             }
+            logger.LogError(1, "ModelState Invalid,Controller Name: AdminController, Action: Settings");
             return BadRequest();
         }
+        [Authorize(Roles = "admin")]
         public IActionResult DownloadLogFile()
         {
             string logFilePath = @"log.txt";
@@ -208,18 +219,27 @@ namespace UlasBlog.WebUI.Controllers
                 return RedirectToAction("Settings");
             }
 
-            
-            
         }
         public IActionResult AccessDenied()
         {
             return View();
         }
+        [Authorize(Roles = "admin")]
         public IActionResult IpList()
         {
-            var ips = uow.Iplist.GetAll();
-            return View(ips);
+            try
+            {
+                var ips = uow.Iplist.GetAll();
+                return View(ips);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(2, ex, "Controller Name: AdminController, Action: IpList");
+                return NotFound();
+            }
+
         }
+        [Authorize(Roles = "admin")]
         public IActionResult AddIpList(Iplist iplist)
         {
             if (ModelState.IsValid)
@@ -235,11 +255,14 @@ namespace UlasBlog.WebUI.Controllers
                 catch (Exception ex)
                 {
                     var error = ex.Message;
+                    logger.LogError(2, ex, "Controller Name: AdminController, Action: AddIpList");
                     return BadRequest(error);
                 }
             }
+            logger.LogError(1, "ModelState Invalid,Controller Name: AdminController, Action: AddIpList");
             return BadRequest();
         }
+        [Authorize(Roles = "admin")]
         public IActionResult DeleteIpList(int Id)
         {
             try
@@ -256,9 +279,11 @@ namespace UlasBlog.WebUI.Controllers
             catch (Exception ex)
             {
                 var error = ex.Message;
+                logger.LogError(2, ex, "Controller Name: AdminController, Action: DeleteIpList");
                 return BadRequest(error.ToString());
             }
         }
+        [Authorize(Roles = "admin")]
         public IActionResult EditIpList(Iplist iplist)
         {
             if (ModelState.IsValid)
@@ -275,11 +300,14 @@ namespace UlasBlog.WebUI.Controllers
                 catch (Exception ex)
                 {
                     var error = ex.Message;
+                    logger.LogError(2, ex, "Controller Name: AdminController, Action: EditIpList");
                     return BadRequest(error.ToString());
                 }
             }
+            logger.LogError(1, "ModelState Invalid,Controller Name: AdminController, Action: EditIpList");
             return BadRequest("Hata");
         }
+        [Authorize(Roles = "admin")]
         public IActionResult IpListChangeStatus(int Id)
         {
             var ips = uow.Iplist.Get(Id);
@@ -298,16 +326,11 @@ namespace UlasBlog.WebUI.Controllers
                 catch (Exception ex)
                 {
                     var error = ex.Message;
-                    return BadRequest(error.ToString());                    
+                    logger.LogError(2, ex, "Controller Name: AdminController, Action: IpListChangeStatus");
+                    return BadRequest(error.ToString());
                 }
             }
-            return BadRequest("Bir hata Oluştu");          
-            
-            
+            return BadRequest("Bir hata Oluştu");
         }
-
-
-
-
     }
 }

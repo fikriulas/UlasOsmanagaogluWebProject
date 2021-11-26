@@ -36,9 +36,8 @@ $("#replyMessage").submit(function (event) {
             $('.note-editable').empty()
             toastr.success("Mesaj iletildi.");
         },
-        error: function (errorMessage) {
-            console.log(errorMessage);
-            toastr.error("Bir sorun oluştu" + errorMessage.responseText);
+        error: function () {            
+            toastr.error("Bir sorun oluştu");
         },
         cache: false,
         contentType: false,
