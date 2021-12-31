@@ -66,12 +66,12 @@ namespace UlasBlog.WebUI.Controllers
                 {
                     return View(blogs);
                 }
-                return View("_404NotFound");
+                return NotFound();
             }
             catch (Exception ex)
             {
                 logger.LogError(2, ex, "Controller Name: Home, Action: Index");
-                return View("_404NotFound");
+                return NotFound();
             }
             
         }
@@ -127,13 +127,13 @@ namespace UlasBlog.WebUI.Controllers
                 }
                 else
                 {
-                    return View("_404NotFound");
+                    return NotFound();                    
                 }
             }
             catch (Exception ex)
             {
                 logger.LogError(2, ex, "Controller Name: Home, Action: Blog");
-                return View("_404NotFound");
+                return NotFound();
             }
             
         }
@@ -433,11 +433,10 @@ namespace UlasBlog.WebUI.Controllers
         {
             return View();
         }
-        public IActionResult NotFound()
+        [Route("/NotFound")]
+        public IActionResult NotFound404()
         {
-            return View("_404NotFound");
+            return View();
         }
-
-
     }
 }

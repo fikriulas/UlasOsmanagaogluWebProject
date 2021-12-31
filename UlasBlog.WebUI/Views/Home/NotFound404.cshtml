@@ -25,8 +25,10 @@
         <div class="error__title">404</div>
         <div class="error__subtitle">Hmmm...</div>
         <div class="error__description">Aradığınız şeyi sanırım henüz oluşturmadık. <br />Belki tekrar geldiğinizde burada bulabilirsiniz, kim bilir ?</div>
-        <a style="text-decoration: none;" class="error__button error__button--active" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
-        <button class="error__button">İletişim</button>
+        <div style="margin-top:25px;">
+            <a style="text-decoration: none;" class="error__button error__button--active" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
+            <a style="text-decoration: none;" class="error__button" asp-controller="Home" asp-action="Contact">İletişim</a>
+        </div>
     </div>
 
     <div class="astronaut">
