@@ -25,8 +25,7 @@
     <link rel="stylesheet" href="/Admin/AdminLTE/plugins/daterangepicker/daterangepicker.css">
     <!-- summernote -->
     <link rel="stylesheet" href="/Admin/AdminLTE/plugins/summernote/summernote-bs4.min.css">
-    <!--Datatables-->   
-    
+    <!--Datatables-->
     <!--Select2-->
     <link href="~/Admin/AdminLTE/dist/css/select2.css" rel="stylesheet" />
 
@@ -112,6 +111,7 @@
                     </div>
                     <div class="info">
                         <a asp-controller="User" asp-action="Profile" class="d-block">@User.Identity.Name</a>
+
                     </div>
                 </div>
 
@@ -130,14 +130,17 @@
                             </a>
                         </li>
                         <li class="nav-header">MENÜ</li>
-                        <li class="nav-item">
-                            <a asp-controller="Category" asp-action="Index" class="nav-link">
-                                <i class="nav-icon fas fa-layer-group"></i>
-                                <p>
-                                    Kategory
-                                </p>
-                            </a>
-                        </li>
+                        @if (User.IsInRole("admin"))
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Category" asp-action="Index" class="nav-link">
+                                    <i class="nav-icon fas fa-layer-group"></i>
+                                    <p>
+                                        Kategory
+                                    </p>
+                                </a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a asp-controller="Blog" asp-action="Index" class="nav-link">
                                 <i class="nav-icon fas fa-book"></i>
@@ -146,30 +149,40 @@
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a asp-controller="Admin" asp-action="Contact" class="nav-link">
-                                <i class="nav-icon far fa-id-card"></i>
-                                <p>
-                                    İletişim
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a asp-controller="Admin" asp-action="Settings" class="nav-link">
-                                <i class="nav-icon fas fa-cogs"></i>
-                                <p>
-                                    Ayarlar
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a asp-controller="User" asp-action="Index" class="nav-link">
-                                <i class="nav-icon fas fa-users"></i>
-                                <p>
-                                    Kullanıcılar
-                                </p>
-                            </a>
-                        </li>
+                        @if (User.IsInRole("admin"))
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Admin" asp-action="Contact" class="nav-link">
+                                    <i class="nav-icon far fa-id-card"></i>
+                                    <p>
+                                        İletişim
+                                    </p>
+                                </a>
+                            </li>
+                        }
+                        @if (User.IsInRole("admin"))
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Admin" asp-action="Settings" class="nav-link">
+                                    <i class="nav-icon fas fa-cogs"></i>
+                                    <p>
+                                        Ayarlar
+                                    </p>
+                                </a>
+                            </li>
+                        }
+                        @if (User.IsInRole("admin"))
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="User" asp-action="Index" class="nav-link">
+                                    <i class="nav-icon fas fa-users"></i>
+                                    <p>
+                                        Kullanıcılar
+                                    </p>
+                                </a>
+                            </li>
+                        }
+
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-user"></i>
@@ -193,14 +206,17 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item">
-                            <a asp-controller="User" asp-action="Roles" class="nav-link">
-                                <i class="nav-icon fas fa-user-tag"></i>
-                                <p>
-                                    Roller
-                                </p>
-                            </a>
-                        </li>
+                        @if (User.IsInRole("admin"))
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="User" asp-action="Roles" class="nav-link">
+                                    <i class="nav-icon fas fa-user-tag"></i>
+                                    <p>
+                                        Roller
+                                    </p>
+                                </a>
+                            </li>
+                        }
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->

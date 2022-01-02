@@ -112,7 +112,7 @@ namespace UlasBlog.WebUI.Controllers
                 if (blog != null)
                 {
                     var commentStatus = uow.Settings.GetAll()
-                        .Where(i => i.Id == 5)
+                        .Where(i => i.Id == 1)
                         .FirstOrDefault();
                     string CommentOfStatus = commentStatus.Comment.ToString();
                     TempData["commentStatus"] = CommentOfStatus;                    
@@ -221,12 +221,24 @@ namespace UlasBlog.WebUI.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Contact(Contact contact)
+        public async Task<IActionResult> Contact(Contact contact)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var captchaImage = HttpContext.Request.Form["g-recaptcha-response"];
+                    if (string.IsNullOrEmpty(captchaImage))
+                    {
+                        ViewBag.LoginAlert = AlertMessageForToastr("Captcha Doğrulayıp Tekrar Deneyin");
+                        return BadRequest("Captcha Doğrulayıp Tekrar Deneyin");
+                    }
+                    var verified = await CheckCaptcha();
+                    if (!verified)
+                    {
+                        ViewBag.LoginAlert = AlertMessageForToastr("Captcha Doğrulaması Hatalı, Tekrar Deneyin");
+                        return BadRequest("Captcha Doğrulaması Hatalı, Tekrar Deneyin");
+                    }
                     string uzakIPadresi = Request.HttpContext.Connection.RemoteIpAddress.ToString();
                     contact.IpAddress = uzakIPadresi;
                     contact.dateAdded = DateTime.Now;
@@ -321,7 +333,7 @@ namespace UlasBlog.WebUI.Controllers
         {
             var postData = new List<KeyValuePair<string, string>>()
             {
-                new KeyValuePair<string, string>("secret", "6Lf2tAwcAAAAADrL9yqoLehzhUu1eyZ6d4fsYiM4"),
+                new KeyValuePair<string, string>("secret", "6LcUiOUdAAAAAL_bDrph8C1v-zbK4xP6Db9Nt7TW"),
                 new KeyValuePair<string, string>("remoteip", HttpContext.Connection.RemoteIpAddress.ToString()),
                 new KeyValuePair<string, string>("response", HttpContext.Request.Form["g-recaptcha-response"])
             };
@@ -340,44 +352,51 @@ namespace UlasBlog.WebUI.Controllers
         [HttpPost]
         public IActionResult ForgotPassword(ForgotPasswordViewModel forgotPasswordView)
         {
-            AppUser user = userManager.FindByEmailAsync(forgotPasswordView.Email).Result; // kullanıcı var mı kontrol edilir.
-            if (user != null)
+            if(forgotPasswordView.Email != null)
             {
-                try
+                AppUser user = userManager.FindByEmailAsync(forgotPasswordView.Email).Result; // kullanıcı var mı kontrol edilir.
+                if (user != null)
                 {
-                    string passwordResetToken = userManager.GeneratePasswordResetTokenAsync(user).Result;
-                    string passwordLink = Url.Action("ResetPasswordConfirm", "Home", new
+                    try
                     {
-                        userId = user.Id,
-                        token = passwordResetToken,
-                    }, HttpContext.Request.Scheme);
-                    //www.localhost.com/Home/ResetPasswordConfirm?userId?kfgj98708=kdfjglkfjdkjhklfjhlkfjghl
-                    var settings = uow.Settings.Get(5);
-                    MimeMessage message = new MimeMessage();
-                    MailboxAddress from = new MailboxAddress(settings.MailUserName, settings.MailUserName);
-                    message.From.Add(from);
-                    MailboxAddress to = new MailboxAddress(user.UserName, user.Email);
-                    message.To.Add(to);
-                    message.Subject = "Şifremi Unuttum";
-                    BodyBuilder bodyBuilder = new BodyBuilder();
-                    bodyBuilder.HtmlBody = "<h2> Şifrenizi Sıfırlamak için aşağıdaki linke tıklayınız </h2><hr/>";
-                    bodyBuilder.HtmlBody += $"<p><a href='{passwordLink}'> Şifre Yenilemek İçin Tıklayınız </a></p>";
-                    message.Body = bodyBuilder.ToMessageBody();
-                    SmtpClient client = new SmtpClient();
-                    client.Connect(settings.SmtpAddress, int.Parse(settings.Port), true);
-                    client.Authenticate(settings.MailUserName, settings.MailPassword);
-                    client.Send(message);
-                    client.Disconnect(true);
-                    client.Dispose();
-                    //ViewBag.PasswordReset = "Şifre Değiştirildi";
-                    ViewBag.ForgotPasswordAlert = AlertMessageForToastr("Şifre Sıfırlama Maili Başarıyla Gönderildi", "success");
+                        string passwordResetToken = userManager.GeneratePasswordResetTokenAsync(user).Result;
+                        string passwordLink = Url.Action("ResetPasswordConfirm", "Home", new
+                        {
+                            userId = user.Id,
+                            token = passwordResetToken,
+                        }, HttpContext.Request.Scheme);
+                        //www.localhost.com/Home/ResetPasswordConfirm?userId?kfgj98708=kdfjglkfjdkjhklfjhlkfjghl
+                        var settings = uow.Settings.Get(5);
+                        MimeMessage message = new MimeMessage();
+                        MailboxAddress from = new MailboxAddress(settings.MailUserName, settings.MailUserName);
+                        message.From.Add(from);
+                        MailboxAddress to = new MailboxAddress(user.UserName, user.Email);
+                        message.To.Add(to);
+                        message.Subject = "Şifremi Unuttum";
+                        BodyBuilder bodyBuilder = new BodyBuilder();
+                        bodyBuilder.HtmlBody = "<h2> Şifrenizi Sıfırlamak için aşağıdaki linke tıklayınız </h2><hr/>";
+                        bodyBuilder.HtmlBody += $"<p><a href='{passwordLink}'> Şifre Yenilemek İçin Tıklayınız </a></p>";
+                        message.Body = bodyBuilder.ToMessageBody();
+                        SmtpClient client = new SmtpClient();
+                        client.Connect(settings.SmtpAddress, int.Parse(settings.Port), true);
+                        client.Authenticate(settings.MailUserName, settings.MailPassword);
+                        client.Send(message);
+                        client.Disconnect(true);
+                        client.Dispose();
+                        //ViewBag.PasswordReset = "Şifre Değiştirildi";
+                        ViewBag.ForgotPasswordAlert = AlertMessageForToastr("Şifre Sıfırlama Maili Başarıyla Gönderildi", "success");
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(2, ex, "Controller Name: Home, Action: ForgotPassword");
+                        ViewBag.ForgotPasswordAlert = AlertMessageForToastr("Bir Hatayla Karşılaşıldı", "error");
+                        return View(forgotPasswordView);
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    logger.LogError(2, ex, "Controller Name: Home, Action: ForgotPassword");
-                    ViewBag.ForgotPasswordAlert = AlertMessageForToastr("Bir Hatayla Karşılaşıldı", "error");
-                    return View(forgotPasswordView);
-                }                
+                    ViewBag.ForgotPasswordAlert = AlertMessageForToastr("Kullanıcı Bulunamadı");
+                }
             }
             else
             {

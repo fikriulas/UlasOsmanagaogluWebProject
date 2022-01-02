@@ -90,6 +90,7 @@ namespace UlasBlog.WebUI.Controllers
             {
                 try
                 {
+                    category.SlugUrl = SeoUrl.AdresDuzenle(category.Name);
                     uow.Categories.Edit(category);
                     uow.SaveChanges();
                     TempData["EditCategory"] = "toastr.success('İşlem Başarılı');";

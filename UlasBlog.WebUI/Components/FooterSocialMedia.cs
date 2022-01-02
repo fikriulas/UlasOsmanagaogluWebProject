@@ -20,7 +20,7 @@ namespace UlasBlog.WebUI.Components
         public IViewComponentResult Invoke()
         {
             var socialMedias = uow.Settings.GetAll()
-                .Where(i => i.Id == 5)
+                .Where(i => i.Id == 1)
                 .Select(i => new Settings()
                 {
                     Github = i.Github,

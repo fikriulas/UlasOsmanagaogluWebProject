@@ -185,8 +185,7 @@ namespace UlasBlog.WebUI.Controllers
                     }
                     else
                     {
-                        var error = "Log Dosyasını Silmek İçin 'Evet' Yazınız";
-                        return BadRequest(error);
+                        
                     }
                     settings.UpdateDate = DateTime.Now;
                     uow.Settings.Edit(settings);
