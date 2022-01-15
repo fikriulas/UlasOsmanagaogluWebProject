@@ -366,7 +366,7 @@ namespace UlasBlog.WebUI.Controllers
                             token = passwordResetToken,
                         }, HttpContext.Request.Scheme);
                         //www.localhost.com/Home/ResetPasswordConfirm?userId?kfgj98708=kdfjglkfjdkjhklfjhlkfjghl
-                        var settings = uow.Settings.Get(5);
+                        var settings = uow.Settings.Get(1);
                         MimeMessage message = new MimeMessage();
                         MailboxAddress from = new MailboxAddress(settings.MailUserName, settings.MailUserName);
                         message.From.Add(from);

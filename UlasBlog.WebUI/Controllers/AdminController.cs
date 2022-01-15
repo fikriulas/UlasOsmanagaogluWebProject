@@ -73,7 +73,7 @@ namespace UlasBlog.WebUI.Controllers
                 return BadRequest(": Yanıt Alanı Boş Bırakılamaz.");
             try
             {
-                var settings = uow.Settings.Get(5);
+                var settings = uow.Settings.Get(1);
                 MimeMessage message = new MimeMessage();
                 MailboxAddress from = new MailboxAddress(settings.MailUserName, settings.MailUserName);
                 message.From.Add(from);
@@ -131,7 +131,7 @@ namespace UlasBlog.WebUI.Controllers
         {
             try
             {
-                var settings = uow.Settings.Get(5);
+                var settings = uow.Settings.Get(1);
                 if (settings != null)
                 {
                     string logfilePath = @"log.txt";

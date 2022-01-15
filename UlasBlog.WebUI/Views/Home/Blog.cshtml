@@ -36,7 +36,7 @@
                         Kategoriler:
                         @foreach (var category in Model.Categories)
                         {
-                            <a href="#">@category.Name</a>
+                            <a asp-controller="Home" asp-action="Blogs" asp-route-SlugUrl="@category.SlugUrl" asp-route-page="1">@category.Name</a>
                         }
                     </p>
                 </div>               
