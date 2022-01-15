@@ -354,7 +354,6 @@ namespace UlasBlog.WebUI.Controllers
         {
             if(forgotPasswordView.Email != null)
             {
-
                 AppUser user = userManager.FindByEmailAsync(forgotPasswordView.Email).Result; // kullanıcı var mı kontrol edilir.
                 if (user != null)
                 {
